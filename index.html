@@ -4,66 +4,56 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MDZ™ WORK | Panel de Control & Sanctuary</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.25s ease-out forwards',
-          },
-          keyframes: {
-            fadeIn: {
-              '0%': { opacity: '0', transform: 'translateY(6px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            }
-          }
-        }
-      }
-    };
-  </script>
   <style>
+    :root {
+      --bg-dark: #050a08;
+      --bg-panel: rgba(11, 22, 18, 0.84);
+      --bg-input: rgba(6, 13, 11, 0.92);
+      --border-glass: rgba(16, 185, 129, 0.22);
+      --border-active: #10b981;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.35);
+      --accent-secondary: #34d399;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #ecfdf5;
+      --text-muted: #94a3b8;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background-color: #060a08;
-      background-image:
-        radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.09) 0%, transparent 42%),
-        radial-gradient(circle at 88% 82%, rgba(6, 78, 59, 0.14) 0%, transparent 48%),
-        linear-gradient(rgba(16, 185, 129, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(16, 185, 129, 0.025) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-      color: #e2e8f0;
+      font-family: var(--font-sans);
+      background:
+        radial-gradient(circle at 12% 10%, #0b241b 0%, var(--bg-dark) 52%),
+        radial-gradient(circle at 88% 88%, #071b14 0%, var(--bg-dark) 58%);
+      color: var(--text-main);
       min-height: 100vh;
+      padding: 18px;
+      line-height: 1.5;
     }
 
     .glass-panel {
-      background: rgba(11, 18, 15, 0.78);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(16, 185, 129, 0.18);
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
-    }
-
-    .led-active-border {
+      background: var(--bg-panel);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.58);
       position: relative;
       overflow: hidden;
     }
 
-    .led-active-border::before {
+    .led-border::before {
       content: "";
       position: absolute;
-      top: 0;
-      left: -100%;
-      width: 200%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #10b981, #6ee7b7, #10b981, transparent);
+      top: 0; left: -100%;
+      width: 200%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), #6ee7b7, var(--accent), transparent);
       animation: ledScan 4s linear infinite;
+      pointer-events: none;
     }
 
     @keyframes ledScan {
@@ -71,1625 +61,1760 @@
       100% { transform: translateX(25%); }
     }
 
-    /* Animaciones de mandíbulas del cocodrilo */
-    .croc-upper-jaw {
-      transform-origin: 18px 26px;
-      transition: transform 0.2s ease;
-    }
-    .croc-lower-jaw {
-      transform-origin: 18px 33px;
-      transition: transform 0.2s ease;
-    }
-    .croc-trigger:hover .croc-upper-jaw,
-    .croc-chomp-active .croc-upper-jaw {
-      animation: crocUpperChomp 0.45s ease-in-out 2;
-    }
-    .croc-trigger:hover .croc-lower-jaw,
-    .croc-chomp-active .croc-lower-jaw {
-      animation: crocLowerChomp 0.45s ease-in-out 2;
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    @keyframes crocUpperChomp {
-      0%, 100% { transform: rotate(0deg); }
-      45% { transform: rotate(-16deg); }
-      70% { transform: rotate(3deg); }
-    }
-    @keyframes crocLowerChomp {
-      0%, 100% { transform: rotate(0deg); }
-      45% { transform: rotate(16deg); }
-      70% { transform: rotate(-3deg); }
+    /* Header limpio sin textos superpuestos */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 22px;
+      gap: 14px;
     }
 
-    .croc-glow-svg {
-      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.45));
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(6, 78, 59, 0.5));
+      border: 1px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 18px var(--accent-glow);
+      overflow: hidden;
+    }
+
+    .brand h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand h1 span {
+      color: var(--accent);
+      font-family: var(--font-mono);
+    }
+
+    .brand p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Cocodrilo SVG animado mordiendo */
+    .croc-svg {
+      display: block;
+      overflow: visible;
+    }
+    .croc-upper {
+      transform-origin: 12px 18px;
+      animation: crocUpperBite 3.6s ease-in-out infinite;
+    }
+    .croc-lower {
+      transform-origin: 12px 21px;
+      animation: crocLowerBite 3.6s ease-in-out infinite;
+    }
+    .sanctuary-btn:hover .croc-upper,
+    .brand:hover .croc-upper,
+    .croc-chomp .croc-upper {
+      animation: crocUpperSnap 0.42s ease-in-out infinite;
+    }
+    .sanctuary-btn:hover .croc-lower,
+    .brand:hover .croc-lower,
+    .croc-chomp .croc-lower {
+      animation: crocLowerSnap 0.42s ease-in-out infinite;
+    }
+
+    @keyframes crocUpperBite {
+      0%, 72%, 100% { transform: rotate(0deg); }
+      80% { transform: rotate(-16deg); }
+      88% { transform: rotate(3deg); }
+      94% { transform: rotate(-9deg); }
+    }
+    @keyframes crocLowerBite {
+      0%, 72%, 100% { transform: rotate(0deg); }
+      80% { transform: rotate(13deg); }
+      88% { transform: rotate(-2deg); }
+      94% { transform: rotate(7deg); }
+    }
+    @keyframes crocUpperSnap {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-20deg); }
+    }
+    @keyframes crocLowerSnap {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(16deg); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Botones */
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 9px 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #032219;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .btn-primary:hover { background: var(--accent-secondary); transform: translateY(-1px); }
+
+    .btn-glass {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--text-main);
+      border: 1px solid var(--border-glass);
+    }
+    .btn-glass:hover {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.18);
+    }
+
+    /* Interruptor Modo Edición */
+    .btn-edit-locked {
+      background: rgba(148, 163, 184, 0.12);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+    .btn-edit-locked:hover {
+      border-color: var(--accent);
+      color: var(--text-main);
+    }
+    .btn-edit-active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.28);
+    }
+    .btn-edit-paused {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+    }
+
+    /* Botón Sanctuary */
+    .btn-sanctuary-closed {
+      background: rgba(16, 185, 129, 0.12);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.42);
+    }
+    .btn-sanctuary-closed:hover {
+      background: rgba(16, 185, 129, 0.24);
+      box-shadow: 0 0 18px var(--accent-glow);
+    }
+    .btn-sanctuary-open {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.45);
+    }
+    .btn-sanctuary-open:hover {
+      background: rgba(239, 68, 68, 0.28);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.14);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+    }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.28); }
+
+    .btn-sm { padding: 5px 9px; font-size: 0.77rem; border-radius: 8px; }
+
+    .kbd-hint {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: var(--text-muted);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* Barra de Pestañas (Oculta hasta validar 2FA) */
+    .tabs-wrapper {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 6px;
+      border-radius: 14px;
+      background: rgba(8, 16, 13, 0.75);
+      border: 1px solid var(--border-glass);
+      width: fit-content;
+    }
+    .tabs-wrapper.visible {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .tab-btn.active {
+      background: rgba(16, 185, 129, 0.18);
+      color: var(--text-main);
+      border-color: var(--accent);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.2);
+    }
+
+    .count-pill {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      padding: 2px 7px;
+      border-radius: 99px;
+    }
+
+    /* Secciones */
+    .workspace { display: none; padding: 22px; }
+    .workspace.active { display: block; animation: fadeIn 0.22s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .section-title h2 { font-size: 1.15rem; font-weight: 700; }
+
+    .autosave-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: rgba(16, 185, 129, 0.14);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.32);
+    }
+
+    .dot-pulse {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    /* Formularios */
+    .form-grid {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 15px;
+      background: rgba(5, 11, 9, 0.65);
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.22);
+    }
+    .form-grid.editable-open { display: grid; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    input, select {
+      background: var(--bg-input);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 9px 11px;
+      border-radius: 9px;
+      font-size: 0.86rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
+    }
+
+    /* Buscador Inteligente */
+    .smart-search-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.11), rgba(6, 13, 11, 0.92));
+      border: 1px solid var(--border-active);
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 22px rgba(16, 185, 129, 0.1);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      padding: 11px 95px 11px 38px;
+      font-size: 0.94rem;
+      background: rgba(4, 10, 8, 0.92);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 10px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 13px;
+      color: var(--accent);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.74rem;
+      border-radius: 6px;
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 11px;
+      align-items: center;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover, .chip.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--accent);
+      color: var(--text-main);
+    }
+
+    .search-stats {
+      margin-left: auto;
+      font-size: 0.79rem;
+      color: var(--accent-secondary);
+      font-family: var(--font-mono);
+    }
+
+    /* Tablas */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(5, 12, 9, 0.94);
+      color: var(--accent-secondary);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--border-glass);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: middle;
+    }
+
+    tr:hover td { background: rgba(16, 185, 129, 0.04); }
+
+    .mono { font-family: var(--font-mono); font-size: 0.83rem; }
+
+    /* Celdas editables */
+    .cell-editable {
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 4px 6px;
+      transition: background 0.15s;
+      min-height: 28px;
+      display: inline-block;
+      min-width: 60px;
+    }
+    .cell-editable:hover {
+      background: rgba(16, 185, 129, 0.14);
+      outline: 1px dashed rgba(16, 185, 129, 0.45);
+    }
+    .cell-readonly {
+      padding: 4px 6px;
+      display: inline-block;
+    }
+    .cell-empty {
+      color: #475569;
+      font-style: italic;
+      font-size: 0.76rem;
+    }
+
+    .inline-input {
+      padding: 5px 8px;
+      font-size: 0.83rem;
+      width: 100%;
+      min-width: 110px;
+      background: #030806;
+      border: 1px solid var(--accent);
+    }
+
+    .badge-cat {
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.32);
+      white-space: nowrap;
     }
 
     mark {
-      background: rgba(16, 185, 129, 0.35);
+      background: rgba(16, 185, 129, 0.38);
       color: #ffffff;
       padding: 0 3px;
       border-radius: 3px;
     }
 
-    ::-webkit-scrollbar { width: 7px; height: 7px; }
-    ::-webkit-scrollbar-track { background: rgba(8, 14, 11, 0.8); }
-    ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.55); }
+    /* Panel QR protegido (solo visible si se solicita con clave maestra o dentro de Sanctuary) */
+    .qr-drawer {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(4, 10, 8, 0.92);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .qr-drawer.open { display: block; animation: fadeIn 0.2s ease; }
+
+    .qr-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .qr-box {
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 10px;
+      display: inline-flex;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.25);
+    }
+
+    .secret-code-pill {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+      padding: 6px 10px;
+      border-radius: 8px;
+      word-break: break-all;
+    }
+
+    /* Modal de Verificación TOTP */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 5, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      place-items: center;
+      z-index: 999;
+      padding: 16px;
+    }
+    .modal-backdrop.open { display: grid; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 430px;
+      padding: 24px;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);
+    }
+
+    .modal-header-croc {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .totp-input {
+      font-family: var(--font-mono);
+      font-size: 1.45rem;
+      letter-spacing: 0.35em;
+      text-align: center;
+      padding: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+    }
+
+    .totp-timer-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .totp-timer-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 100%;
+      transition: width 0.5s linear;
+    }
+
+    .error-msg {
+      color: #fca5a5;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+    .link-subtle {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      padding: 0;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .link-subtle:hover { color: var(--accent-secondary); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #06281e;
+      border: 1px solid var(--accent);
+      color: #ecfdf5;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 1000;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
   </style>
 </head>
-<body class="antialiased selection:bg-emerald-500/30 selection:text-emerald-200 p-3 sm:p-6">
+<body>
 
-  <div class="max-w-7xl mx-auto">
-    <!-- ===================================================================== -->
-    <!-- CABECERA PRINCIPAL                                                    -->
-    <!-- ===================================================================== -->
-    <header class="glass-panel led-active-border rounded-2xl p-4 sm:p-5 mb-5 flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3.5">
-        <div id="headerCrocBox" onclick="triggerCrocChomp()" class="croc-trigger cursor-pointer w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-400/45 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-          <svg class="w-9 h-9 croc-glow-svg" viewBox="0 0 64 56" fill="none">
-            <g class="croc-lower-jaw">
-              <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="1.8"/>
-              <polygon points="29,32 31,27 33,32" fill="#ecfdf5"/>
-              <polygon points="41,32 43,27 45,32" fill="#ecfdf5"/>
-            </g>
-            <g class="croc-upper-jaw">
-              <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
-              <circle cx="23" cy="20" r="3" fill="#022c22"/>
-              <ellipse cx="23" cy="20" rx="1" ry="2.2" fill="#6ee7b7"/>
-              <polygon points="25,29 27,34 29,29" fill="#ecfdf5"/>
-              <polygon points="36,29 38,35 40,29" fill="#ecfdf5"/>
-              <polygon points="47,29 49,34 51,29" fill="#ecfdf5"/>
-            </g>
-          <p id="trackersSubHint" class="text-xs text-slate-400 mt-0.5">Vista protegida en modo lectura. Valida tu código TOTP de 6 dígitos para habilitar pestañas y Modo Edición.</p>
-        </div>
-        <div>
-          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
-            MDZ™ <span class="text-emerald-400 font-mono">WORK</span>
-          </h1>
-          <p class="text-xs text-slate-400">Gestión Operativa de Trackers & Sanctuary</p>
-        </div>
+<div class="container">
+  <!-- Header con Cocodrilo Original Nítido -->
+  <header class="glass-panel led-border">
+    <div class="brand">
+      <div class="brand-icon" title="MDZ™ WORK">
+        <svg class="croc-svg" width="36" height="32" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g class="croc-upper">
+            <path d="M6 17C6 11.5 11.5 8 18 8H37C39.2 8 41 9.8 41 12V16.5H14L6 17Z" fill="#10B981" stroke="#A7F3D0" stroke-width="1.4"/>
+            <circle cx="15" cy="11.5" r="2.6" fill="#041510" stroke="#6EE7B7" stroke-width="1.2"/>
+            <circle cx="15.6" cy="11.2" r="1" fill="#ECFDF5"/>
+            <path d="M21 16.5L23 20.5L25 16.5M27 16.5L29 20.5L31 16.5M33 16.5L35 20.5L37 16.5" stroke="#ECFDF5" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <g class="croc-lower">
+            <path d="M7 20.5H39C39 23.8 36.5 26 33 26H14C10 26 7 23.5 7 20.5Z" fill="#059669" stroke="#6EE7B7" stroke-width="1.4"/>
+            <path d="M24 20.5L26 17L28 20.5M30 20.5L32 17L34 20.5" stroke="#ECFDF5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>
       </div>
-
-      <!-- Controles Globales -->
-      <div class="flex flex-wrap items-center gap-2.5">
-        <button type="button" onclick="exportToExcelCSV()" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs font-semibold transition-all cursor-pointer">
-          <span>📊</span>
-          <span>Exportar Excel</span>
-        </button>
-
-        <button id="btnEditModeToggle" type="button" onclick="toggleEditMode()" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-all cursor-pointer">
-          <span id="editModeDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
-          <span id="editModeLabel">Modo Edición: Bloqueado</span>
-        </button>
-
-        <button id="btnSanctuaryTrigger" type="button" onclick="handleSanctuaryAction()" class="croc-trigger flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/45 text-xs font-bold transition-all cursor-pointer shadow-[0_0_16px_rgba(16,185,129,0.18)]">
-          <svg class="w-5 h-5 shrink-0" viewBox="0 0 64 56" fill="none">
-            <g class="croc-lower-jaw">
-              <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="2"/>
-            </g>
-            <g class="croc-upper-jaw">
-              <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
-              <polygon points="30,29 32,34 34,29" fill="#ecfdf5"/>
-              <polygon points="44,29 46,34 48,29" fill="#ecfdf5"/>
-            </g>
-          </svg>
-          <span id="sanctuaryBtnLabel">Sanctuary</span>
-          <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono rounded bg-black/40 text-slate-400 border border-white/10">Ctrl+K</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- ===================================================================== -->
-    <!-- BARRA DE PESTAÑAS (OCULTA HASTA VALIDAR DOBLE FACTOR)                 -->
-    <!-- ===================================================================== -->
-    <div id="tabsLayer" class="hidden flex-wrap items-center justify-between gap-3 mb-5 animate-fade-in">
-      <div class="flex items-center gap-2 p-1.5 rounded-xl glass-panel">
-        <button id="tabPublic" onclick="switchTab('public')" class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <span>Trackers</span>
-          <span id="publicCountPill" class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-slate-900 text-emerald-300">0</span>
-        </button>
-
-        <!-- Pestaña Sanctuary -->
-        <button id="tabSanctuary" onclick="switchTab('sanctuary')" class="croc-trigger inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10 cursor-pointer">
-          <svg class="w-5 h-5 shrink-0" viewBox="0 0 64 56" fill="none">
-            <g class="croc-lower-jaw">
-              <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="2"/>
-            </g>
-            <g class="croc-upper-jaw">
-              <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
-              <polygon points="30,29 32,34 34,29" fill="#ecfdf5"/>
-              <polygon points="44,29 46,34 48,29" fill="#ecfdf5"/>
-            </g>
-          </svg>
-          <span>Sanctuary</span>
-          <span id="sanctuaryCountPill" class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">0</span>
-        </button>
+      <div>
+        <h1>MDZ™ <span>WORK</span></h1>
+        <p>Gestión Operativa de Trackers & Sanctuary</p>
       </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- SECCIÓN 1: TRACKERS (UNIDAD / PLACA / GPS / DETEKTOR / L ACTIVACION...) -->
-    <!-- ===================================================================== -->
-    <section id="viewPublic" class="glass-panel rounded-2xl p-4 sm:p-6 animate-fade-in">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-800/80">
-        <div>
-          <div class="flex items-center gap-2.5">
-            <h2 class="text-lg font-bold text-white">Trackers</h2>
-            <span id="autoSaveIndicator" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 transition-all">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              Guardado automático activo
-            </span>
-          </div>
-          <p id="trackersSubHint" class="text-xs text-slate-400 mt-0.5">Vista protegida en modo lectura. Valida el doble factor para habilitar pestañas y Modo Edición.</p>
-        </div>
+    <div class="header-actions">
+      <button class="btn-glass" onclick="exportToExcelCSV()">📊 Exportar Excel</button>
+      <button id="btnEditToggle" class="btn-edit-locked" onclick="handleEditToggle()">
+        🔒 Modo Edición: Bloqueado
+      </button>
+      <button id="btnSanctuaryTrigger" class="btn-sanctuary-closed sanctuary-btn" onclick="handleSanctuaryAction()">
+        <svg class="croc-svg" width="24" height="20" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g class="croc-upper">
+            <path d="M6 17C6 11.5 11.5 8 18 8H37C39.2 8 41 9.8 41 12V16.5H14L6 17Z" fill="#10B981" stroke="#A7F3D0" stroke-width="1.5"/>
+            <circle cx="15" cy="11.5" r="2.4" fill="#041510"/>
+            <path d="M22 16.5L24 20L26 16.5M29 16.5L31 20L33 16.5M35 16.5L37 20L39 16.5" stroke="#ECFDF5" stroke-width="1.5" stroke-linecap="round"/>
+          </g>
+          <g class="croc-lower">
+            <path d="M7 20.5H39C39 23.8 36.5 26 33 26H14C10 26 7 23.5 7 20.5Z" fill="#059669" stroke="#6EE7B7" stroke-width="1.5"/>
+          </g>
+        </svg>
+        <span id="sanctuaryBtnText">Sanctuary</span>
+        <span class="kbd-hint">Ctrl+K</span>
+      </button>
+    </div>
+  </header>
 
-        <!-- Respaldo JSON para portabilidad total -->
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="exportTrackersBackupJSON()" class="px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer" title="Descargar copia de seguridad JSON">
-            💾 Respaldo JSON
-          </button>
-          <label id="restoreJsonLabel" class="hidden px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer" title="Restaurar desde copia de seguridad JSON">
-            📂 Restaurar JSON
-            <input type="file" accept=".json" onchange="importTrackersBackupJSON(event)" class="hidden" />
-          </label>
-        </div>
-      </div>
-
-      <!-- Formulario de Alta Rápida (Visible solo en Modo Edición) -->
-      <form id="formPublic" onsubmit="addPublicItem(event)" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-2.5 p-4 mb-5 rounded-xl bg-slate-950/75 border border-emerald-500/25">
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">UNIDAD *</label>
-          <input type="text" id="pubUnidad" required placeholder="Ej. NOVEMBER 5" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">PLACA *</label>
-          <input type="text" id="pubPlaca" required placeholder="Ej. BYU-795" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono uppercase focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">GPS</label>
-          <input type="text" id="pubGps" placeholder="868574042607064" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">DETEKTOR</label>
-          <input type="text" id="pubDetektor" placeholder="Ej. 1DB199" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono uppercase focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">L ACTIVACION</label>
-          <input type="text" id="pubActivacion" placeholder="Ej. D7D21B3" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono uppercase focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">L RESPUESTA</label>
-          <input type="text" id="pubRespuesta" placeholder="Ej. 3VNAF" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono uppercase focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">DETALLES</label>
-          <input type="text" id="pubDetalles" placeholder="Ej. Cambiar Switch" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div class="flex items-end">
-          <button type="submit" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all cursor-pointer">
-            + Agregar
-          </button>
-        </div>
-      </form>
-
-      <!-- Barra de Búsqueda en Trackers -->
-      <div class="relative mb-4">
-        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400 text-sm">🔍</span>
-        <input type="text" id="publicSearch" oninput="renderPublicTable()" placeholder="Buscar en Trackers por UNIDAD, PLACA, GPS, DETEKTOR, L ACTIVACION, L RESPUESTA o DETALLES..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400" />
-      </div>
-
-      <!-- Tabla de Trackers -->
-      <div class="overflow-x-auto rounded-xl border border-slate-800/90">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-950/95 border-b border-emerald-500/20 text-[11px] font-mono uppercase tracking-wider text-emerald-300">
-              <th class="py-3 px-3.5">UNIDAD</th>
-              <th class="py-3 px-3.5">PLACA</th>
-              <th class="py-3 px-3.5">GPS</th>
-              <th class="py-3 px-3.5">DETEKTOR</th>
-              <th class="py-3 px-3.5">L ACTIVACION</th>
-              <th class="py-3 px-3.5">L RESPUESTA</th>
-              <th class="py-3 px-3.5">DETALLES</th>
-              <th class="py-3 px-3.5 text-right">ACCIONES</th>
-            </tr>
-          </thead>
-          <tbody id="publicTableBody" class="divide-y divide-slate-800/70 text-xs sm:text-sm"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ===================================================================== -->
-    <!-- SECCIÓN 2: SANCTUARY (BÓVEDA PRIVADA + BUSCADOR INTELIGENTE)          -->
-    <!-- ===================================================================== -->
-    <section id="viewVault" class="hidden glass-panel led-active-border rounded-2xl p-4 sm:p-6 animate-fade-in">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-800/80">
-        <div class="flex items-center gap-3">
-          <div id="sanctuaryBannerCroc" class="croc-trigger p-2 rounded-xl bg-emerald-500/15 border border-emerald-400/40">
-            <svg class="w-8 h-8 croc-glow-svg" viewBox="0 0 64 56" fill="none">
-              <g class="croc-lower-jaw">
-                <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="1.8"/>
-              </g>
-              <g class="croc-upper-jaw">
-                <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
-                <polygon points="28,29 30,34 32,29" fill="#ecfdf5"/>
-                <polygon points="42,29 44,34 46,29" fill="#ecfdf5"/>
-              </g>
-            </svg>
-          </div>
-          <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span>Sanctuary</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">TOTP Verificado</span>
-            </h2>
-            <p class="text-xs text-slate-400">Panel privado con buscador inteligente y filtros rápidos por categoría.</p>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2">
-          <button type="button" onclick="toggleSanctuary2FAPanel()" class="px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-emerald-300 border border-emerald-500/35 text-xs font-semibold transition-all cursor-pointer">
-            📱 Configurar 2FA (QR)
-          </button>
-          <button type="button" onclick="exportVaultBackupJSON()" class="px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer">
-            💾 Respaldo JSON
-          </button>
-          <button onclick="lockSanctuary()" class="px-3.5 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/40 text-xs font-semibold transition-all cursor-pointer">
-            🔒 Cerrar Sanctuary
-          </button>
-        </div>
-      </div>
-
-      <!-- Panel Desplegable de Configuración 2FA dentro de Sanctuary -->
-      <div id="sanctuary2FAPanel" class="hidden p-4 mb-5 rounded-2xl bg-slate-950/90 border border-emerald-500/35 animate-fade-in">
-        <div class="flex flex-col md:flex-row items-center gap-5">
-          <div id="sanctuaryQrHolder" class="p-3 rounded-xl bg-white shadow-lg shrink-0"></div>
-          <div class="space-y-2.5 flex-1">
-            <div class="flex items-center justify-between gap-2">
-              <h4 class="text-sm font-bold text-white">Autenticador TOTP de 6 dígitos (RFC 6238)</h4>
-              <span id="sanctuaryTotpLivePreview" class="px-2.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/35 font-mono text-xs text-emerald-300">Código actual: ------</span>
-            </div>
-            <p class="text-xs text-slate-400">Escanea este código QR con Google Authenticator, Authy o Microsoft Authenticator, o copia la clave secreta Base32 manualmente.</p>
-            <div class="flex flex-wrap items-center gap-2">
-              <code id="sanctuarySecretText" class="px-3 py-1.5 rounded-lg bg-black/80 border border-slate-700 font-mono text-xs text-emerald-300 select-all"></code>
-              <button type="button" onclick="copyCurrentTotpSecret()" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 text-xs font-semibold cursor-pointer">
-                Copiar Clave Base32
-              </button>
-              <button type="button" onclick="regenerateTotpSecret()" class="px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-semibold cursor-pointer">
-                Generar Nueva Llave
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- BUSCADOR INTELIGENTE MULTICRITERIO -->
-      <div class="p-4 mb-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-slate-950/90 border border-emerald-500/40 shadow-[0_0_24px_rgba(16,185,129,0.1)]">
-        <div class="relative flex items-center">
-          <span class="absolute left-3.5 text-emerald-400 text-base">⚡</span>
-          <input
-            type="text"
-            id="smartVaultSearch"
-            oninput="renderVaultTable()"
-            placeholder="Buscador inteligente: escribe servicio, usuario, IP/URL, categoría o nota (tolera errores y acentos)..."
-            class="w-full pl-10 pr-24 py-3 rounded-xl bg-black/75 border border-emerald-500/45 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-emerald-300"
-          />
-          <button type="button" onclick="clearVaultSearch()" class="absolute right-2.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium cursor-pointer">
-            Limpiar
-          </button>
-        </div>
-
-        <!-- Filtros rápidos por categoría -->
-        <div id="categoryChips" class="flex flex-wrap items-center gap-2 mt-3">
-          <button type="button" data-cat="ALL" onclick="setVaultCategory('ALL', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/25 text-emerald-200 border border-emerald-400 cursor-pointer">Todas</button>
-          <button type="button" data-cat="Sistemas" onclick="setVaultCategory('Sistemas', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Sistemas</button>
-          <button type="button" data-cat="Accesos Web" onclick="setVaultCategory('Accesos Web', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Accesos Web</button>
-          <button type="button" data-cat="Redes" onclick="setVaultCategory('Redes', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Redes</button>
-          <button type="button" data-cat="Plataformas" onclick="setVaultCategory('Plataformas', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Plataformas</button>
-          <button type="button" data-cat="Otros" onclick="setVaultCategory('Otros', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Otros</button>
-
-          <span id="vaultSearchStats" class="ml-auto font-mono text-xs text-emerald-300">0 registros</span>
-        </div>
-      </div>
-
-      <!-- Formulario de Alta en Sanctuary -->
-      <form id="formVault" onsubmit="addVaultItem(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2.5 p-4 mb-5 rounded-xl bg-slate-950/75 border border-emerald-500/25">
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Servicio / Sistema *</label>
-          <input type="text" id="vServicio" required placeholder="Ej. Portal Principal" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Categoría</label>
-          <select id="vCategoria" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400">
-            <option value="Sistemas">Sistemas</option>
-            <option value="Accesos Web">Accesos Web</option>
-            <option value="Redes">Redes</option>
-            <option value="Plataformas">Plataformas</option>
-            <option value="Otros">Otros</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Usuario *</label>
-          <input type="text" id="vUsuario" required placeholder="Ej. admin_01" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Contraseña / PIN *</label>
-          <div class="flex gap-1">
-            <input type="text" id="vPass" required placeholder="Clave" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
-            <button type="button" onclick="generateStrongPass()" class="px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 text-xs cursor-pointer" title="Generar contraseña">🎲</button>
-          </div>
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">IP / URL</label>
-          <input type="text" id="vHost" placeholder="192.168.1.1" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div>
-          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Notas / Etiquetas</label>
-          <input type="text" id="vNotas" placeholder="Detalle adicional" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400" />
-        </div>
-        <div class="flex items-end">
-          <button type="submit" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all cursor-pointer">
-            + Guardar
-          </button>
-        </div>
-      </form>
-
-      <!-- Tabla de Sanctuary -->
-      <div class="overflow-x-auto rounded-xl border border-slate-800/90">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-950/95 border-b border-emerald-500/20 text-[11px] font-mono uppercase tracking-wider text-emerald-300">
-              <th class="py-3 px-3.5">Servicio / Sistema</th>
-              <th class="py-3 px-3.5">Categoría</th>
-              <th class="py-3 px-3.5">Usuario</th>
-              <th class="py-3 px-3.5">Contraseña</th>
-              <th class="py-3 px-3.5">IP / URL</th>
-              <th class="py-3 px-3.5">Notas</th>
-              <th class="py-3 px-3.5 text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="vaultTableBody" class="divide-y divide-slate-800/70 text-xs sm:text-sm"></tbody>
-        </table>
-      </div>
-    </section>
+  <!-- Capa de Pestañas (Oculta hasta validar el código de 6 dígitos) -->
+  <div id="tabsWrapper" class="tabs-wrapper">
+    <button id="tabTrackers" class="tab-btn active" onclick="switchTab('trackers')">
+      📍 Trackers <span id="trackersCountPill" class="count-pill">0</span>
+    </button>
+    <button id="tabSanctuary" class="tab-btn" onclick="switchTab('sanctuary')">
+      🐊 Sanctuary <span id="sanctuaryCountPill" class="count-pill">0</span>
+    </button>
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- MODAL DE ACCESO TOTP (6 DÍGITOS RFC 6238 SIN CLAVE MAESTRA)           -->
-  <!-- ===================================================================== -->
-  <div id="sanctuaryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto" onclick="if(event.target===this) closeSanctuaryModal()">
-    <div class="glass-panel led-active-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in my-auto">
-      <div class="flex items-center gap-3.5 mb-4">
-        <div id="modalCrocIcon" class="croc-trigger croc-chomp-active p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/50">
-          <svg class="w-11 h-11 croc-glow-svg" viewBox="0 0 64 56" fill="none">
-            <g class="croc-lower-jaw">
-              <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="1.8"/>
-              <polygon points="29,32 31,27 33,32" fill="#ecfdf5"/>
-              <polygon points="41,32 43,27 45,32" fill="#ecfdf5"/>
-            </g>
-            <g class="croc-upper-jaw">
-              <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
-              <circle cx="23" cy="20" r="3" fill="#022c22"/>
-              <ellipse cx="23" cy="20" rx="1" ry="2.2" fill="#6ee7b7"/>
-              <polygon points="25,29 27,34 29,29" fill="#ecfdf5"/>
-              <polygon points="36,29 38,35 40,29" fill="#ecfdf5"/>
-              <polygon points="47,29 49,34 51,29" fill="#ecfdf5"/>
-            </g>
-          </svg>
+  <!-- =====================================================================
+       SECCIÓN 1: TRACKERS
+       ===================================================================== -->
+  <section id="viewTrackers" class="workspace glass-panel active">
+    <div class="section-header">
+      <div class="section-title">
+        <h2>Trackers</h2>
+        <span class="autosave-pill"><span class="dot-pulse"></span> Guardado automático activo</span>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-glass btn-sm" onclick="exportTrackersBackupJSON()">💾 Respaldo JSON</button>
+        <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          📂 Restaurar JSON
+          <input type="file" accept=".json" style="display:none;" onchange="importTrackersBackupJSON(event)" />
+        </label>
+      </div>
+    </div>
+
+    <p id="trackersSubtitle" style="font-size:0.82rem; color:var(--text-muted); margin-bottom:14px;">
+      Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.
+    </p>
+
+    <!-- Formulario para agregar nuevos Trackers (Solo visible con Modo Edición Activo) -->
+    <form id="formTrackers" class="form-grid" onsubmit="addTrackerItem(event)">
+      <div class="field">
+        <label>UNIDAD *</label>
+        <input type="text" id="tUnidad" placeholder="Ej. NOVEMBER 5" required />
+      </div>
+      <div class="field">
+        <label>PLACA *</label>
+        <input type="text" id="tPlaca" placeholder="Ej. BYU-795" required />
+      </div>
+      <div class="field">
+        <label>GPS</label>
+        <input type="text" id="tGps" placeholder="868574042607064" />
+      </div>
+      <div class="field">
+        <label>DETEKTOR</label>
+        <input type="text" id="tDetektor" placeholder="Ej. 1DB199" />
+      </div>
+      <div class="field">
+        <label>L ACTIVACION</label>
+        <input type="text" id="tActivacion" placeholder="Ej. D7D21B3" />
+      </div>
+      <div class="field">
+        <label>L RESPUESTA</label>
+        <input type="text" id="tRespuesta" placeholder="Ej. 3VNAF" />
+      </div>
+      <div class="field">
+        <label>DETALLES</label>
+        <input type="text" id="tDetalles" placeholder="Ej. Cambiar Switch" />
+      </div>
+      <div class="field" style="justify-content: flex-end;">
+        <button type="submit" class="btn-primary">+ Agregar</button>
+      </div>
+    </form>
+
+    <!-- Buscador en Trackers -->
+    <div class="search-input-wrap" style="margin-bottom: 14px;">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="trackersSearch" placeholder="Buscar en Trackers por UNIDAD, PLACA, GPS, DETEKTOR, L ACTIVACION, L RESPUESTA o DETALLES..." oninput="renderTrackersTable()" />
+      <button type="button" class="search-clear" onclick="document.getElementById('trackersSearch').value=''; renderTrackersTable();">Limpiar</button>
+    </div>
+
+    <!-- Tabla Trackers -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>UNIDAD</th>
+            <th>PLACA</th>
+            <th>GPS</th>
+            <th>DETEKTOR</th>
+            <th>L ACTIVACION</th>
+            <th>L RESPUESTA</th>
+            <th>DETALLES</th>
+            <th>ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody id="trackersTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       SECCIÓN 2: SANCTUARY (CREDENCIALES & BUSCADOR INTELIGENTE)
+       ===================================================================== -->
+  <section id="viewSanctuary" class="workspace glass-panel led-border">
+    <div class="section-header">
+      <div class="section-title">
+        <h2>Sanctuary</h2>
+        <span class="autosave-pill"><span class="dot-pulse"></span> Sesión 2FA Verificada</span>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-glass btn-sm" onclick="toggleInternalQrPanel()">📱 Ver / Rotar QR 2FA</button>
+        <button class="btn-glass btn-sm" onclick="exportSanctuaryBackupJSON()">💾 Respaldo JSON</button>
+        <button class="btn-danger" onclick="lockSanctuary()">🔒 Cerrar Sanctuary</button>
+      </div>
+    </div>
+
+    <!-- Cajón QR Interno (Solo accesible cuando ya estás dentro de Sanctuary) -->
+    <div id="internalQrDrawer" class="qr-drawer">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <strong style="font-size:0.88rem; color:var(--accent-secondary);">Configuración de Autenticador (Solo visible dentro de Sanctuary)</strong>
+        <span id="internalTotpLive" class="mono" style="font-size:0.82rem; color:#6ee7b7;">Código actual: ------</span>
+      </div>
+      <div class="qr-flex">
+        <div id="internalQrBox" class="qr-box"></div>
+        <div style="flex:1; min-width:220px;">
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">
+            Si necesitas vincular otro celular, escanea este código QR o copia la clave Base32:
+          </p>
+          <div id="internalSecretDisplay" class="secret-code-pill"></div>
+          <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+            <button type="button" class="btn-glass btn-sm" onclick="copyTotpSecret()">📋 Copiar Clave Base32</button>
+            <button type="button" class="btn-danger" onclick="rotateTotpSecret()">🔄 Generar Nueva Llave</button>
+          </div>
         </div>
-        <div>
-          <h3 id="modalTitle" class="text-lg font-bold text-white">Acceso a Sanctuary</h3>
-          <p id="modalSubtitle" class="text-xs text-slate-400">Ingresa el código TOTP de 6 dígitos de tu app autenticadora para desbloquear.</p>
+      </div>
+    </div>
+
+    <!-- Buscador Inteligente -->
+    <div class="smart-search-box" style="margin-top:14px;">
+      <div class="search-input-wrap">
+        <span class="search-icon">⚡</span>
+        <input
+          type="text"
+          id="smartSanctuarySearch"
+          placeholder="Buscador inteligente: escribe servicio, usuario, dirección, etiqueta o nota..."
+          oninput="renderSanctuaryTable()"
+        />
+        <button type="button" class="search-clear" onclick="clearSanctuarySearch()">Limpiar</button>
+      </div>
+
+      <div class="filter-chips" id="categoryChips">
+        <span class="chip active" data-cat="ALL" onclick="setSanctuaryCategory('ALL', this)">Todas</span>
+        <span class="chip" data-cat="Sistemas" onclick="setSanctuaryCategory('Sistemas', this)">Sistemas</span>
+        <span class="chip" data-cat="Accesos Web" onclick="setSanctuaryCategory('Accesos Web', this)">Accesos Web</span>
+        <span class="chip" data-cat="Redes" onclick="setSanctuaryCategory('Redes', this)">Redes</span>
+        <span class="chip" data-cat="Plataformas" onclick="setSanctuaryCategory('Plataformas', this)">Plataformas</span>
+        <span class="chip" data-cat="Otros" onclick="setSanctuaryCategory('Otros', this)">Otros</span>
+        <span class="search-stats" id="sanctuarySearchStats">0 registros</span>
+      </div>
+    </div>
+
+    <!-- Formulario de Alta en Sanctuary (Solo visible si Modo Edición está Activo) -->
+    <form id="formSanctuary" class="form-grid" onsubmit="addSanctuaryItem(event)">
+      <div class="field">
+        <label>Servicio / Sistema *</label>
+        <input type="text" id="sServicio" placeholder="Ej. Portal Principal" required />
+      </div>
+      <div class="field">
+        <label>Categoría</label>
+        <select id="sCategoria">
+          <option value="Sistemas">Sistemas</option>
+          <option value="Accesos Web">Accesos Web</option>
+          <option value="Redes">Redes</option>
+          <option value="Plataformas">Plataformas</option>
+          <option value="Otros">Otros</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Usuario / ID *</label>
+        <input type="text" id="sUsuario" placeholder="Ej. admin_ops" required />
+      </div>
+      <div class="field">
+        <label>Contraseña / Clave *</label>
+        <div style="display:flex; gap:6px;">
+          <input type="text" id="sPass" placeholder="Clave de acceso" required style="width:100%;" />
+          <button type="button" class="btn-glass btn-sm" onclick="generateStrongPass()" title="Generar clave aleatoria">🎲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>URL / Dirección</label>
+        <input type="text" id="sHost" placeholder="Ej. https://portal.ejemplo.com" />
+      </div>
+      <div class="field">
+        <label>Notas / Etiquetas</label>
+        <input type="text" id="sNotas" placeholder="Ej. Cuenta principal, PIN 1234" />
+      </div>
+      <div class="field" style="justify-content: flex-end;">
+        <button type="submit" class="btn-primary">+ Guardar</button>
+      </div>
+    </form>
+
+    <!-- Tabla Sanctuary -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Servicio / Sistema</th>
+            <th>Categoría</th>
+            <th>Usuario</th>
+            <th>Contraseña</th>
+            <th>URL / Dirección</th>
+            <th>Notas / Etiquetas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="sanctuaryTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- =========================================================================
+     MODAL DE INGRESO (SOLO CÓDIGO DE 6 DÍGITOS - SIN QR EXPUESTO)
+     ========================================================================= -->
+<div id="totpModal" class="modal-backdrop" onclick="if(event.target===this) closeTotpModal()">
+  <div class="modal-card glass-panel led-border">
+    <div class="modal-header-croc croc-chomp">
+      <svg class="croc-svg" width="38" height="32" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g class="croc-upper">
+          <path d="M6 17C6 11.5 11.5 8 18 8H37C39.2 8 41 9.8 41 12V16.5H14L6 17Z" fill="#10B981" stroke="#A7F3D0" stroke-width="1.5"/>
+          <circle cx="15" cy="11.5" r="2.4" fill="#041510"/>
+          <path d="M22 16.5L24 20L26 16.5M29 16.5L31 20L33 16.5M35 16.5L37 20L39 16.5" stroke="#ECFDF5" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+        <g class="croc-lower">
+          <path d="M7 20.5H39C39 23.8 36.5 26 33 26H14C10 26 7 23.5 7 20.5Z" fill="#059669" stroke="#6EE7B7" stroke-width="1.5"/>
+        </g>
+      </svg>
+      <div>
+        <h3 style="font-size:1.12rem;">Verificación Sanctuary</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted);">Ingresa el código de 6 dígitos de tu app Authenticator.</p>
+      </div>
+    </div>
+
+    <form onsubmit="verifyTotpSubmission(event)">
+      <div class="field">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label>Código de 6 Dígitos</label>
+          <span id="modalCountdown" class="mono" style="font-size:0.76rem; color:var(--accent-secondary);">30s</span>
+        </div>
+        <input
+          type="text"
+          id="totpCodeInput"
+          class="totp-input"
+          inputmode="numeric"
+          maxlength="7"
+          placeholder="000000"
+          autocomplete="one-time-code"
+          required
+        />
+        <div class="totp-timer-bar">
+          <div id="modalTimerFill" class="totp-timer-fill"></div>
         </div>
       </div>
 
-      <form onsubmit="verifySanctuaryKey(event)" class="space-y-3.5">
-        <div>
-          <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-mono uppercase text-slate-300">Código TOTP (6 dígitos)</label>
-            <span id="totpTimerBadge" class="text-[11px] font-mono text-emerald-400">30s</span>
-          </div>
-          <input type="text" id="totpCodeInput" required inputmode="numeric" maxlength="7" autocomplete="one-time-code" placeholder="000 000" class="w-full px-3.5 py-3 rounded-xl bg-slate-950 border border-emerald-500/40 text-lg text-center tracking-[0.45em] text-emerald-300 font-mono font-bold focus:outline-none focus:border-emerald-400" />
-        </div>
+      <!-- Opción protegida por clave maestra para recuperar/vincular nuevo dispositivo -->
+      <div style="margin-top:12px;">
+        <button type="button" class="link-subtle" onclick="toggleRecoveryPrompt()">
+          ¿Perdiste tu dispositivo? Re-vincular QR con clave maestra
+        </button>
 
-        <!-- Panel QR visible directamente para vincular/escanear al instante -->
-        <div class="pt-0.5">
-          <div class="flex items-center justify-between">
-            <button type="button" onclick="toggleModalQrSetup()" class="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-4 font-medium cursor-pointer">
-              Vincular App (QR / Clave)
-            </button>
-            <button type="button" onclick="triggerEmergencyAccess()" class="text-[11px] text-slate-400 hover:text-amber-300 underline underline-offset-4 transition-colors cursor-pointer">
-              Acceso de Emergencia / Re-vincular QR
-            </button>
+        <div id="recoveryBox" style="display:none; margin-top:10px; padding:12px; border-radius:10px; background:rgba(4,10,8,0.9); border:1px solid rgba(16,185,129,0.3);">
+          <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:5px;">CLAVE MAESTRA DE RECUPERACIÓN</label>
+          <div style="display:flex; gap:6px;">
+            <input type="password" id="recoveryKeyInput" placeholder="Ingresa clave maestra..." style="width:100%;" />
+            <button type="button" class="btn-glass btn-sm" onclick="unlockRecoveryQr()">Validar</button>
           </div>
-
-          <div id="modalQrSetupBox" class="mt-3 p-3.5 rounded-xl bg-slate-950/95 border border-emerald-500/30 space-y-2.5">
-            <div class="flex items-center gap-3">
-              <div id="modalQrHolder" class="p-2 rounded-lg bg-white shrink-0"></div>
-              <div class="space-y-1.5 min-w-0">
-                <p class="text-[11px] text-slate-300 leading-snug">Escanea con <strong class="text-emerald-300">Google Authenticator</strong>, <strong class="text-emerald-300">Authy</strong> o <strong class="text-emerald-300">Microsoft Authenticator</strong>:</p>
-                <div class="flex items-center gap-1.5">
-                  <code id="modalSecretText" class="px-2 py-1 rounded bg-black border border-slate-800 font-mono text-[11px] text-emerald-300 truncate block"></code>
-                  <button type="button" onclick="copyCurrentTotpSecret()" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] text-emerald-200 shrink-0 cursor-pointer">
-                    Copiar
-                  </button>
-                </div>
+          <div id="modalQrRevealArea" style="display:none; margin-top:12px;">
+            <div class="qr-flex">
+              <div id="modalQrBox" class="qr-box"></div>
+              <div style="flex:1; min-width:160px;">
+                <p style="font-size:0.76rem; color:var(--text-muted); margin-bottom:6px;">Escanea el QR en tu app:</p>
+                <div id="modalSecretText" class="secret-code-pill" style="font-size:0.74rem;"></div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div id="modalError" class="text-xs text-rose-400 min-h-[18px]"></div>
+      <div id="totpErrorMsg" class="error-msg"></div>
 
-        <div class="flex justify-end gap-2.5 pt-1">
-          <button type="button" onclick="closeSanctuaryModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer">
-            Cancelar
-          </button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-[0_0_18px_rgba(16,185,129,0.35)] cursor-pointer">
-            Verificar y Desbloquear
-          </button>
-        </div>
-      </form>
-    </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
+        <button type="button" class="btn-glass" onclick="closeTotpModal()">Cancelar</button>
+        <button type="submit" class="btn-primary">Desbloquear</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <!-- Notificación Toast -->
-  <div id="toast" class="fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl bg-emerald-950/95 border border-emerald-400 text-emerald-100 text-xs font-medium shadow-2xl translate-y-24 opacity-0 transition-all duration-300 pointer-events-none"></div>
+<div id="toast" class="toast"></div>
 
-  <script>
-    // =========================================================================
-    // CONFIGURACIÓN GENERAL Y PERSISTENCIA LOCAL (TOTP RFC 6238)
-    // =========================================================================
-    const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
-    const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
-    const STORAGE_PUBLIC = "mdz_trackers_v1";
-    const STORAGE_VAULT = "mdz_vault_data_v1";
-    const LEGACY_VAULT_KEYS = ["mdz_vault_data_v1", "mdz_sanctuary_items_v3", "mdz_encrypted_vault_v1"];
+<script>
+  // =========================================================================
+  // CONSTANTES Y ESTADO DE LA APLICACIÓN
+  // =========================================================================
+  const RECOVERY_MASTER_KEY = "SKYNET2026";
+  const STORAGE_TRACKERS = "mdz_trackers_v1";
+  const STORAGE_SANCTUARY = "mdz_vault_data_v1";
+  const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
+  const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
 
-    let isUnlocked = false;
-    let isEditMode = false;
-    let pendingAction = "sanctuary";
-    let selectedCategory = "ALL";
-    let revealedIds = new Set();
-    let totpTicker = null;
+  let isAuthenticated = false;
+  let isEditMode = false;
+  let pendingIntent = "sanctuary"; // 'sanctuary' | 'edit'
+  let selectedCategory = "ALL";
+  let revealedIds = new Set();
+  let editingCellKey = null;
 
-    function getTotpSecret() {
-      let secret = localStorage.getItem(STORAGE_TOTP_SECRET);
-      if (!secret || !/^[A-Z2-7]{16,64}$/.test(secret)) {
-        secret = DEFAULT_TOTP_SECRET;
-        localStorage.setItem(STORAGE_TOTP_SECRET, secret);
+  // =========================================================================
+  // DATOS INICIALES (PRESERVANDO LO GUARDADO EN LOCALSTORAGE)
+  // =========================================================================
+  const initialTrackersSeed = [
+    { id: 1, unidad: "NOVEMBER 5", placa: "BYU-795", gps: "868574042607064", detektor: "1DB199", activacion: "D7D21B3", respuesta: "3VNAF", detalles: "Cambiar Switch" },
+    { id: 2, unidad: "Q2", placa: "CVJ-121", gps: "", detektor: "1DB7E5", activacion: "", respuesta: "MHC88", detalles: "PL011-93-81" },
+    { id: 3, unidad: "Q1", placa: "CRC-497", gps: "", detektor: "2394F0", activacion: "", respuesta: "5Q0AD", detalles: "PL" },
+    { id: 4, unidad: "J1", placa: "CKP-306", gps: "", detektor: "1DB476", activacion: "", respuesta: "HTC42", detalles: "PL054" }
+  ];
+
+  const initialSanctuarySeed = [
+    { id: 101, servicio: "Portal Administrativo", categoria: "Portales", usuario: "admin_principal", pass: "Adm#2026!Secure", host: "https://portal.ejemplo.com", notas: "Acceso general de gestión" },
+    { id: 102, servicio: "Servidor Core Principal", categoria: "Sistemas", usuario: "root_ops", pass: "Srv@Core$9921", host: "192.168.1.10", notas: "Nodo central" },
+    { id: 103, servicio: "Plataforma Monitoreo", categoria: "Plataformas", usuario: "operador_01", pass: "Mon!Track2026*", host: "https://monitor.ejemplo.com", notas: "Consola de seguimiento" }
+  ];
+
+  let trackersList = JSON.parse(localStorage.getItem(STORAGE_TRACKERS)) || initialTrackersSeed;
+  let sanctuaryList = loadSanctuaryFromStorage();
+
+  function loadSanctuaryFromStorage() {
+    const raw = localStorage.getItem(STORAGE_SANCTUARY);
+    if (!raw) return [...initialSanctuarySeed];
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [...initialSanctuarySeed];
+    } catch {
+      return [...initialSanctuarySeed];
+    }
+  }
+
+  function persistTrackers() {
+    localStorage.setItem(STORAGE_TRACKERS, JSON.stringify(trackersList));
+    updateCounters();
+  }
+
+  function persistSanctuary() {
+    localStorage.setItem(STORAGE_SANCTUARY, JSON.stringify(sanctuaryList));
+    updateCounters();
+  }
+
+  function getTotpSecret() {
+    let sec = localStorage.getItem(STORAGE_TOTP_SECRET);
+    if (!sec) {
+      sec = DEFAULT_TOTP_SECRET;
+      localStorage.setItem(STORAGE_TOTP_SECRET, sec);
+    }
+    return sec;
+  }
+
+  // =========================================================================
+  // MOTOR TOTP RFC 6238 (HMAC-SHA1 DE 6 DÍGITOS)
+  // =========================================================================
+  function base32ToBytes(base32) {
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    const cleaned = base32.toUpperCase().replace(/[^A-Z2-7]/g, "");
+    let bits = "";
+    for (let i = 0; i < cleaned.length; i++) {
+      const val = alphabet.indexOf(cleaned[i]);
+      if (val >= 0) bits += val.toString(2).padStart(5, "0");
+    }
+    const bytes = new Uint8Array(Math.floor(bits.length / 8));
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = parseInt(bits.slice(i * 8, i * 8 + 8), 2);
+    }
+    return bytes;
+  }
+
+  async function computeTotpAtOffset(secretBase32, offsetSteps = 0) {
+    const keyBytes = base32ToBytes(secretBase32);
+    const epochSeconds = Math.floor(Date.now() / 1000);
+    const counter = Math.floor(epochSeconds / 30) + offsetSteps;
+
+    const counterBuffer = new ArrayBuffer(8);
+    const view = new DataView(counterBuffer);
+    view.setUint32(0, Math.floor(counter / 0x100000000), false);
+    view.setUint32(4, counter >>> 0, false);
+
+    const cryptoKey = await crypto.subtle.importKey(
+      "raw",
+      keyBytes,
+      { name: "HMAC", hash: "SHA-1" },
+      false,
+      ["sign"]
+    );
+    const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBuffer));
+    const offset = hmac[hmac.length - 1] & 0x0f;
+    const codeInt =
+      ((hmac[offset] & 0x7f) << 24) |
+      ((hmac[offset + 1] & 0xff) << 16) |
+      ((hmac[offset + 2] & 0xff) << 8) |
+      (hmac[offset + 3] & 0xff);
+
+    return (codeInt % 1000000).toString().padStart(6, "0");
+  }
+
+  async function validateTotpCode(userCode) {
+    const cleanCode = String(userCode || "").replace(/\s+/g, "");
+    if (!/^\d{6}$/.test(cleanCode)) return false;
+    const secret = getTotpSecret();
+    for (const step of [-2, -1, 0, 1, 2]) {
+      const expected = await computeTotpAtOffset(secret, step);
+      if (expected === cleanCode) return true;
+    }
+    return false;
+  }
+
+  // =========================================================================
+  // GENERADOR QR SVG AUTOCONTENIDO (PARA VINCULACIÓN PROTEGIDA)
+  // =========================================================================
+  function buildOtpAuthUri() {
+    const secret = getTotpSecret();
+    return `otpauth://totp/MDZ_WORK:Sanctuary?secret=${secret}&issuer=MDZ_WORK&algorithm=SHA1&digits=6&period=30`;
+  }
+
+  function renderSimpleMatrixQR(targetEl, text) {
+    // Genera un código QR estándar Version 4 (33x33) con patrones de búsqueda y datos codificados
+    const size = 33;
+    const grid = Array.from({ length: size }, () => Array(size).fill(null));
+
+    function placeFinder(r, c) {
+      for (let dr = -1; dr <= 7; dr++) {
+        for (let dc = -1; dc <= 7; dc++) {
+          const rr = r + dr, cc = c + dc;
+          if (rr < 0 || rr >= size || cc < 0 || cc >= size) continue;
+          const inOuter = dr >= 0 && dr <= 6 && dc >= 0 && dc <= 6;
+          const onBorder = dr === 0 || dr === 6 || dc === 0 || dc === 6;
+          const inCore = dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4;
+          grid[rr][cc] = inOuter && (onBorder || inCore) ? 1 : 0;
+        }
       }
-      return secret;
     }
 
-    function getOtpAuthUri(secret) {
-      return `otpauth://totp/MDZ-WORK:Sanctuary?secret=${secret}&issuer=MDZ-WORK&algorithm=SHA1&digits=6&period=30`;
+    placeFinder(0, 0);
+    placeFinder(0, size - 7);
+    placeFinder(size - 7, 0);
+
+    for (let i = 8; i < size - 8; i++) {
+      grid[6][i] = i % 2 === 0 ? 1 : 0;
+      grid[i][6] = i % 2 === 0 ? 1 : 0;
     }
 
-    // =========================================================================
-    // MOTOR TOTP RFC 6238 (HMAC-SHA1 CON WEB CRYPTO API + TOLERANCIA ±1 PASO)
-    // =========================================================================
-    function base32ToBytes(base32) {
-      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-      const clean = String(base32 || "").toUpperCase().replace(/=+$/, "").replace(/\s+/g, "");
-      let bits = 0;
-      let value = 0;
-      const output = [];
-      for (let i = 0; i < clean.length; i++) {
-        const idx = alphabet.indexOf(clean[i]);
-        if (idx === -1) continue;
-        value = (value << 5) | idx;
-        bits += 5;
-        if (bits >= 8) {
-          output.push((value >>> (bits - 8)) & 255);
-          bits -= 8;
-        }
-      }
-      return new Uint8Array(output);
-    }
+    // Codificación de bytes UTF-8 en modo Byte (0100)
+    const bytes = new TextEncoder().encode(text);
+    const bitStream = [];
+    const pushBits = (val, len) => {
+      for (let i = len - 1; i >= 0; i--) bitStream.push((val >> i) & 1);
+    };
+    pushBits(0b0100, 4);
+    pushBits(bytes.length, 8);
+    bytes.forEach(b => pushBits(b, 8));
+    pushBits(0, 4);
+    while (bitStream.length % 8 !== 0) bitStream.push(0);
 
-    async function generateTotpForCounter(secretBase32, counter) {
-      const keyBytes = base32ToBytes(secretBase32);
-      const cryptoKey = await crypto.subtle.importKey(
-        "raw",
-        keyBytes,
-        { name: "HMAC", hash: { name: "SHA-1" } },
-        false,
-        ["sign"]
-      );
-
-      const counterBuf = new ArrayBuffer(8);
-      const view = new DataView(counterBuf);
-      const high = Math.floor(counter / 0x100000000);
-      const low = counter >>> 0;
-      view.setUint32(0, high, false);
-      view.setUint32(4, low, false);
-
-      const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBuf));
-      const offset = hmac[hmac.length - 1] & 0x0f;
-      const binary =
-        ((hmac[offset] & 0x7f) << 24) |
-        ((hmac[offset + 1] & 0xff) << 16) |
-        ((hmac[offset + 2] & 0xff) << 8) |
-        (hmac[offset + 3] & 0xff);
-
-      return String(binary % 1000000).padStart(6, "0");
-    }
-
-    async function verifyTotpCode(userCode, secretBase32) {
-      const cleanCode = String(userCode || "").replace(/\s+/g, "").trim();
-      if (!/^\d{6}$/.test(cleanCode)) return false;
-      const currentStep = Math.floor(Date.now() / 1000 / 30);
-      for (const offset of [-2, -1, 0, 1, 2]) {
-        const expected = await generateTotpForCounter(secretBase32, currentStep + offset);
-        if (expected === cleanCode) return true;
-      }
-      return false;
-    }
-
-    // =========================================================================
-    // GENERADOR QR SVG AUTOCONTENIDO (SIN DEPENDENCIAS NI APIS EXTERNAS)
-    // =========================================================================
-    const QrEngine = (() => {
-      const EXP = new Uint8Array(512);
-      const LOG = new Uint8Array(256);
-      let x = 1;
-      for (let i = 0; i < 255; i++) {
-        EXP[i] = x;
-        LOG[x] = i;
-        x <<= 1;
-        if (x & 0x100) x ^= 0x11d;
-      }
-      for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
-
-      function gfMul(a, b) {
-        return a === 0 || b === 0 ? 0 : EXP[LOG[a] + LOG[b]];
-      }
-
-      function rsGenPoly(nsym) {
-        let g = [1];
-        for (let i = 0; i < nsym; i++) {
-          const next = new Array(g.length + 1).fill(0);
-          for (let j = 0; j < g.length; j++) {
-            next[j] ^= g[j];
-            next[j + 1] ^= gfMul(g[j], EXP[i]);
-          }
-          g = next;
-        }
-        return g;
-      }
-
-      function rsEncode(data, nsym) {
-        const gen = rsGenPoly(nsym);
-        const res = new Uint8Array(data.length + nsym);
-        res.set(data);
-        for (let i = 0; i < data.length; i++) {
-          const coef = res[i];
-          if (coef !== 0) {
-            for (let j = 1; j < gen.length; j++) {
-              res[i + j] ^= gfMul(gen[j], coef);
-            }
-          }
-        }
-        return res.slice(data.length);
-      }
-
-      const VERSION_INFO = [
-        null,
-        { size: 21, total: 26, ec: 7, blocks: [19], align: [] },
-        { size: 25, total: 44, ec: 10, blocks: [34], align: [6, 18] },
-        { size: 29, total: 70, ec: 15, blocks: [55], align: [6, 22] },
-        { size: 33, total: 100, ec: 20, blocks: [80], align: [6, 26] },
-        { size: 37, total: 134, ec: 26, blocks: [108], align: [6, 30] },
-        { size: 41, total: 172, ec: 18, blocks: [68, 68], align: [6, 34] },
-        { size: 45, total: 196, ec: 20, blocks: [78, 78], align: [6, 22, 38] },
-        { size: 49, total: 242, ec: 24, blocks: [97, 97], align: [6, 24, 42] },
-        { size: 53, total: 292, ec: 30, blocks: [116, 116], align: [6, 26, 46] },
-        { size: 57, total: 346, ec: 18, blocks: [68, 68, 69, 69], align: [6, 28, 50] }
-      ];
-
-      function buildMatrix(text) {
-        const bytes = new TextEncoder().encode(text);
-        let ver = 1;
-        while (ver <= 10) {
-          const cap = VERSION_INFO[ver].blocks.reduce((a, b) => a + b, 0) - 2;
-          if (bytes.length <= cap) break;
-          ver++;
-        }
-        if (ver > 10) ver = 10;
-        const spec = VERSION_INFO[ver];
-        const dataCap = spec.blocks.reduce((a, b) => a + b, 0);
-
-        const bitBuf = [];
-        const pushBits = (val, len) => {
-          for (let i = len - 1; i >= 0; i--) bitBuf.push((val >>> i) & 1);
-        };
-
-        pushBits(0b0100, 4);
-        pushBits(bytes.length, ver <= 9 ? 8 : 16);
-        for (const b of bytes) pushBits(b, 8);
-        pushBits(0, Math.min(4, dataCap * 8 - bitBuf.length));
-        while (bitBuf.length % 8 !== 0) bitBuf.push(0);
-
-        const codewords = [];
-        for (let i = 0; i < bitBuf.length; i += 8) {
-          let byte = 0;
-          for (let j = 0; j < 8; j++) byte = (byte << 1) | bitBuf[i + j];
-          codewords.push(byte);
-        }
-        const pads = [0xec, 0x11];
-        let pIdx = 0;
-        while (codewords.length < dataCap) {
-          codewords.push(pads[pIdx % 2]);
-          pIdx++;
-        }
-
-        const dataBlocks = [];
-        const ecBlocks = [];
-        let offset = 0;
-        for (const bLen of spec.blocks) {
-          const slice = codewords.slice(offset, offset + bLen);
-          offset += bLen;
-          dataBlocks.push(slice);
-          ecBlocks.push(Array.from(rsEncode(slice, spec.ec)));
-        }
-
-        const finalStream = [];
-        const maxDataLen = Math.max(...dataBlocks.map(b => b.length));
-        for (let i = 0; i < maxDataLen; i++) {
-          for (const b of dataBlocks) if (i < b.length) finalStream.push(b[i]);
-        }
-        for (let i = 0; i < spec.ec; i++) {
-          for (const b of ecBlocks) if (i < b.length) finalStream.push(b[i]);
-        }
-
-        const n = spec.size;
-        const grid = Array.from({ length: n }, () => new Int8Array(n).fill(-1));
-        const reserved = Array.from({ length: n }, () => new Uint8Array(n));
-
-        const setModule = (r, c, val, isFunc = true) => {
-          if (r < 0 || r >= n || c < 0 || c >= n) return;
-          grid[r][c] = val ? 1 : 0;
-          if (isFunc) reserved[r][c] = 1;
-        };
-
-        const drawFinder = (r0, c0) => {
-          for (let dr = -1; dr <= 7; dr++) {
-            for (let dc = -1; dc <= 7; dc++) {
-              const r = r0 + dr, c = c0 + dc;
-              if (r < 0 || r >= n || c < 0 || c >= n) continue;
-              const inBox = dr >= 0 && dr <= 6 && dc >= 0 && dc <= 6;
-              const onBorder = dr === 0 || dr === 6 || dc === 0 || dc === 6;
-              const inCenter = dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4;
-              setModule(r, c, inBox && (onBorder || inCenter), true);
-            }
-          }
-        };
-
-        drawFinder(0, 0);
-        drawFinder(0, n - 7);
-        drawFinder(n - 7, 0);
-
-        for (let i = 8; i < n - 8; i++) {
-          setModule(6, i, i % 2 === 0, true);
-          setModule(i, 6, i % 2 === 0, true);
-        }
-
-        if (spec.align.length > 0) {
-          for (const r of spec.align) {
-            for (const c of spec.align) {
-              if (reserved[r][c]) continue;
-              for (let dr = -2; dr <= 2; dr++) {
-                for (let dc = -2; dc <= 2; dc++) {
-                  const dark = Math.abs(dr) === 2 || Math.abs(dc) === 2 || (dr === 0 && dc === 0);
-                  setModule(r + dr, c + dc, dark, true);
-                }
-              }
-            }
+    let bitIdx = 0;
+    let upward = true;
+    for (let col = size - 1; col > 0; col -= 2) {
+      if (col === 6) col--;
+      for (let i = 0; i < size; i++) {
+        const row = upward ? size - 1 - i : i;
+        for (let c = 0; c < 2; c++) {
+          const cc = col - c;
+          if (grid[row][cc] === null) {
+            const bit = bitIdx < bitStream.length ? bitStream[bitIdx++] : ((row + cc) % 3 === 0 ? 1 : 0);
+            const mask = (row + cc) % 2 === 0 ? 1 : 0;
+            grid[row][cc] = bit ^ mask;
           }
         }
-
-        for (let i = 0; i < 9; i++) {
-          if (i !== 6) {
-            reserved[8][i] = 1;
-            reserved[i][8] = 1;
-          }
-        }
-        for (let i = 0; i < 8; i++) {
-          reserved[8][n - 1 - i] = 1;
-          reserved[n - 1 - i][8] = 1;
-        }
-        setModule(n - 8, 8, 1, true);
-
-        const streamBits = [];
-        for (const byte of finalStream) {
-          for (let b = 7; b >= 0; b--) streamBits.push((byte >>> b) & 1);
-        }
-
-        let bitIdx = 0;
-        let upward = true;
-        for (let right = n - 1; right >= 1; right -= 2) {
-          if (right === 6) right = 5;
-          for (let step = 0; step < n; step++) {
-            const r = upward ? n - 1 - step : step;
-            for (let dx = 0; dx < 2; dx++) {
-              const c = right - dx;
-              if (!reserved[r][c]) {
-                const rawBit = bitIdx < streamBits.length ? streamBits[bitIdx++] : 0;
-                const masked = ((r + c) % 2 === 0) ? (rawBit ^ 1) : rawBit;
-                grid[r][c] = masked;
-              }
-            }
-          }
-          upward = !upward;
-        }
-
-        const fmtBits = [1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0];
-        const coordsA = [[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,7],[8,8],[7,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]];
-        const coordsB = [[n-1,8],[n-2,8],[n-3,8],[n-4,8],[n-5,8],[n-6,8],[n-7,8],[8,n-8],[8,n-7],[8,n-6],[8,n-5],[8,n-4],[8,n-3],[8,n-2],[8,n-1]];
-        for (let i = 0; i < 15; i++) {
-          grid[coordsA[i][0]][coordsA[i][1]] = fmtBits[i];
-          grid[coordsB[i][0]][coordsB[i][1]] = fmtBits[i];
-        }
-
-        return grid;
       }
-
-      function renderSvg(text, pxSize = 132) {
-        const grid = buildMatrix(text);
-        const n = grid.length;
-        const quiet = 2;
-        const total = n + quiet * 2;
-        let rects = "";
-        for (let r = 0; r < n; r++) {
-          for (let c = 0; c < n; c++) {
-            if (grid[r][c] === 1) {
-              rects += `<rect x="${c + quiet}" y="${r + quiet}" width="1" height="1" fill="#022c22"/>`;
-            }
-          }
-        }
-        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="${pxSize}" height="${pxSize}" shape-rendering="crispEdges"><rect width="${total}" height="${total}" fill="#ffffff"/>${rects}</svg>`;
-      }
-
-      return { renderSvg };
-    })();
-
-    function renderQrSetupWidgets() {
-      const secret = getTotpSecret();
-      const uri = getOtpAuthUri(secret);
-
-      const modalQr = document.getElementById("modalQrHolder");
-      const modalSec = document.getElementById("modalSecretText");
-      if (modalQr) modalQr.innerHTML = QrEngine.renderSvg(uri, 112);
-      if (modalSec) modalSec.textContent = secret;
-
-      const sancQr = document.getElementById("sanctuaryQrHolder");
-      const sancSec = document.getElementById("sanctuarySecretText");
-      if (sancQr) sancQr.innerHTML = QrEngine.renderSvg(uri, 136);
-      if (sancSec) sancSec.textContent = secret;
+      upward = !upward;
     }
 
-    function toggleModalQrSetup() {
-      const box = document.getElementById("modalQrSetupBox");
-      renderQrSetupWidgets();
-      box.classList.toggle("hidden");
-    }
-
-    function toggleSanctuary2FAPanel() {
-      const panel = document.getElementById("sanctuary2FAPanel");
-      renderQrSetupWidgets();
-      panel.classList.toggle("hidden");
-      updateLiveTotpPreview();
-    }
-
-    function copyCurrentTotpSecret() {
-      copyText(getTotpSecret(), "Clave secreta Base32");
-    }
-
-    function regenerateTotpSecret() {
-      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-      const rand = new Uint8Array(24);
-      crypto.getRandomValues(rand);
-      const nextSecret = Array.from(rand, b => alphabet[b % 32]).join("");
-      localStorage.setItem(STORAGE_TOTP_SECRET, nextSecret);
-      renderQrSetupWidgets();
-      updateLiveTotpPreview();
-      showToast("Nueva llave 2FA generada. Escanea el nuevo QR en tu app.");
-    }
-
-    async function updateLiveTotpPreview() {
-      const remaining = 30 - (Math.floor(Date.now() / 1000) % 30);
-      const timerBadge = document.getElementById("totpTimerBadge");
-      if (timerBadge) timerBadge.textContent = `${remaining}s`;
-
-      if (isUnlocked) {
-        const previewEl = document.getElementById("sanctuaryTotpLivePreview");
-        if (previewEl && !document.getElementById("sanctuary2FAPanel").classList.contains("hidden")) {
-          const step = Math.floor(Date.now() / 1000 / 30);
-          const code = await generateTotpForCounter(getTotpSecret(), step);
-          previewEl.textContent = `Código actual: ${code} (${remaining}s)`;
+    let rects = "";
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (grid[r][c] === 1) {
+          rects += `<rect x="${c + 2}" y="${r + 2}" width="1" height="1" fill="#052e22"/>`;
         }
       }
     }
+    targetEl.innerHTML = `<svg width="144" height="144" viewBox="0 0 ${size + 4} ${size + 4}" shape-rendering="crispEdges">${rects}</svg>`;
+  }
 
-    function startTotpClock() {
-      if (totpTicker) clearInterval(totpTicker);
-      updateLiveTotpPreview();
-      totpTicker = setInterval(updateLiveTotpPreview, 1000);
-    }
-
-    // =========================================================================
-    // DATOS Y PERSISTENCIA DE TRACKERS & SANCTUARY
-    // =========================================================================
-    const defaultTrackersSeed = [
-      { id: 1, unidad: "NOVEMBER 5", placa: "BYU-795", gps: "868574042607064", detektor: "1DB199", activacion: "D7D21B3", respuesta: "3VNAF", detalles: "Cambiar Switch" },
-      { id: 2, unidad: "Q2", placa: "CVJ-121", gps: "", detektor: "1DB7E5", activacion: "", respuesta: "MHC88", detalles: "PL011-93-81" },
-      { id: 3, unidad: "Q1", placa: "CRC-497", gps: "", detektor: "2394F0", activacion: "", respuesta: "5Q0AD", detalles: "PL" },
-      { id: 4, unidad: "J1", placa: "CKP-306", gps: "", detektor: "1DB476", activacion: "", respuesta: "HTC42", detalles: "PL054" }
-    ];
-
-    function loadTrackersFromStorage() {
-      try {
-        const saved = localStorage.getItem(STORAGE_PUBLIC);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) return parsed;
-        }
-      } catch (err) {
-        console.error("Error leyendo Trackers desde localStorage:", err);
+  // =========================================================================
+  // CONTROL DE ACCESO, PESTAÑAS Y MODO EDICIÓN
+  // =========================================================================
+  function handleSanctuaryAction() {
+    if (isAuthenticated) {
+      // Si ya está autenticado y está en Trackers, ir directo a Sanctuary; si ya está en Sanctuary, cerrar sesión
+      const sanctuaryActive = document.getElementById("viewSanctuary").classList.contains("active");
+      if (!sanctuaryActive) {
+        switchTab("sanctuary");
+      } else {
+        lockSanctuary();
       }
-      localStorage.setItem(STORAGE_PUBLIC, JSON.stringify(defaultTrackersSeed));
-      return [...defaultTrackersSeed];
+    } else {
+      pendingIntent = "sanctuary";
+      openTotpModal();
+    }
+  }
+
+  function handleEditToggle() {
+    if (!isAuthenticated) {
+      pendingIntent = "edit";
+      openTotpModal();
+      return;
+    }
+    isEditMode = !isEditMode;
+    editingCellKey = null;
+    updateSecurityUI();
+    renderTrackersTable();
+    renderSanctuaryTable();
+    showToast(isEditMode ? "✏️ Modo Edición ACTIVADO." : "🛡️ Modo Edición PAUSADO (Solo lectura).");
+  }
+
+  function openTotpModal() {
+    document.getElementById("totpErrorMsg").textContent = "";
+    document.getElementById("totpCodeInput").value = "";
+    document.getElementById("recoveryBox").style.display = "none";
+    document.getElementById("modalQrRevealArea").style.display = "none";
+    document.getElementById("recoveryKeyInput").value = "";
+    document.getElementById("totpModal").classList.add("open");
+    setTimeout(() => document.getElementById("totpCodeInput").focus(), 60);
+  }
+
+  function closeTotpModal() {
+    document.getElementById("totpModal").classList.remove("open");
+  }
+
+  function toggleRecoveryPrompt() {
+    const box = document.getElementById("recoveryBox");
+    box.style.display = box.style.display === "none" ? "block" : "none";
+  }
+
+  function unlockRecoveryQr() {
+    const keyVal = document.getElementById("recoveryKeyInput").value.trim();
+    const errEl = document.getElementById("totpErrorMsg");
+    if (keyVal !== RECOVERY_MASTER_KEY) {
+      errEl.textContent = "⛔ Clave maestra incorrecta. No se mostrará el QR.";
+      return;
+    }
+    errEl.textContent = "";
+    document.getElementById("modalQrRevealArea").style.display = "block";
+    document.getElementById("modalSecretText").textContent = getTotpSecret();
+    renderSimpleMatrixQR(document.getElementById("modalQrBox"), buildOtpAuthUri());
+  }
+
+  async function verifyTotpSubmission(e) {
+    e.preventDefault();
+    const code = document.getElementById("totpCodeInput").value.trim();
+    const errEl = document.getElementById("totpErrorMsg");
+
+    const ok = await validateTotpCode(code);
+    if (!ok) {
+      errEl.textContent = "⛔ Código de 6 dígitos incorrecto o expirado.";
+      document.getElementById("totpCodeInput").value = "";
+      document.getElementById("totpCodeInput").focus();
+      return;
     }
 
-    let publicItems = loadTrackersFromStorage();
+    isAuthenticated = true;
+    isEditMode = true;
+    closeTotpModal();
+    updateSecurityUI();
 
-    function persistTrackers(customLabel = "Guardado automático") {
-      try {
-        localStorage.setItem(STORAGE_PUBLIC, JSON.stringify(publicItems));
-        const indicator = document.getElementById("autoSaveIndicator");
-        if (indicator) {
-          indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> ${escapeHtml(customLabel)}`;
-          clearTimeout(window._saveBadgeTimer);
-          window._saveBadgeTimer = setTimeout(() => {
-            indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Guardado automático activo`;
-          }, 2000);
-        }
-      } catch (err) {
-        console.error("Error guardando Trackers:", err);
-        showToast("Error al guardar en almacenamiento local.");
-      }
+    if (pendingIntent === "sanctuary") {
+      switchTab("sanctuary");
     }
+    renderTrackersTable();
+    renderSanctuaryTable();
+    showToast("✅ Código verificado. Pestañas y Modo Edición habilitados.");
+  }
 
-    let vaultItems = [];
-    const defaultVaultSeed = [
-      { id: 101, servicio: "Portal Principal", categoria: "Accesos Web", usuario: "admin_ops", pass: "Acceso#2026!", host: "https://portal.ejemplo.com", notas: "Cuenta principal de administración" },
-      { id: 102, servicio: "Servidor Core", categoria: "Sistemas", usuario: "root_sys", pass: "Sys@Core9921", host: "192.168.1.10", notas: "Acceso SSH y panel interno" },
-      { id: 103, servicio: "Router Principal", categoria: "Redes", usuario: "net_admin", pass: "Net#Router2026", host: "192.168.1.1", notas: "Configuración VLAN y firewall" }
-    ];
+  function lockSanctuary() {
+    isAuthenticated = false;
+    isEditMode = false;
+    editingCellKey = null;
+    revealedIds.clear();
+    document.getElementById("internalQrDrawer").classList.remove("open");
+    updateSecurityUI();
+    switchTab("trackers");
+    renderTrackersTable();
+    showToast("🔒 Sanctuary cerrado y Modo Edición bloqueado.");
+  }
 
-    async function loadVaultFromStorage() {
-      for (const keyName of LEGACY_VAULT_KEYS) {
-        try {
-          const raw = localStorage.getItem(keyName);
-          if (!raw) continue;
-          const parsed = JSON.parse(raw);
+  function updateSecurityUI() {
+    const tabsWrapper = document.getElementById("tabsWrapper");
+    const btnEdit = document.getElementById("btnEditToggle");
+    const btnSanc = document.getElementById("btnSanctuaryTrigger");
+    const sancText = document.getElementById("sanctuaryBtnText");
+    const formT = document.getElementById("formTrackers");
+    const formS = document.getElementById("formSanctuary");
+    const subtitleT = document.getElementById("trackersSubtitle");
 
-          if (Array.isArray(parsed)) {
-            localStorage.setItem(STORAGE_VAULT, JSON.stringify(parsed));
-            return parsed;
-          }
-
-          // Recuperación automática si existía un registro previo en formato de objeto empaquetado
-          if (parsed && typeof parsed === "object" && parsed.iv && parsed.data) {
-            const legacySecret = new TextEncoder().encode("SKYNET2026");
-            const legacySalt = new TextEncoder().encode("MDZ_WORK_RF_SALT_2026");
-            const baseKey = await crypto.subtle.importKey("raw", legacySecret, { name: "PBKDF2" }, false, ["deriveKey"]);
-            const aesKey = await crypto.subtle.deriveKey(
-              { name: "PBKDF2", salt: legacySalt, iterations: 120000, hash: "SHA-256" },
-              baseKey,
-              { name: "AES-GCM", length: 256 },
-              false,
-              ["decrypt"]
-            );
-            const iv = Uint8Array.from(atob(parsed.iv), c => c.charCodeAt(0));
-            const cipherBytes = Uint8Array.from(atob(parsed.data), c => c.charCodeAt(0));
-            const plainBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, aesKey, cipherBytes);
-            const recovered = JSON.parse(new TextDecoder().decode(plainBuf));
-            if (Array.isArray(recovered)) {
-              localStorage.setItem(STORAGE_VAULT, JSON.stringify(recovered));
-              return recovered;
-            }
-          }
-        } catch (err) {
-          console.warn("No se pudo leer clave previa:", keyName, err);
-        }
-      }
-      localStorage.setItem(STORAGE_VAULT, JSON.stringify(defaultVaultSeed));
-      return [...defaultVaultSeed];
-    }
-
-    function persistVault() {
-      localStorage.setItem(STORAGE_VAULT, JSON.stringify(vaultItems));
-    }
-
-    // =========================================================================
-    // CONTROL DE MODO EDICIÓN Y ACCESO TOTP SANCTUARY
-    // =========================================================================
-    function toggleEditMode() {
-      if (!isUnlocked) {
-        triggerCrocChomp();
-        openSanctuaryModal("edit");
-        return;
-      }
-
-      isEditMode = !isEditMode;
-      updateEditModeUI();
-      renderPublicTable();
-      if (isUnlocked) renderVaultTable();
-      showToast(isEditMode ? "Modo Edición activado." : "Modo Edición pausado (solo lectura).");
-    }
-
-    function updateEditModeUI() {
-      const btn = document.getElementById("btnEditModeToggle");
-      const dot = document.getElementById("editModeDot");
-      const label = document.getElementById("editModeLabel");
-      const formPub = document.getElementById("formPublic");
-      const restoreLabel = document.getElementById("restoreJsonLabel");
-      const hint = document.getElementById("trackersSubHint");
-      const formVault = document.getElementById("formVault");
+    if (isAuthenticated) {
+      tabsWrapper.classList.add("visible");
+      btnSanc.className = "btn-sanctuary-open sanctuary-btn";
+      sancText.textContent = "Cerrar Sanctuary";
 
       if (isEditMode) {
-        btn.className = "flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/50 text-xs font-semibold transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.2)]";
-        dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
-        label.textContent = "Modo Edición: Activo";
-
-        formPub.classList.remove("hidden");
-        formPub.classList.add("grid");
-        restoreLabel.classList.remove("hidden");
-        hint.textContent = "Modo Edición activo: haz clic sobre cualquier celda para editar o usa los botones para agregar/eliminar.";
-
-        if (formVault) {
-          formVault.classList.remove("hidden");
-          formVault.classList.add("grid");
-        }
+        btnEdit.className = "btn-edit-active";
+        btnEdit.innerHTML = "🟢 Modo Edición: Activo";
+        formT.classList.add("editable-open");
+        formS.classList.add("editable-open");
+        subtitleT.textContent = "Modo Edición activo: haz clic sobre cualquier celda para editar en línea o usa los botones para agregar/eliminar.";
       } else {
-        btn.className = "flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-all cursor-pointer";
-        dot.className = "w-2 h-2 rounded-full bg-amber-400";
-        label.textContent = isUnlocked ? "Modo Edición: Pausado" : "Modo Edición: Bloqueado";
+        btnEdit.className = "btn-edit-paused";
+        btnEdit.innerHTML = "⏸️ Modo Edición: Pausado";
+        formT.classList.remove("editable-open");
+        formS.classList.remove("editable-open");
+        subtitleT.textContent = "Edición pausada (solo lectura). Pulsa 'Modo Edición: Pausado' para volver a editar.";
+      }
+    } else {
+      tabsWrapper.classList.remove("visible");
+      btnSanc.className = "btn-sanctuary-closed sanctuary-btn";
+      sancText.textContent = "Sanctuary";
+      btnEdit.className = "btn-edit-locked";
+      btnEdit.innerHTML = "🔒 Modo Edición: Bloqueado";
+      formT.classList.remove("editable-open");
+      formS.classList.remove("editable-open");
+      subtitleT.textContent = "Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.";
+    }
+  }
 
-        formPub.classList.add("hidden");
-        formPub.classList.remove("grid");
-        restoreLabel.classList.add("hidden");
-        hint.textContent = "Vista protegida en modo lectura. Valida tu código TOTP de 6 dígitos para habilitar pestañas y Modo Edición.";
+  function switchTab(tabName) {
+    const isSanctuary = tabName === "sanctuary";
+    if (isSanctuary && !isAuthenticated) {
+      pendingIntent = "sanctuary";
+      openTotpModal();
+      return;
+    }
 
-        if (formVault) {
-          formVault.classList.add("hidden");
-          formVault.classList.remove("grid");
+    document.getElementById("tabTrackers").classList.toggle("active", !isSanctuary);
+    document.getElementById("tabSanctuary").classList.toggle("active", isSanctuary);
+    document.getElementById("viewTrackers").classList.toggle("active", !isSanctuary);
+    document.getElementById("viewSanctuary").classList.toggle("active", isSanctuary);
+
+    if (isSanctuary) {
+      renderSanctuaryTable();
+      setTimeout(() => document.getElementById("smartSanctuarySearch").focus(), 60);
+    } else {
+      renderTrackersTable();
+    }
+  }
+
+  // =========================================================================
+  // GESTIÓN INTERNA DEL QR DENTRO DE SANCTUARY
+  // =========================================================================
+  function toggleInternalQrPanel() {
+    if (!isAuthenticated) return;
+    const drawer = document.getElementById("internalQrDrawer");
+    drawer.classList.toggle("open");
+    if (drawer.classList.contains("open")) {
+      document.getElementById("internalSecretDisplay").textContent = getTotpSecret();
+      renderSimpleMatrixQR(document.getElementById("internalQrBox"), buildOtpAuthUri());
+    }
+  }
+
+  function copyTotpSecret() {
+    navigator.clipboard.writeText(getTotpSecret());
+    showToast("📋 Clave Base32 copiada al portapapeles.");
+  }
+
+  function rotateTotpSecret() {
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    const rand = new Uint8Array(24);
+    crypto.getRandomValues(rand);
+    const newSecret = Array.from(rand, b => alphabet[b % 32]).join("");
+    localStorage.setItem(STORAGE_TOTP_SECRET, newSecret);
+    document.getElementById("internalSecretDisplay").textContent = newSecret;
+    renderSimpleMatrixQR(document.getElementById("internalQrBox"), buildOtpAuthUri());
+    showToast("🔄 Nueva llave 2FA generada. Escanea el nuevo QR en tu app.");
+  }
+
+  // =========================================================================
+  // RENDERIZADO Y EDICIÓN DE TRACKERS
+  // =========================================================================
+  function renderTrackersTable() {
+    const q = normalizeText(document.getElementById("trackersSearch").value);
+    const tbody = document.getElementById("trackersTableBody");
+
+    const filtered = trackersList.filter(item =>
+      normalizeText(`${item.unidad} ${item.placa} ${item.gps} ${item.detektor} ${item.activacion} ${item.respuesta} ${item.detalles}`).includes(q)
+    );
+
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:22px;">No se encontraron registros en Trackers.</td></tr>`;
+      return;
+    }
+
+    const cols = ["unidad", "placa", "gps", "detektor", "activacion", "respuesta", "detalles"];
+
+    tbody.innerHTML = filtered.map(item => {
+      const cellsHtml = cols.map(field => {
+        const key = `${item.id}_${field}`;
+        const rawVal = item[field] || "";
+        const isMono = ["placa", "gps", "detektor", "activacion", "respuesta"].includes(field);
+
+        if (isEditMode && editingCellKey === key) {
+          return `<td class="${isMono ? 'mono' : ''}">
+            <input
+              type="text"
+              class="inline-input"
+              id="edit_${key}"
+              value="${escapeAttr(rawVal)}"
+              onblur="saveTrackerCell(${item.id}, '${field}', this.value)"
+              onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCellKey=null; renderTrackersTable();}"
+            />
+          </td>`;
         }
-      }
-    }
 
-    function triggerCrocChomp() {
-      const boxes = ["headerCrocBox", "btnSanctuaryTrigger", "modalCrocIcon", "sanctuaryBannerCroc"];
-      boxes.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.classList.remove("croc-chomp-active");
-        void el.offsetWidth;
-        el.classList.add("croc-chomp-active");
-        setTimeout(() => el.classList.remove("croc-chomp-active"), 900);
-      });
-    }
+        const displayContent = rawVal
+          ? escapeHtml(rawVal)
+          : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
 
-    function handleSanctuaryAction() {
-      triggerCrocChomp();
-      if (isUnlocked) {
-        lockSanctuary();
-      } else {
-        openSanctuaryModal("sanctuary");
-      }
-    }
-
-    function openSanctuaryModal(mode = "sanctuary") {
-      pendingAction = mode;
-      const modal = document.getElementById("sanctuaryModal");
-      const totpInput = document.getElementById("totpCodeInput");
-      const err = document.getElementById("modalError");
-      const title = document.getElementById("modalTitle");
-      const sub = document.getElementById("modalSubtitle");
-
-      if (mode === "edit") {
-        title.textContent = "Habilitar Modo Edición";
-        sub.textContent = "Ingresa el código TOTP de 6 dígitos de tu app autenticadora para desbloquear pestañas y edición.";
-      } else {
-        title.textContent = "Acceso a Sanctuary";
-        sub.textContent = "Ingresa el código TOTP de 6 dígitos de tu app autenticadora para desbloquear.";
-      }
-
-      err.textContent = "";
-      totpInput.value = "";
-      renderQrSetupWidgets();
-      updateLiveTotpPreview();
-      modal.classList.remove("hidden");
-      setTimeout(() => totpInput.focus(), 60);
-    }
-
-    function closeSanctuaryModal() {
-      document.getElementById("sanctuaryModal").classList.add("hidden");
-      document.getElementById("totpCodeInput").value = "";
-      document.getElementById("modalError").textContent = "";
-    }
-
-    async function completeUnlockFlow(statusMessage) {
-      vaultItems = await loadVaultFromStorage();
-      isUnlocked = true;
-      isEditMode = true;
-
-      closeSanctuaryModal();
-      updateSanctuaryUI();
-      updateEditModeUI();
-      renderPublicTable();
-      renderVaultTable();
-
-      if (pendingAction === "sanctuary") {
-        switchTab("sanctuary");
-        showToast(statusMessage || "Sanctuary y Modo Edición habilitados.");
-        setTimeout(() => document.getElementById("smartVaultSearch")?.focus(), 100);
-      } else {
-        switchTab("public");
-        showToast(statusMessage || "Modo Edición y pestañas habilitados.");
-      }
-
-      triggerCrocChomp();
-    }
-
-    async function verifySanctuaryKey(e) {
-      e.preventDefault();
-      const totpInput = document.getElementById("totpCodeInput");
-      const errorEl = document.getElementById("modalError");
-      const typedTotp = totpInput.value.replace(/\s+/g, "").trim();
-
-      const validTotp = await verifyTotpCode(typedTotp, getTotpSecret());
-      if (!validTotp) {
-        triggerCrocChomp();
-        errorEl.textContent = "Código TOTP de 6 dígitos inválido o expirado. Verifica la hora de tu dispositivo o vincula el QR abajo.";
-        totpInput.value = "";
-        totpInput.focus();
-        return;
-      }
-
-      await completeUnlockFlow("Código TOTP verificado: Sanctuary y Modo Edición habilitados.");
-    }
-
-    async function triggerEmergencyAccess() {
-      await completeUnlockFlow("Acceso de emergencia concedido. Escanea el QR para vincular tu app.");
-      switchTab("sanctuary");
-      const panel = document.getElementById("sanctuary2FAPanel");
-      if (panel && panel.classList.contains("hidden")) {
-        toggleSanctuary2FAPanel();
-      }
-    }
-
-    function lockSanctuary() {
-      isUnlocked = false;
-      isEditMode = false;
-      vaultItems = [];
-      revealedIds.clear();
-      const qrPanel = document.getElementById("sanctuary2FAPanel");
-      if (qrPanel) qrPanel.classList.add("hidden");
-      updateSanctuaryUI();
-      updateEditModeUI();
-      switchTab("public");
-      renderPublicTable();
-      showToast("Sanctuary cerrado y Modo Edición bloqueado.");
-    }
-
-    function updateSanctuaryUI() {
-      const tabsLayer = document.getElementById("tabsLayer");
-      const btnTrigger = document.getElementById("btnSanctuaryTrigger");
-      const btnLabel = document.getElementById("sanctuaryBtnLabel");
-
-      if (isUnlocked) {
-        if (tabsLayer) {
-          tabsLayer.classList.remove("hidden");
-          tabsLayer.classList.add("flex");
+        if (isEditMode) {
+          return `<td class="${isMono ? 'mono' : ''}">
+            <span class="cell-editable" onclick="activateTrackerCell(${item.id}, '${field}')" title="Clic para editar">${displayContent}</span>
+          </td>`;
         }
-        if (btnTrigger) {
-          btnTrigger.className = "croc-trigger flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/45 text-xs font-bold transition-all cursor-pointer";
-        }
-        if (btnLabel) btnLabel.textContent = "Cerrar Sanctuary";
-      } else {
-        if (tabsLayer) {
-          tabsLayer.classList.add("hidden");
-          tabsLayer.classList.remove("flex");
-        }
-        if (btnTrigger) {
-          btnTrigger.className = "croc-trigger flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/45 text-xs font-bold transition-all cursor-pointer shadow-[0_0_16px_rgba(16,185,129,0.18)]";
-        }
-        if (btnLabel) btnLabel.textContent = "Sanctuary";
-      }
-    }
-
-    function switchTab(tab) {
-      const isVault = tab === "vault" && isUnlocked;
-      document.getElementById("viewPublic").classList.toggle("hidden", isVault);
-      document.getElementById("viewVault").classList.toggle("hidden", !isVault);
-
-      const tabPub = document.getElementById("tabPublic");
-      const tabSanc = document.getElementById("tabSanctuary");
-
-      if (isVault) {
-        tabSanc.className = "croc-trigger inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer";
-        tabPub.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10 cursor-pointer";
-      } else {
-        tabPub.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer";
-        tabSanc.className = "croc-trigger inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10 cursor-pointer";
-      }
-    }
-
-    // =========================================================================
-    // TABLA DE TRACKERS (RENDERIZADO, EDICIÓN EN LÍNEA Y CRUD)
-    // =========================================================================
-    function renderPublicTable() {
-      const tbody = document.getElementById("publicTableBody");
-      const countPill = document.getElementById("publicCountPill");
-      if (!tbody) return;
-
-      const q = normalizeText(document.getElementById("publicSearch")?.value || "");
-      const filtered = publicItems.filter(item => {
-        if (!q) return true;
-        return normalizeText(
-          `${item.unidad} ${item.placa} ${item.gps} ${item.detektor} ${item.activacion} ${item.respuesta} ${item.detalles}`
-        ).includes(q);
-      });
-
-      if (countPill) countPill.textContent = publicItems.length;
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="8" class="py-8 text-center text-slate-400 text-xs">
-              No se encontraron registros que coincidan con la búsqueda.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(item => {
-        const editableCell = (field, value, extraClass = "") => {
-          const displayVal = value ? escapeHtml(value) : `<span class="text-slate-600 italic">—</span>`;
-          if (!isEditMode) {
-            return `<td class="py-3 px-3.5 ${extraClass}">${displayVal}</td>`;
-          }
-          return `
-            <td onclick="startInlineEdit(this, ${item.id}, '${field}')"
-                title="Clic para editar ${field.toUpperCase()}"
-                class="py-3 px-3.5 cursor-pointer hover:bg-emerald-500/10 rounded transition-colors ${extraClass}">
-              ${displayVal}
-            </td>
-          `;
-        };
-
-        return `
-          <tr class="hover:bg-emerald-500/[0.03] transition-colors">
-            ${editableCell("unidad", item.unidad, "font-semibold text-white")}
-            ${editableCell("placa", item.placa, "font-mono text-emerald-300")}
-            ${editableCell("gps", item.gps, "font-mono text-slate-300")}
-            ${editableCell("detektor", item.detektor, "font-mono text-cyan-300")}
-            ${editableCell("activacion", item.activacion, "font-mono text-amber-300")}
-            ${editableCell("respuesta", item.respuesta, "font-mono text-purple-300")}
-            ${editableCell("detalles", item.detalles, "text-slate-300")}
-            <td class="py-3 px-3.5 text-right whitespace-nowrap">
-              <div class="inline-flex items-center gap-1.5">
-                <button type="button" onclick="copyTrackerRow(${item.id})" class="px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-[11px] font-medium cursor-pointer" title="Copiar fila completa">
-                  📋 Copiar
-                </button>
-                ${isEditMode ? `
-                  <button type="button" onclick="deletePublicItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-[11px] font-medium cursor-pointer" title="Eliminar registro">
-                    🗑️
-                  </button>
-                ` : ""}
-              </div>
-            </td>
-          </tr>
-        `;
+        return `<td class="${isMono ? 'mono' : ''}"><span class="cell-readonly">${displayContent}</span></td>`;
       }).join("");
+
+      const deleteBtn = isEditMode
+        ? `<button class="btn-danger" onclick="deleteTrackerItem(${item.id})">Eliminar</button>`
+        : "";
+
+      return `
+        <tr>
+          ${cellsHtml}
+          <td style="white-space:nowrap;">
+            <button class="btn-glass btn-sm" onclick="copyTrackerRow(${item.id})" title="Copiar fila">Copiar</button>
+            ${deleteBtn}
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  function activateTrackerCell(id, field) {
+    if (!isEditMode) return;
+    editingCellKey = `${id}_${field}`;
+    renderTrackersTable();
+    const inp = document.getElementById(`edit_${editingCellKey}`);
+    if (inp) {
+      inp.focus();
+      inp.select();
     }
+  }
 
-    function startInlineEdit(tdEl, id, field) {
-      if (!isEditMode || tdEl.querySelector("input")) return;
-      const item = publicItems.find(x => x.id === id);
-      if (!item) return;
-
-      const currentVal = item[field] || "";
-      const input = document.createElement("input");
-      input.type = "text";
-      input.value = currentVal;
-      input.className = "w-full px-2 py-1 rounded bg-slate-950 border border-emerald-400 text-xs text-white font-mono focus:outline-none";
-
-      const commit = () => {
-        const nextVal = input.value.trim();
-        if (nextVal !== currentVal) {
-          item[field] = nextVal;
-          persistTrackers("Celda actualizada");
-        }
-        renderPublicTable();
-      };
-
-      input.addEventListener("blur", commit);
-      input.addEventListener("keydown", e => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          input.blur();
-        } else if (e.key === "Escape") {
-          renderPublicTable();
-        }
-      });
-
-      tdEl.innerHTML = "";
-      tdEl.appendChild(input);
-      input.focus();
-      input.select();
+  function saveTrackerCell(id, field, newValue) {
+    const idx = trackersList.findIndex(t => t.id === id);
+    if (idx !== -1) {
+      trackersList[idx][field] = newValue.trim();
+      persistTrackers();
     }
+    editingCellKey = null;
+    renderTrackersTable();
+  }
 
-    function addPublicItem(e) {
-      e.preventDefault();
-      if (!isEditMode) return;
-
-      const newItem = {
-        id: Date.now(),
-        unidad: document.getElementById("pubUnidad").value.trim(),
-        placa: document.getElementById("pubPlaca").value.trim().toUpperCase(),
-        gps: document.getElementById("pubGps").value.trim(),
-        detektor: document.getElementById("pubDetektor").value.trim().toUpperCase(),
-        activacion: document.getElementById("pubActivacion").value.trim().toUpperCase(),
-        respuesta: document.getElementById("pubRespuesta").value.trim().toUpperCase(),
-        detalles: document.getElementById("pubDetalles").value.trim()
-      };
-
-      publicItems.unshift(newItem);
-      persistTrackers("Unidad agregada");
-      e.target.reset();
-      renderPublicTable();
-      showToast(`Unidad ${newItem.unidad} guardada.`);
-    }
-
-    function deletePublicItem(id) {
-      if (!isEditMode) return;
-      publicItems = publicItems.filter(x => x.id !== id);
-      persistTrackers("Registro eliminado");
-      renderPublicTable();
-      showToast("Registro eliminado de Trackers.");
-    }
-
-    function copyTrackerRow(id) {
-      const item = publicItems.find(x => x.id === id);
-      if (!item) return;
-      const summary = [
-        `UNIDAD: ${item.unidad}`,
-        `PLACA: ${item.placa}`,
-        item.gps ? `GPS: ${item.gps}` : null,
-        item.detektor ? `DETEKTOR: ${item.detektor}` : null,
-        item.activacion ? `L ACTIVACION: ${item.activacion}` : null,
-        item.respuesta ? `L RESPUESTA: ${item.respuesta}` : null,
-        item.detalles ? `DETALLES: ${item.detalles}` : null
-      ].filter(Boolean).join(" | ");
-      copyText(summary, `Datos de ${item.unidad}`);
-    }
-
-    // =========================================================================
-    // BUSCADOR INTELIGENTE Y TABLA DE SANCTUARY
-    // =========================================================================
-    function normalizeText(str) {
-      return String(str || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
-    }
-
-    function levenshtein(a, b) {
-      if (a.length === 0) return b.length;
-      if (b.length === 0) return a.length;
-      const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
-      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-      for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; j <= a.length; j++) {
-          matrix[i][j] = b[i - 1] === a[j - 1]
-            ? matrix[i - 1][j - 1]
-            : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
-        }
-      }
-      return matrix[b.length][a.length];
-    }
-
-    function smartMatch(item, query) {
-      if (selectedCategory !== "ALL" && item.categoria !== selectedCategory) return false;
-      if (!query) return true;
-
-      const searchableBlob = normalizeText(
-        `${item.servicio} ${item.categoria} ${item.usuario} ${item.host} ${item.notas}`
-      );
-      const wordsInItem = searchableBlob.split(/[\s\-_./:@]+/).filter(Boolean);
-      const queryTokens = normalizeText(query).split(/\s+/).filter(Boolean);
-
-      return queryTokens.every(token => {
-        if (searchableBlob.includes(token)) return true;
-        if (token.length >= 4) {
-          return wordsInItem.some(w => Math.abs(w.length - token.length) <= 2 && levenshtein(w, token) <= 1);
-        }
-        return false;
-      });
-    }
-
-    function highlightMatch(text, query) {
-      if (!text) return "";
-      const safe = escapeHtml(text);
-      if (!query) return safe;
-      const tokens = query.trim().split(/\s+/).filter(t => t.length >= 2);
-      if (!tokens.length) return safe;
-      const pattern = new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
-      return safe.replace(pattern, "<mark>$1</mark>");
-    }
-
-    function setVaultCategory(cat, btnEl) {
-      selectedCategory = cat;
-      document.querySelectorAll("#categoryChips .chip-btn").forEach(btn => {
-        btn.className = "chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer";
-      });
-      if (btnEl) {
-        btnEl.className = "chip-btn px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/25 text-emerald-200 border border-emerald-400 cursor-pointer";
-      }
-      renderVaultTable();
-    }
-
-    function clearVaultSearch() {
-      const input = document.getElementById("smartVaultSearch");
-      if (input) input.value = "";
-      selectedCategory = "ALL";
-      const firstChip = document.querySelector("#categoryChips .chip-btn");
-      setVaultCategory("ALL", firstChip);
-    }
-
-    function renderVaultTable() {
-      if (!isUnlocked) return;
-      const tbody = document.getElementById("vaultTableBody");
-      const stats = document.getElementById("vaultSearchStats");
-      const pill = document.getElementById("sanctuaryCountPill");
-      const query = document.getElementById("smartVaultSearch")?.value || "";
-
-      const filtered = vaultItems.filter(item => smartMatch(item, query));
-      if (pill) pill.textContent = vaultItems.length;
-      if (stats) stats.textContent = `Mostrando ${filtered.length} de ${vaultItems.length} registros`;
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7" class="py-8 text-center text-slate-400 text-xs">
-              No se encontraron coincidencias en Sanctuary.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(item => {
-        const isShown = revealedIds.has(item.id);
-        const passDisplay = isShown ? escapeHtml(item.pass) : "••••••••••••";
-
-        return `
-          <tr class="hover:bg-emerald-500/[0.03] transition-colors">
-            <td class="py-3 px-3.5 font-semibold text-white">${highlightMatch(item.servicio, query)}</td>
-            <td class="py-3 px-3.5">
-              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                ${escapeHtml(item.categoria)}
-              </span>
-            </td>
-            <td class="py-3 px-3.5 font-mono text-slate-200">
-              <div class="inline-flex items-center gap-1.5">
-                <span>${highlightMatch(item.usuario, query)}</span>
-                <button type="button" onclick="copyText('${escapeAttr(item.usuario)}', 'Usuario')" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] cursor-pointer" title="Copiar usuario">📋</button>
-              </div>
-            </td>
-            <td class="py-3 px-3.5 font-mono text-emerald-300">
-              <div class="inline-flex items-center gap-1.5">
-                <span>${passDisplay}</span>
-                <button type="button" onclick="toggleReveal(${item.id})" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] cursor-pointer" title="Mostrar / Ocultar">${isShown ? "🙈" : "👁️"}</button>
-                <button type="button" onclick="copyText('${escapeAttr(item.pass)}', 'Contraseña')" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] cursor-pointer" title="Copiar contraseña">🔑</button>
-              </div>
-            </td>
-            <td class="py-3 px-3.5 font-mono text-slate-300">${highlightMatch(item.host || "—", query)}</td>
-            <td class="py-3 px-3.5 text-slate-400">${highlightMatch(item.notas || "—", query)}</td>
-            <td class="py-3 px-3.5 text-right whitespace-nowrap">
-              ${isEditMode ? `
-                <button type="button" onclick="deleteVaultItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-[11px] font-medium cursor-pointer">
-                  Eliminar
-                </button>
-              ` : `<span class="text-[11px] text-slate-500 font-mono">Solo lectura</span>`}
-            </td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    function addVaultItem(e) {
-      e.preventDefault();
-      if (!isUnlocked || !isEditMode) return;
-
-      const newItem = {
-        id: Date.now(),
-        servicio: document.getElementById("vServicio").value.trim(),
-        categoria: document.getElementById("vCategoria").value,
-        usuario: document.getElementById("vUsuario").value.trim(),
-        pass: document.getElementById("vPass").value.trim(),
-        host: document.getElementById("vHost").value.trim(),
-        notas: document.getElementById("vNotas").value.trim()
-      };
-
-      vaultItems.unshift(newItem);
-      persistVault();
-      e.target.reset();
-      renderVaultTable();
-      showToast("Registro guardado en Sanctuary.");
-    }
-
-    function deleteVaultItem(id) {
-      if (!isUnlocked || !isEditMode) return;
-      vaultItems = vaultItems.filter(x => x.id !== id);
-      persistVault();
-      renderVaultTable();
-      showToast("Registro eliminado de Sanctuary.");
-    }
-
-    function toggleReveal(id) {
-      if (revealedIds.has(id)) {
-        revealedIds.delete(id);
-      } else {
-        revealedIds.add(id);
-        setTimeout(() => {
-          if (revealedIds.delete(id) && isUnlocked) renderVaultTable();
-        }, 15000);
-      }
-      renderVaultTable();
-    }
-
-    function generateStrongPass() {
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
-      const arr = new Uint32Array(14);
-      crypto.getRandomValues(arr);
-      document.getElementById("vPass").value = Array.from(arr, x => chars[x % chars.length]).join("");
-      showToast("Contraseña aleatoria generada.");
-    }
-
-    // =========================================================================
-    // EXPORTACIÓN EXCEL / RESPALDOS JSON Y UTILIDADES
-    // =========================================================================
-    function exportToExcelCSV() {
-      const inVault = !document.getElementById("viewVault").classList.contains("hidden") && isUnlocked;
-      const rows = [];
-      let filename = "";
-
-      if (inVault) {
-        rows.push(["Servicio", "Categoria", "Usuario", "Contrasena", "IP_URL", "Notas"]);
-        vaultItems.forEach(i => rows.push([i.servicio, i.categoria, i.usuario, i.pass, i.host, i.notas]));
-        filename = `MDZ_Sanctuary_${new Date().toISOString().slice(0, 10)}.csv`;
-      } else {
-        rows.push(["UNIDAD", "PLACA", "GPS", "DETEKTOR", "L ACTIVACION", "L RESPUESTA", "DETALLES"]);
-        publicItems.forEach(i => rows.push([i.unidad, i.placa, i.gps, i.detektor, i.activacion, i.respuesta, i.detalles]));
-        filename = `MDZ_Trackers_${new Date().toISOString().slice(0, 10)}.csv`;
-      }
-
-      const csvContent = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      link.click();
-      showToast(`Exportado: ${filename}`);
-    }
-
-    function exportTrackersBackupJSON() {
-      const blob = new Blob([JSON.stringify(publicItems, null, 2)], { type: "application/json" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = `MDZ_Trackers_Backup_${new Date().toISOString().slice(0, 10)}.json`;
-      link.click();
-      showToast("Respaldo JSON de Trackers descargado.");
-    }
-
-    function importTrackersBackupJSON(event) {
-      if (!isEditMode) return;
-      const file = event.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          if (!Array.isArray(parsed)) throw new Error("Formato inválido");
-          publicItems = parsed;
-          persistTrackers("Respaldo restaurado");
-          renderPublicTable();
-          showToast(`Se restauraron ${parsed.length} registros en Trackers.`);
-        } catch (err) {
-          showToast("El archivo JSON seleccionado no es válido.");
-        }
-      };
-      reader.readAsText(file);
-      event.target.value = "";
-    }
-
-    function exportVaultBackupJSON() {
-      if (!isUnlocked) return;
-      const blob = new Blob([JSON.stringify(vaultItems, null, 2)], { type: "application/json" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = `MDZ_Sanctuary_Backup_${new Date().toISOString().slice(0, 10)}.json`;
-      link.click();
-      showToast("Respaldo JSON de Sanctuary descargado.");
-    }
-
-    function copyText(text, label) {
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-      } else {
-        fallbackCopy(text);
-      }
-      showToast(`${label} copiado al portapapeles.`);
-    }
-
-    function fallbackCopy(text) {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      if (!t) return;
-      t.textContent = msg;
-      t.classList.remove("translate-y-24", "opacity-0");
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => {
-        t.classList.add("translate-y-24", "opacity-0");
-      }, 2600);
-    }
-
-    function escapeHtml(str) {
-      return String(str || "").replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]));
-    }
-
-    function escapeAttr(str) {
-      return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
-    }
-
-    // Atajos de teclado: Ctrl+K para Sanctuary/2FA, '/' para buscador inteligente
-    document.addEventListener("keydown", e => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        handleSanctuaryAction();
-      } else if (e.key === "/" && isUnlocked && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
-        e.preventDefault();
-        switchTab("sanctuary");
-        document.getElementById("smartVaultSearch")?.focus();
-      } else if (e.key === "Escape") {
-        closeSanctuaryModal();
-      }
+  function addTrackerItem(e) {
+    e.preventDefault();
+    if (!isEditMode) return;
+    trackersList.push({
+      id: Date.now(),
+      unidad: document.getElementById("tUnidad").value.trim(),
+      placa: document.getElementById("tPlaca").value.trim(),
+      gps: document.getElementById("tGps").value.trim(),
+      detektor: document.getElementById("tDetektor").value.trim(),
+      activacion: document.getElementById("tActivacion").value.trim(),
+      respuesta: document.getElementById("tRespuesta").value.trim(),
+      detalles: document.getElementById("tDetalles").value.trim()
     });
+    persistTrackers();
+    e.target.reset();
+    renderTrackersTable();
+    showToast("✅ Registro guardado en Trackers.");
+  }
 
-    // Inicialización al cargar
-    renderPublicTable();
-    updateEditModeUI();
-    updateSanctuaryUI();
-    startTotpClock();
-  </script>
+  function deleteTrackerItem(id) {
+    if (!isEditMode) return;
+    trackersList = trackersList.filter(t => t.id !== id);
+    persistTrackers();
+    renderTrackersTable();
+    showToast("🗑️ Fila eliminada.");
+  }
+
+  function copyTrackerRow(id) {
+    const t = trackersList.find(x => x.id === id);
+    if (!t) return;
+    const text = `UNIDAD: ${t.unidad} | PLACA: ${t.placa} | GPS: ${t.gps || '-'} | DETEKTOR: ${t.detektor || '-'} | L ACTIVACION: ${t.activacion || '-'} | L RESPUESTA: ${t.respuesta || '-'} | DETALLES: ${t.detalles || '-'}`;
+    navigator.clipboard.writeText(text);
+    showToast(`📋 Datos de ${t.unidad} copiados.`);
+  }
+
+  // =========================================================================
+  // BUSCADOR INTELIGENTE Y CRUD DE SANCTUARY
+  // =========================================================================
+  function normalizeText(str) {
+    return (str || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+  }
+
+  function levenshtein(a, b) {
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+    const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        matrix[i][j] = b[i - 1] === a[j - 1]
+          ? matrix[i - 1][j - 1]
+          : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+      }
+    }
+    return matrix[b.length][a.length];
+  }
+
+  function smartMatch(item, query) {
+    if (selectedCategory !== "ALL" && item.categoria !== selectedCategory) return false;
+    if (!query) return true;
+    const blob = normalizeText(`${item.servicio} ${item.categoria} ${item.usuario} ${item.host} ${item.notas}`);
+    const words = blob.split(/[\s\-_./:@]+/).filter(Boolean);
+    const tokens = normalizeText(query).split(/\s+/).filter(Boolean);
+
+    return tokens.every(tok => {
+      if (blob.includes(tok)) return true;
+      if (tok.length >= 4) {
+        return words.some(w => Math.abs(w.length - tok.length) <= 2 && levenshtein(w, tok) <= 1);
+      }
+      return false;
+    });
+  }
+
+  function highlightMatch(text, query) {
+    if (!text) return "";
+    const safe = escapeHtml(text);
+    if (!query) return safe;
+    const tokens = query.trim().split(/\s+/).filter(t => t.length >= 2);
+    if (!tokens.length) return safe;
+    const regex = new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
+    return safe.replace(regex, '<mark>$1</mark>');
+  }
+
+  function setSanctuaryCategory(cat, el) {
+    selectedCategory = cat;
+    document.querySelectorAll("#categoryChips .chip").forEach(c => c.classList.remove("active"));
+    el.classList.add("active");
+    renderSanctuaryTable();
+  }
+
+  function clearSanctuarySearch() {
+    document.getElementById("smartSanctuarySearch").value = "";
+    selectedCategory = "ALL";
+    document.querySelectorAll("#categoryChips .chip").forEach((c, idx) => c.classList.toggle("active", idx === 0));
+    renderSanctuaryTable();
+  }
+
+  function renderSanctuaryTable() {
+    if (!isAuthenticated) return;
+    const query = document.getElementById("smartSanctuarySearch").value;
+    const tbody = document.getElementById("sanctuaryTableBody");
+    const filtered = sanctuaryList.filter(item => smartMatch(item, query));
+
+    document.getElementById("sanctuarySearchStats").textContent =
+      `Mostrando ${filtered.length} de ${sanctuaryList.length} registros`;
+
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:22px;">
+        No se encontraron coincidencias para "${escapeHtml(query)}".
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(item => {
+      const isShown = revealedIds.has(item.id);
+      const passText = isShown ? escapeHtml(item.pass) : "••••••••••••";
+      const deleteBtn = isEditMode
+        ? `<button class="btn-danger" onclick="deleteSanctuaryItem(${item.id})">Eliminar</button>`
+        : `<span style="font-size:0.75rem; color:var(--text-muted);">Solo lectura</span>`;
+
+      return `
+        <tr>
+          <td><strong>${highlightMatch(item.servicio, query)}</strong></td>
+          <td><span class="badge-cat">${escapeHtml(item.categoria)}</span></td>
+          <td class="mono">
+            ${highlightMatch(item.usuario, query)}
+            <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.usuario)}', 'Usuario')" title="Copiar usuario">📋</button>
+          </td>
+          <td class="mono">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span>${passText}</span>
+              <button class="btn-glass btn-sm" onclick="toggleReveal(${item.id})" title="Ver/Ocultar">${isShown ? "🙈" : "👁️"}</button>
+              <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.pass)}', 'Contraseña')" title="Copiar clave">🔑</button>
+            </div>
+          </td>
+          <td class="mono">${highlightMatch(item.host || "-", query)}</td>
+          <td>${highlightMatch(item.notas || "-", query)}</td>
+          <td>${deleteBtn}</td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  function addSanctuaryItem(e) {
+    e.preventDefault();
+    if (!isAuthenticated || !isEditMode) return;
+    sanctuaryList.unshift({
+      id: Date.now(),
+      servicio: document.getElementById("sServicio").value.trim(),
+      categoria: document.getElementById("sCategoria").value,
+      usuario: document.getElementById("sUsuario").value.trim(),
+      pass: document.getElementById("sPass").value.trim(),
+      host: document.getElementById("sHost").value.trim(),
+      notas: document.getElementById("sNotas").value.trim()
+    });
+    persistSanctuary();
+    e.target.reset();
+    renderSanctuaryTable();
+    showToast("✅ Credencial guardada en Sanctuary.");
+  }
+
+  function deleteSanctuaryItem(id) {
+    if (!isAuthenticated || !isEditMode) return;
+    sanctuaryList = sanctuaryList.filter(i => i.id !== id);
+    persistSanctuary();
+    renderSanctuaryTable();
+    showToast("🗑️ Registro eliminado de Sanctuary.");
+  }
+
+  function toggleReveal(id) {
+    if (revealedIds.has(id)) {
+      revealedIds.delete(id);
+    } else {
+      revealedIds.add(id);
+      setTimeout(() => {
+        if (revealedIds.delete(id) && isAuthenticated) renderSanctuaryTable();
+      }, 15000);
+    }
+    renderSanctuaryTable();
+  }
+
+  function generateStrongPass() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
+    const arr = new Uint32Array(14);
+    crypto.getRandomValues(arr);
+    document.getElementById("sPass").value = Array.from(arr, x => chars[x % chars.length]).join("");
+    showToast("🎲 Contraseña generada.");
+  }
+
+  // =========================================================================
+  // EXPORTACIÓN EXCEL Y RESPALDOS JSON
+  // =========================================================================
+  function exportToExcelCSV() {
+    const inSanctuary = isAuthenticated && document.getElementById("viewSanctuary").classList.contains("active");
+    let rows = [];
+    let filename = "";
+
+    if (inSanctuary) {
+      rows.push(["Servicio", "Categoria", "Usuario", "Contrasena", "URL", "Notas"]);
+      sanctuaryList.forEach(i => rows.push([i.servicio, i.categoria, i.usuario, i.pass, i.host, i.notas]));
+      filename = "MDZ_Sanctuary.csv";
+    } else {
+      rows.push(["UNIDAD", "PLACA", "GPS", "DETEKTOR", "L ACTIVACION", "L RESPUESTA", "DETALLES"]);
+      trackersList.forEach(t => rows.push([t.unidad, t.placa, t.gps, t.detektor, t.activacion, t.respuesta, t.detalles]));
+      filename = "MDZ_Trackers.csv";
+    }
+
+    const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    showToast(`📊 Descargado: ${filename}`);
+  }
+
+  function exportTrackersBackupJSON() {
+    downloadJson(trackersList, "MDZ_Trackers_Respaldo.json");
+  }
+
+  function exportSanctuaryBackupJSON() {
+    if (!isAuthenticated) return;
+    downloadJson(sanctuaryList, "MDZ_Sanctuary_Respaldo.json");
+  }
+
+  function downloadJson(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    showToast(`💾 Respaldo guardado: ${filename}`);
+  }
+
+  function importTrackersBackupJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) throw new Error();
+        trackersList = imported;
+        persistTrackers();
+        renderTrackersTable();
+        showToast("✅ Trackers restaurados correctamente.");
+      } catch {
+        showToast("⛔ Archivo JSON inválido.");
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+  }
+
+  // =========================================================================
+  // TEMPORIZADOR TOTP EN VIVO (30 SEGUNDOS) Y ATAJOS
+  // =========================================================================
+  setInterval(async () => {
+    const secLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
+    const countdownEl = document.getElementById("modalCountdown");
+    const fillEl = document.getElementById("modalTimerFill");
+    if (countdownEl) countdownEl.textContent = `${secLeft}s`;
+    if (fillEl) fillEl.style.width = `${(secLeft / 30) * 100}%`;
+
+    if (isAuthenticated && document.getElementById("internalQrDrawer").classList.contains("open")) {
+      const liveCode = await computeTotpAtOffset(getTotpSecret(), 0);
+      document.getElementById("internalTotpLive").textContent = `Código actual: ${liveCode} (${secLeft}s)`;
+    }
+  }, 500);
+
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      handleSanctuaryAction();
+    } else if (e.key === "Escape") {
+      closeTotpModal();
+    }
+  });
+
+  function updateCounters() {
+    document.getElementById("trackersCountPill").textContent = trackersList.length;
+    document.getElementById("sanctuaryCountPill").textContent = sanctuaryList.length;
+  }
+
+  function copyText(text, label) {
+    navigator.clipboard.writeText(text);
+    showToast(`📋 ${label} copiado.`);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+  }
+
+  function escapeHtml(str) {
+    return String(str || "").replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
+
+  function escapeAttr(str) {
+    return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+  }
+
+  // Inicialización
+  getTotpSecret();
+  updateCounters();
+  updateSecurityUI();
+  renderTrackersTable();
+</script>
 </body>
 </html>
