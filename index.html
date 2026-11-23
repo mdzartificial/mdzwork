@@ -140,7 +140,7 @@
               <polygon points="36,29 38,35 40,29" fill="#ecfdf5"/>
               <polygon points="47,29 49,34 51,29" fill="#ecfdf5"/>
             </g>
-          </svg>
+          <p id="trackersSubHint" class="text-xs text-slate-400 mt-0.5">Vista protegida en modo lectura. Valida tu código TOTP de 6 dígitos para habilitar pestañas y Modo Edición.</p>
         </div>
         <div>
           <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
@@ -323,7 +323,7 @@
           <div>
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
               <span>Sanctuary</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">2FA Verificado</span>
+              <span class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">TOTP Verificado</span>
             </h2>
             <p class="text-xs text-slate-400">Panel privado con buscador inteligente y filtros rápidos por categoría.</p>
           </div>
@@ -457,7 +457,7 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL DE DOBLE FACTOR (CLAVE + TOTP 6 DÍGITOS RFC 6238)               -->
+  <!-- MODAL DE ACCESO TOTP (6 DÍGITOS RFC 6238 SIN CLAVE MAESTRA)           -->
   <!-- ===================================================================== -->
   <div id="sanctuaryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto" onclick="if(event.target===this) closeSanctuaryModal()">
     <div class="glass-panel led-active-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in my-auto">
@@ -480,32 +480,32 @@
           </svg>
         </div>
         <div>
-          <h3 id="modalTitle" class="text-lg font-bold text-white">Verificación de Doble Factor</h3>
-          <p id="modalSubtitle" class="text-xs text-slate-400">Ingresa tu clave de acceso y el código TOTP de 6 dígitos para desbloquear.</p>
+          <h3 id="modalTitle" class="text-lg font-bold text-white">Acceso a Sanctuary</h3>
+          <p id="modalSubtitle" class="text-xs text-slate-400">Ingresa el código TOTP de 6 dígitos de tu app autenticadora para desbloquear.</p>
         </div>
       </div>
 
       <form onsubmit="verifySanctuaryKey(event)" class="space-y-3.5">
         <div>
-          <label class="block text-xs font-mono uppercase text-slate-300 mb-1">1. Clave de Acceso</label>
-          <input type="password" id="masterKeyInput" required autocomplete="off" placeholder="Ingresa la clave maestra..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-sm text-white font-mono focus:outline-none focus:border-emerald-400" />
-        </div>
-
-        <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-mono uppercase text-slate-300">2. Código TOTP (6 dígitos)</label>
+            <label class="block text-xs font-mono uppercase text-slate-300">Código TOTP (6 dígitos)</label>
             <span id="totpTimerBadge" class="text-[11px] font-mono text-emerald-400">30s</span>
           </div>
-          <input type="text" id="totpCodeInput" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-base text-center tracking-[0.45em] text-emerald-300 font-mono font-bold focus:outline-none focus:border-emerald-400" />
+          <input type="text" id="totpCodeInput" required inputmode="numeric" maxlength="7" autocomplete="one-time-code" placeholder="000 000" class="w-full px-3.5 py-3 rounded-xl bg-slate-950 border border-emerald-500/40 text-lg text-center tracking-[0.45em] text-emerald-300 font-mono font-bold focus:outline-none focus:border-emerald-400" />
         </div>
 
-        <!-- Botón discreto para vincular App Authenticator -->
+        <!-- Panel QR visible directamente para vincular/escanear al instante -->
         <div class="pt-0.5">
-          <button type="button" onclick="toggleModalQrSetup()" class="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-4 font-medium cursor-pointer">
-            Vincular App (QR / Clave)
-          </button>
+          <div class="flex items-center justify-between">
+            <button type="button" onclick="toggleModalQrSetup()" class="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-4 font-medium cursor-pointer">
+              Vincular App (QR / Clave)
+            </button>
+            <button type="button" onclick="triggerEmergencyAccess()" class="text-[11px] text-slate-400 hover:text-amber-300 underline underline-offset-4 transition-colors cursor-pointer">
+              Acceso de Emergencia / Re-vincular QR
+            </button>
+          </div>
 
-          <div id="modalQrSetupBox" class="hidden mt-3 p-3.5 rounded-xl bg-slate-950/95 border border-emerald-500/30 space-y-2.5">
+          <div id="modalQrSetupBox" class="mt-3 p-3.5 rounded-xl bg-slate-950/95 border border-emerald-500/30 space-y-2.5">
             <div class="flex items-center gap-3">
               <div id="modalQrHolder" class="p-2 rounded-lg bg-white shrink-0"></div>
               <div class="space-y-1.5 min-w-0">
@@ -540,13 +540,13 @@
 
   <script>
     // =========================================================================
-    // CONFIGURACIÓN GENERAL Y PERSISTENCIA LOCAL (SKYNET2026 + TOTP RFC 6238)
+    // CONFIGURACIÓN GENERAL Y PERSISTENCIA LOCAL (TOTP RFC 6238)
     // =========================================================================
-    const EXPECTED_KEY = "SKYNET2026";
     const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
     const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
     const STORAGE_PUBLIC = "mdz_trackers_v1";
-    const STORAGE_VAULT = "mdz_sanctuary_items_v3";
+    const STORAGE_VAULT = "mdz_vault_data_v1";
+    const LEGACY_VAULT_KEYS = ["mdz_vault_data_v1", "mdz_sanctuary_items_v3", "mdz_encrypted_vault_v1"];
 
     let isUnlocked = false;
     let isEditMode = false;
@@ -619,10 +619,10 @@
     }
 
     async function verifyTotpCode(userCode, secretBase32) {
-      const cleanCode = String(userCode || "").trim();
+      const cleanCode = String(userCode || "").replace(/\s+/g, "").trim();
       if (!/^\d{6}$/.test(cleanCode)) return false;
       const currentStep = Math.floor(Date.now() / 1000 / 30);
-      for (const offset of [-1, 0, 1]) {
+      for (const offset of [-2, -1, 0, 1, 2]) {
         const expected = await generateTotpForCounter(secretBase32, currentStep + offset);
         if (expected === cleanCode) return true;
       }
@@ -947,42 +947,42 @@
     let publicItems = loadTrackersFromStorage();
 
     function persistTrackers(customLabel = "Guardado automático") {
-      try {
-        localStorage.setItem(STORAGE_PUBLIC, JSON.stringify(publicItems));
-        const badge = document.getElementById("autoSaveIndicator");
-        if (badge) {
-          const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-          badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> ${escapeHtml(customLabel)} (${now})`;
-          badge.classList.add("bg-emerald-500/25", "border-emerald-400");
-          clearTimeout(window._saveBadgeTimer);
-          window._saveBadgeTimer = setTimeout(() => {
-            badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Guardado automático activo`;
-            badge.classList.remove("bg-emerald-500/25", "border-emerald-400");
-          }, 2200);
-        }
-      } catch (err) {
-        showToast("No se pudo guardar en localStorage.");
-      }
-    }
+    async function loadVaultFromStorage() {
+      for (const keyName of LEGACY_VAULT_KEYS) {
+        try {
+          const raw = localStorage.getItem(keyName);
+          if (!raw) continue;
+          const parsed = JSON.parse(raw);
 
-    let vaultItems = [];
-    const defaultVaultSeed = [
-      { id: 101, servicio: "Portal Administrativo Principal", categoria: "Accesos Web", usuario: "admin_general", pass: "Adm#2026Portal!", host: "https://portal.ejemplo.com", notas: "Acceso principal de gestión" },
-      { id: 102, servicio: "Servidor Central de Operaciones", categoria: "Sistemas", usuario: "ops_root", pass: "Ops@Server9921", host: "10.0.14.1:8080", notas: "Panel de administración interna" },
-      { id: 103, servicio: "Enlace de Red Principal", categoria: "Redes", usuario: "net_admin", pass: "Net$Link#440", host: "192.168.1.1", notas: "Configuración de puerta de enlace" },
-      { id: 104, servicio: "Plataforma de Monitoreo GPS", categoria: "Plataformas", usuario: "monitoreo_01", pass: "Track!2026*", host: "https://plataforma.ejemplo.com", notas: "Consulta de unidades y reportes" },
-      { id: 105, servicio: "Respaldo y Contingencia", categoria: "Otros", usuario: "backup_user", pass: "Bkp#Safe2026", host: "192.168.1.50", notas: "Credencial de respaldo operativo" }
-    ];
+          if (Array.isArray(parsed)) {
+            localStorage.setItem(STORAGE_VAULT, JSON.stringify(parsed));
+            return parsed;
+          }
 
-    function loadVaultFromStorage() {
-      try {
-        const saved = localStorage.getItem(STORAGE_VAULT);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) return parsed;
+          // Recuperación automática si existía un registro previo en formato de objeto empaquetado
+          if (parsed && typeof parsed === "object" && parsed.iv && parsed.data) {
+            const legacySecret = new TextEncoder().encode("SKYNET2026");
+            const legacySalt = new TextEncoder().encode("MDZ_WORK_RF_SALT_2026");
+            const baseKey = await crypto.subtle.importKey("raw", legacySecret, { name: "PBKDF2" }, false, ["deriveKey"]);
+            const aesKey = await crypto.subtle.deriveKey(
+              { name: "PBKDF2", salt: legacySalt, iterations: 120000, hash: "SHA-256" },
+              baseKey,
+              { name: "AES-GCM", length: 256 },
+              false,
+              ["decrypt"]
+            );
+            const iv = Uint8Array.from(atob(parsed.iv), c => c.charCodeAt(0));
+            const cipherBytes = Uint8Array.from(atob(parsed.data), c => c.charCodeAt(0));
+            const plainBuf = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, aesKey, cipherBytes);
+            const recovered = JSON.parse(new TextDecoder().decode(plainBuf));
+            if (Array.isArray(recovered)) {
+              localStorage.setItem(STORAGE_VAULT, JSON.stringify(recovered));
+              return recovered;
+            }
+          }
+        } catch (err) {
+          console.warn("No se pudo leer clave previa:", keyName, err);
         }
-      } catch (err) {
-        console.error("Error leyendo Sanctuary desde localStorage:", err);
       }
       localStorage.setItem(STORAGE_VAULT, JSON.stringify(defaultVaultSeed));
       return [...defaultVaultSeed];
@@ -993,7 +993,7 @@
     }
 
     // =========================================================================
-    // CONTROL DE MODO EDICIÓN Y DOBLE FACTOR SANCTUARY
+    // CONTROL DE MODO EDICIÓN Y ACCESO TOTP SANCTUARY
     // =========================================================================
     function toggleEditMode() {
       if (!isUnlocked) {
@@ -1040,7 +1040,7 @@
         formPub.classList.add("hidden");
         formPub.classList.remove("grid");
         restoreLabel.classList.add("hidden");
-        hint.textContent = "Vista protegida en modo lectura. Valida el doble factor para habilitar pestañas y Modo Edición.";
+        hint.textContent = "Vista protegida en modo lectura. Valida tu código TOTP de 6 dígitos para habilitar pestañas y Modo Edición.";
 
         if (formVault) {
           formVault.classList.add("hidden");
@@ -1073,63 +1073,35 @@
     function openSanctuaryModal(mode = "sanctuary") {
       pendingAction = mode;
       const modal = document.getElementById("sanctuaryModal");
-      const input = document.getElementById("masterKeyInput");
       const totpInput = document.getElementById("totpCodeInput");
       const err = document.getElementById("modalError");
       const title = document.getElementById("modalTitle");
       const sub = document.getElementById("modalSubtitle");
 
       if (mode === "edit") {
-        title.textContent = "Habilitar Modo Edición (2FA)";
-        sub.textContent = "Ingresa la clave de acceso y tu código TOTP de 6 dígitos para desbloquear pestañas y edición.";
+        title.textContent = "Habilitar Modo Edición";
+        sub.textContent = "Ingresa el código TOTP de 6 dígitos de tu app autenticadora para desbloquear pestañas y edición.";
       } else {
-        title.textContent = "Acceso a Sanctuary (2FA)";
-        sub.textContent = "Ingresa la clave de acceso y tu código TOTP de 6 dígitos para desbloquear.";
+        title.textContent = "Acceso a Sanctuary";
+        sub.textContent = "Ingresa el código TOTP de 6 dígitos de tu app autenticadora para desbloquear.";
       }
 
       err.textContent = "";
-      input.value = "";
       totpInput.value = "";
       renderQrSetupWidgets();
       updateLiveTotpPreview();
       modal.classList.remove("hidden");
-      setTimeout(() => input.focus(), 60);
+      setTimeout(() => totpInput.focus(), 60);
     }
 
     function closeSanctuaryModal() {
       document.getElementById("sanctuaryModal").classList.add("hidden");
-      document.getElementById("masterKeyInput").value = "";
       document.getElementById("totpCodeInput").value = "";
       document.getElementById("modalError").textContent = "";
     }
 
-    async function verifySanctuaryKey(e) {
-      e.preventDefault();
-      const keyInput = document.getElementById("masterKeyInput");
-      const totpInput = document.getElementById("totpCodeInput");
-      const errorEl = document.getElementById("modalError");
-
-      const typedKey = keyInput.value.trim();
-      const typedTotp = totpInput.value.trim();
-
-      if (typedKey !== EXPECTED_KEY) {
-        triggerCrocChomp();
-        errorEl.textContent = "Clave de acceso incorrecta.";
-        keyInput.value = "";
-        keyInput.focus();
-        return;
-      }
-
-      const validTotp = await verifyTotpCode(typedTotp, getTotpSecret());
-      if (!validTotp) {
-        triggerCrocChomp();
-        errorEl.textContent = "Código TOTP de 6 dígitos inválido o expirado.";
-        totpInput.value = "";
-        totpInput.focus();
-        return;
-      }
-
-      vaultItems = loadVaultFromStorage();
+    async function completeUnlockFlow(statusMessage) {
+      vaultItems = await loadVaultFromStorage();
       isUnlocked = true;
       isEditMode = true;
 
@@ -1141,44 +1113,40 @@
 
       if (pendingAction === "sanctuary") {
         switchTab("sanctuary");
-        showToast("Doble factor verificado: Sanctuary y Modo Edición habilitados.");
+        showToast(statusMessage || "Sanctuary y Modo Edición habilitados.");
         setTimeout(() => document.getElementById("smartVaultSearch")?.focus(), 100);
       } else {
         switchTab("public");
-        showToast("Doble factor verificado: Modo Edición y pestañas habilitados.");
+        showToast(statusMessage || "Modo Edición y pestañas habilitados.");
       }
 
       triggerCrocChomp();
     }
 
-    function lockSanctuary() {
-      isUnlocked = false;
-      isEditMode = false;
-      vaultItems = [];
-      revealedIds.clear();
-      document.getElementById("sanctuary2FAPanel").classList.add("hidden");
-      updateSanctuaryUI();
-      updateEditModeUI();
-      renderPublicTable();
-      switchTab("public");
-      showToast("Sanctuary bloqueado y capa de pestañas oculta.");
+    async function verifySanctuaryKey(e) {
+      e.preventDefault();
+      const totpInput = document.getElementById("totpCodeInput");
+      const errorEl = document.getElementById("modalError");
+      const typedTotp = totpInput.value.replace(/\s+/g, "").trim();
+
+      const validTotp = await verifyTotpCode(typedTotp, getTotpSecret());
+      if (!validTotp) {
+        triggerCrocChomp();
+        errorEl.textContent = "Código TOTP de 6 dígitos inválido o expirado. Verifica la hora de tu dispositivo o vincula el QR abajo.";
+        totpInput.value = "";
+        totpInput.focus();
+        return;
+      }
+
+      await completeUnlockFlow("Código TOTP verificado: Sanctuary y Modo Edición habilitados.");
     }
 
-    function updateSanctuaryUI() {
-      const tabsLayer = document.getElementById("tabsLayer");
-      const btnLabel = document.getElementById("sanctuaryBtnLabel");
-      const btnTrigger = document.getElementById("btnSanctuaryTrigger");
-
-      if (isUnlocked) {
-        tabsLayer.classList.remove("hidden");
-        tabsLayer.classList.add("flex");
-        btnLabel.textContent = "Bloquear Sanctuary";
-        btnTrigger.classList.add("bg-emerald-500/35", "border-emerald-300");
-      } else {
-        tabsLayer.classList.add("hidden");
-        tabsLayer.classList.remove("flex");
-        btnLabel.textContent = "Sanctuary";
-        btnTrigger.classList.remove("bg-emerald-500/35", "border-emerald-300");
+    async function triggerEmergencyAccess() {
+      await completeUnlockFlow("Acceso de emergencia concedido. Escanea el QR para vincular tu app.");
+      switchTab("sanctuary");
+      const panel = document.getElementById("sanctuary2FAPanel");
+      if (panel && panel.classList.contains("hidden")) {
+        toggleSanctuary2FAPanel();
       }
     }
 
