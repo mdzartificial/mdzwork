@@ -1,262 +1,8 @@
-<!DOCTYPE html>
-<html lang="es" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MDZ™ WORK | Panel de Control & Sanctuary</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    body {
-      background-color: #050a08;
-      background-image:
-        radial-gradient(circle at 12% 12%, rgba(16, 185, 129, 0.11) 0%, transparent 42%),
-        radial-gradient(circle at 88% 85%, rgba(5, 150, 105, 0.09) 0%, transparent 45%),
-        linear-gradient(to bottom, #050a08, #08110e);
-      color: #ecfdf5;
-      min-height: 100vh;
-    }
-
-    .bg-tech-grid {
-      background-size: 32px 32px;
-      background-image:
-        linear-gradient(to right, rgba(16, 185, 129, 0.035) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(16, 185, 129, 0.035) 1px, transparent 1px);
-    }
-
-    .glass-panel {
-      background: rgba(11, 22, 18, 0.76);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(16, 185, 129, 0.22);
-      box-shadow: 0 14px 42px -10px rgba(0, 0, 0, 0.72);
-    }
-
-    /* Borde animado LED verde esmeralda */
-    @property --led-angle {
-      syntax: '<angle>';
-      initial-value: 0deg;
-      inherits: false;
-    }
-
-    @keyframes rotateLed {
-      0% { --led-angle: 0deg; }
-      100% { --led-angle: 360deg; }
-    }
-
-    .led-active-border {
-      position: relative;
-      border-radius: 1rem;
-      z-index: 0;
-    }
-
-    .led-active-border::before {
-      content: '';
-      position: absolute;
-      inset: -1.5px;
-      border-radius: 1.08rem;
-      background: conic-gradient(
-        from var(--led-angle),
-        transparent 0%,
-        transparent 68%,
-        rgba(16, 185, 129, 0.45) 80%,
-        #34d399 92%,
-        #10b981 96%,
-        transparent 100%
-      );
-      z-index: -1;
-      animation: rotateLed 4.5s linear infinite;
-      pointer-events: none;
-    }
-
-    .led-active-border::after {
-      content: '';
-      position: absolute;
-      inset: 0px;
-      border-radius: 1rem;
-      background: #0a1410;
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    /* =====================================================================
-       ANIMACIONES DEL COCODRILO ARTICULADO MORDIENDO (MANDÍBULAS LED)
-       ===================================================================== */
-    .croc-upper-jaw {
-      transform-origin: 18px 26px;
-      animation: crocUpperIdle 3.2s ease-in-out infinite;
-    }
-    .croc-lower-jaw {
-      transform-origin: 18px 34px;
-      animation: crocLowerIdle 3.2s ease-in-out infinite;
-    }
-
-    @keyframes crocUpperIdle {
-      0%, 70%, 100% { transform: rotate(0deg); }
-      80% { transform: rotate(-16deg); }
-      88% { transform: rotate(3deg); }
-      94% { transform: rotate(-6deg); }
-    }
-
-    @keyframes crocLowerIdle {
-      0%, 70%, 100% { transform: rotate(0deg); }
-      80% { transform: rotate(15deg); }
-      88% { transform: rotate(-3deg); }
-      94% { transform: rotate(5deg); }
-    }
-
-    /* Mordida agresiva al pasar el cursor o al desbloquear Sanctuary */
-    .croc-trigger:hover .croc-upper-jaw,
-    .croc-chomp-active .croc-upper-jaw {
-      animation: crocUpperChomp 0.42s cubic-bezier(0.25, 1, 0.5, 1) 2;
-    }
-
-    .croc-trigger:hover .croc-lower-jaw,
-    .croc-chomp-active .croc-lower-jaw {
-      animation: crocLowerChomp 0.42s cubic-bezier(0.25, 1, 0.5, 1) 2;
-    }
-
-    @keyframes crocUpperChomp {
-      0%, 100% { transform: rotate(0deg); }
-      45% { transform: rotate(-24deg); }
-      75% { transform: rotate(4deg); }
-    }
-
-    @keyframes crocLowerChomp {
-      0%, 100% { transform: rotate(0deg); }
-      45% { transform: rotate(22deg); }
-      75% { transform: rotate(-4deg); }
-    }
-
-    .croc-glow-svg {
-      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.65));
-    }
-
-    mark {
-      background: rgba(16, 185, 129, 0.38);
-      color: #ffffff;
-      padding: 0 3px;
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(10, 20, 16, 0.6); }
-    ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.35); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(52, 211, 153, 0.65); }
-
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in { animation: fadeSlideIn 0.25s ease-out forwards; }
-  </style>
-</head>
-<body class="bg-tech-grid font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200">
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
+<!-- ... existing code ... -->
     <!-- ===================================================================== -->
-    <!-- HEADER PRINCIPAL CON COCODRILO ANIMADO & BOTÓN SANCTUARY              -->
+    <!-- BARRA DE PESTAÑAS (OCULTA HASTA VALIDAR DOBLE FACTOR)                 -->
     <!-- ===================================================================== -->
-    <header class="glass-panel led-active-border rounded-2xl p-4 sm:p-5 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-      <div class="flex items-center gap-3.5">
-        <!-- Emblema Cocodrilo Articulado LED -->
-        <div id="headerCrocBox" class="croc-trigger w-13 h-13 p-2 rounded-xl bg-emerald-500/15 border border-emerald-500/45 flex items-center justify-center shadow-[0_0_24px_rgba(16,185,129,0.3)] shrink-0 cursor-pointer" onclick="triggerCrocChomp()" title="MDZ™ Guardian">
-          <svg class="w-10 h-10 croc-glow-svg" viewBox="0 0 64 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Mandíbula Inferior Articulada -->
-            <g class="croc-lower-jaw">
-              <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="1.6" stroke-linejoin="round"/>
-              <!-- Dientes Inferiores -->
-              <polygon points="27,32 29,27 31,32" fill="#ecfdf5"/>
-              <polygon points="35,32 37,26 39,32" fill="#ecfdf5"/>
-              <polygon points="43,32 45,27 47,32" fill="#ecfdf5"/>
-              <polygon points="50,32 52,27 54,32" fill="#ecfdf5"/>
-            </g>
-            <!-- Mandíbula Superior Articulada -->
-            <g class="croc-upper-jaw">
-              <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#047857" stroke="#6ee7b7" stroke-width="1.8" stroke-linejoin="round"/>
-              <!-- Escamas Dorsales -->
-              <path d="M13 18 L16 14 L19 18 M20 17 L23 13 L26 17" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
-              <!-- Ojo Reptil Brillante -->
-              <circle cx="23" cy="20" r="3" fill="#022c22" stroke="#6ee7b7" stroke-width="1.2"/>
-              <ellipse cx="23" cy="20" rx="1" ry="2.2" fill="#34d399"/>
-              <!-- Fosa Nasal -->
-              <circle cx="53" cy="24.5" r="1.1" fill="#a7f3d0"/>
-              <!-- Dientes Superiores Afilados -->
-              <polygon points="24,29 26,34 28,29" fill="#ecfdf5"/>
-              <polygon points="31,29 33,35 35,29" fill="#ecfdf5"/>
-              <polygon points="39,29 41,34 43,29" fill="#ecfdf5"/>
-              <polygon points="47,29 49,35 51,29" fill="#ecfdf5"/>
-            </g>
-          </svg>
-        </div>
-
-        <div>
-          <div class="flex items-center gap-2.5">
-            <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">MDZ™ <span class="text-emerald-400 font-mono">WORK</span></h1>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-400">Panel de Control de Unidades & Sanctuary</p>
-        </div>
-      </div>
-
-      <!-- Acciones de Cabecera -->
-      <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-between md:justify-end">
-        <!-- Botón Control de Modo Edición -->
-        <button id="btnEditModeToggle" onclick="toggleEditMode()" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-all cursor-pointer" title="Activar o desactivar la edición de registros">
-          <span id="editModeDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
-          <span id="editModeLabel">Modo Edición: Bloqueado</span>
-        </button>
-
-        <button onclick="exportToExcelCSV()" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer" title="Exportar vista activa a Excel/CSV">
-          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <span>Exportar Excel</span>
-        </button>
-
-        <!-- Botón Sanctuary con Cocodrilo Mordiendo -->
-        <button id="btnSanctuaryTrigger" onclick="handleSanctuaryAction()" class="croc-trigger flex items-center gap-2.5 px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 active:scale-[0.98] text-emerald-200 border border-emerald-400/50 font-semibold text-xs sm:text-sm transition-all shadow-[0_0_20px_rgba(16,185,129,0.25)] cursor-pointer">
-          <svg class="w-6 h-6 shrink-0" viewBox="0 0 64 56" fill="none">
-            <g class="croc-lower-jaw">
-              <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="2"/>
-              <polygon points="31,32 33,27 35,32" fill="#ecfdf5"/>
-              <polygon points="43,32 45,27 47,32" fill="#ecfdf5"/>
-            </g>
-            <g class="croc-upper-jaw">
-              <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
-              <circle cx="23" cy="20" r="2.6" fill="#022c22"/>
-              <polygon points="26,29 28,34 30,29" fill="#ecfdf5"/>
-              <polygon points="38,29 40,34 42,29" fill="#ecfdf5"/>
-              <polygon points="48,29 50,34 52,29" fill="#ecfdf5"/>
-            </g>
-          </svg>
-          <span id="sanctuaryBtnLabel">Sanctuary</span>
-          <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono rounded bg-black/40 text-emerald-300 border border-emerald-500/30">Ctrl+K</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- ===================================================================== -->
-    <!-- BARRA DE PESTAÑAS                                                     -->
-    <!-- ===================================================================== -->
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+    <div id="tabsLayer" class="hidden flex-wrap items-center justify-between gap-3 mb-5 animate-fade-in">
       <div class="flex items-center gap-2 p-1.5 rounded-xl glass-panel">
         <button id="tabPublic" onclick="switchTab('public')" class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -267,8 +13,8 @@
           <span id="publicCountPill" class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-slate-900 text-emerald-300">0</span>
         </button>
 
-        <!-- Pestaña Sanctuary (Oculta hasta ingresar SKYNET2026) -->
-        <button id="tabSanctuary" onclick="switchTab('sanctuary')" class="hidden croc-trigger items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10 cursor-pointer">
+        <!-- Pestaña Sanctuary -->
+        <button id="tabSanctuary" onclick="switchTab('sanctuary')" class="croc-trigger inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10 cursor-pointer">
           <svg class="w-5 h-5 shrink-0" viewBox="0 0 64 56" fill="none">
             <g class="croc-lower-jaw">
               <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="2"/>
@@ -288,9 +34,7 @@
     <!-- ===================================================================== -->
     <!-- SECCIÓN 1: TRACKERS (UNIDAD / PLACA / GPS / DETEKTOR / L ACTIVACION...) -->
     <!-- ===================================================================== -->
-    <main id="viewPublic" class="led-active-border glass-panel rounded-2xl p-5 sm:p-6 animate-fade-in">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-        <div>
+<!-- ... existing code ... -->
           <div class="flex items-center gap-2.5">
             <h2 class="text-lg font-bold text-white">Trackers</h2>
             <span id="autoSaveIndicator" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 transition-all">
@@ -298,7 +42,7 @@
               Guardado automático activo
             </span>
           </div>
-          <p id="trackersSubHint" class="text-xs text-slate-400 mt-0.5">Vista protegida en modo lectura. Activa el Modo Edición para agregar, modificar o eliminar registros.</p>
+          <p id="trackersSubHint" class="text-xs text-slate-400 mt-0.5">Vista protegida en modo lectura. Valida el doble factor para habilitar pestañas y Modo Edición.</p>
         </div>
 
         <!-- Respaldo JSON para portabilidad total -->
@@ -312,131 +56,57 @@
           </label>
         </div>
       </div>
-
-      <!-- Formulario de Registro de Tracker (Visible solo con Modo Edición activo) -->
-      <form id="formPublic" onsubmit="addPublicItem(event)" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3 p-4 mb-5 rounded-xl bg-black/40 border border-emerald-500/15">
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">UNIDAD *</label>
-          <input type="text" id="tUnidad" required placeholder="Ej. NOVEMBER 5" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">PLACA *</label>
-          <input type="text" id="tPlaca" required placeholder="Ej. BYU-795" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono uppercase focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">GPS</label>
-          <input type="text" id="tGps" placeholder="868574042607064" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">DETEKTOR</label>
-          <input type="text" id="tDetektor" placeholder="Ej. 1DB199" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono uppercase focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">L ACTIVACION</label>
-          <input type="text" id="tActivacion" placeholder="Ej. D7D21B3" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono uppercase focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">L RESPUESTA</label>
-          <input type="text" id="tRespuesta" placeholder="Ej. 3VNAF" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono uppercase focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">DETALLES</label>
-          <input type="text" id="tDetalles" placeholder="Ej. Cambiar Switch" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div class="flex items-end">
-          <button type="submit" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-[0_0_15px_rgba(16,185,129,0.25)] cursor-pointer">
-            + Agregar
-          </button>
-        </div>
-      </form>
-
-      <!-- Buscador Rápido Trackers -->
-      <div class="relative mb-4">
-        <svg class="w-4 h-4 text-emerald-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <input type="text" id="publicSearch" oninput="renderPublicTable()" placeholder="Buscar en Trackers por UNIDAD, PLACA, GPS, DETEKTOR, L ACTIVACION, L RESPUESTA o DETALLES..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500" />
-      </div>
-
-      <!-- Tabla Trackers -->
-      <div class="overflow-x-auto rounded-xl border border-slate-800">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-950/95 border-b border-emerald-500/20 text-[11px] font-mono uppercase tracking-wider text-emerald-300">
-              <th class="py-3 px-3.5">UNIDAD</th>
-              <th class="py-3 px-3.5">PLACA</th>
-              <th class="py-3 px-3.5">GPS</th>
-              <th class="py-3 px-3.5">DETEKTOR</th>
-              <th class="py-3 px-3.5">L ACTIVACION</th>
-              <th class="py-3 px-3.5">L RESPUESTA</th>
-              <th class="py-3 px-3.5">DETALLES</th>
-              <th class="py-3 px-3.5 text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="publicTableBody" class="divide-y divide-slate-800/70 text-sm"></tbody>
-        </table>
-      </div>
-    </main>
-
-    <!-- ===================================================================== -->
-    <!-- SECCIÓN 2: SANCTUARY (HOJA PRIVADA CON BUSCADOR INTELIGENTE)          -->
-    <!-- ===================================================================== -->
-    <section id="viewSanctuary" class="hidden led-active-border glass-panel rounded-2xl p-5 sm:p-6 animate-fade-in">
-      <!-- Encabezado de Sanctuary con Cocodrilo Animado -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-5 border-b border-emerald-500/20">
-        <div class="flex items-center gap-3">
-          <div id="sanctuaryBannerCroc" class="croc-trigger p-2 rounded-xl bg-emerald-500/15 border border-emerald-400/40">
-            <svg class="w-9 h-9 croc-glow-svg" viewBox="0 0 64 56" fill="none">
-              <g class="croc-lower-jaw">
-                <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="1.8"/>
-                <polygon points="29,32 31,27 33,32" fill="#ecfdf5"/>
-                <polygon points="41,32 43,27 45,32" fill="#ecfdf5"/>
-              </g>
-              <g class="croc-upper-jaw">
-                <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
-                <circle cx="23" cy="20" r="2.8" fill="#022c22"/>
-                <ellipse cx="23" cy="20" rx="1" ry="2" fill="#6ee7b7"/>
-                <polygon points="25,29 27,34 29,29" fill="#ecfdf5"/>
-                <polygon points="36,29 38,35 40,29" fill="#ecfdf5"/>
-                <polygon points="47,29 49,34 51,29" fill="#ecfdf5"/>
-              </g>
-            </svg>
-          </div>
+<!-- ... existing code ... -->
           <div>
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
               <span>Sanctuary</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">Acceso Habilitado</span>
+              <span class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">2FA Verificado</span>
             </h2>
             <p class="text-xs text-slate-400">Panel privado con buscador inteligente y filtros rápidos por categoría.</p>
           </div>
         </div>
 
-        <button onclick="lockSanctuary()" class="self-start sm:self-auto px-3.5 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/40 text-xs font-semibold transition-all cursor-pointer">
-          🔒 Cerrar Sanctuary
-        </button>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="toggleSanctuary2FAPanel()" class="px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-emerald-300 border border-emerald-500/35 text-xs font-semibold transition-all cursor-pointer">
+            📱 Configurar 2FA (QR)
+          </button>
+          <button type="button" onclick="exportVaultBackupJSON()" class="px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer">
+            💾 Respaldo JSON
+          </button>
+          <button onclick="lockSanctuary()" class="px-3.5 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/40 text-xs font-semibold transition-all cursor-pointer">
+            🔒 Cerrar Sanctuary
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Desplegable de Configuración 2FA dentro de Sanctuary -->
+      <div id="sanctuary2FAPanel" class="hidden p-4 mb-5 rounded-2xl bg-slate-950/90 border border-emerald-500/35 animate-fade-in">
+        <div class="flex flex-col md:flex-row items-center gap-5">
+          <div id="sanctuaryQrHolder" class="p-3 rounded-xl bg-white shadow-lg shrink-0"></div>
+          <div class="space-y-2.5 flex-1">
+            <div class="flex items-center justify-between gap-2">
+              <h4 class="text-sm font-bold text-white">Autenticador TOTP de 6 dígitos (RFC 6238)</h4>
+              <span id="sanctuaryTotpLivePreview" class="px-2.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/35 font-mono text-xs text-emerald-300">Código actual: ------</span>
+            </div>
+            <p class="text-xs text-slate-400">Escanea este código QR con Google Authenticator, Authy o Microsoft Authenticator, o copia la clave secreta Base32 manualmente.</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <code id="sanctuarySecretText" class="px-3 py-1.5 rounded-lg bg-black/80 border border-slate-700 font-mono text-xs text-emerald-300 select-all"></code>
+              <button type="button" onclick="copyCurrentTotpSecret()" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 text-xs font-semibold cursor-pointer">
+                Copiar Clave Base32
+              </button>
+              <button type="button" onclick="regenerateTotpSecret()" class="px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-semibold cursor-pointer">
+                Generar Nueva Llave
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- BUSCADOR INTELIGENTE MULTICRITERIO -->
-      <div class="p-4 mb-5 rounded-2xl bg-gradient-to-br from-emerald-950/55 to-slate-950/90 border border-emerald-500/45 shadow-[0_0_25px_rgba(16,185,129,0.12)]">
-        <div class="relative flex items-center">
-          <svg class="w-5 h-5 text-emerald-400 absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            id="smartVaultSearch"
-            oninput="renderVaultTable()"
-            placeholder="Buscador inteligente: filtra por servicio, usuario, enlace, categoría o nota..."
-            class="w-full pl-11 pr-24 py-3 rounded-xl bg-black/75 border border-emerald-500/40 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25"
-          />
-          <button type="button" onclick="clearVaultSearch()" class="absolute right-2.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 cursor-pointer">
-            Limpiar
-          </button>
-        </div>
-
+<!-- ... existing code ... -->
         <!-- Filtros rápidos por categoría -->
         <div id="categoryChips" class="flex flex-wrap items-center gap-2 mt-3">
-          <button type="button" data-cat="ALL" onclick="setVaultCategory('ALL', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/25 text-emerald-200 border border-emerald-400 cursor-pointer">Todos</button>
+          <button type="button" data-cat="ALL" onclick="setVaultCategory('ALL', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/25 text-emerald-200 border border-emerald-400 cursor-pointer">Todas</button>
           <button type="button" data-cat="Sistemas" onclick="setVaultCategory('Sistemas', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Sistemas</button>
           <button type="button" data-cat="Accesos Web" onclick="setVaultCategory('Accesos Web', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Accesos Web</button>
           <button type="button" data-cat="Redes" onclick="setVaultCategory('Redes', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Redes</button>
@@ -446,74 +116,12 @@
           <span id="vaultSearchStats" class="ml-auto font-mono text-xs text-emerald-300">0 registros</span>
         </div>
       </div>
-
-      <!-- Formulario para Agregar Credencial en Sanctuary -->
-      <form id="formVault" onsubmit="addVaultItem(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 p-4 mb-5 rounded-xl bg-black/40 border border-emerald-500/15">
-        <div class="lg:col-span-1">
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Servicio / Cuenta *</label>
-          <input type="text" id="vServicio" required placeholder="Ej. Portal Principal" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Categoría</label>
-          <select id="vCategoria" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500">
-            <option value="Sistemas">Sistemas</option>
-            <option value="Accesos Web">Accesos Web</option>
-            <option value="Redes">Redes</option>
-            <option value="Plataformas">Plataformas</option>
-            <option value="Otros">Otros</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Usuario / ID *</label>
-          <input type="text" id="vUsuario" required placeholder="Ej. usuario_admin" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Contraseña *</label>
-          <div class="flex gap-1">
-            <input type="text" id="vPass" required placeholder="Clave de acceso" class="w-full px-2.5 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
-            <button type="button" onclick="generateStrongPass()" class="px-2.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-mono cursor-pointer" title="Generar clave">Gen</button>
-          </div>
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Enlace / Dirección</label>
-          <input type="text" id="vHost" placeholder="https://..." class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Etiquetas / Notas</label>
-          <input type="text" id="vNotas" placeholder="Notas adicionales..." class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div class="flex items-end">
-          <button type="submit" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-[0_0_15px_rgba(16,185,129,0.25)] cursor-pointer">
-            + Guardar
-          </button>
-        </div>
-      </form>
-
-      <!-- Tabla de Credenciales en Sanctuary -->
-      <div class="overflow-x-auto rounded-xl border border-slate-800">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-950/95 border-b border-emerald-500/20 text-[11px] font-mono uppercase tracking-wider text-emerald-300">
-              <th class="py-3 px-4">Servicio / Cuenta</th>
-              <th class="py-3 px-4">Categoría</th>
-              <th class="py-3 px-4">Usuario</th>
-              <th class="py-3 px-4">Contraseña</th>
-              <th class="py-3 px-4">Enlace / Dirección</th>
-              <th class="py-3 px-4">Etiquetas / Notas</th>
-              <th class="py-3 px-4 text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="vaultTableBody" class="divide-y divide-slate-800/70 text-sm"></tbody>
-        </table>
-      </div>
-    </section>
-  </div>
-
+<!-- ... existing code ... -->
   <!-- ===================================================================== -->
-  <!-- MODAL DE ACCESO A SANCTUARY Y MODO EDICIÓN                            -->
+  <!-- MODAL DE DOBLE FACTOR (CLAVE + TOTP 6 DÍGITOS RFC 6238)               -->
   <!-- ===================================================================== -->
-  <div id="sanctuaryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="if(event.target===this) closeSanctuaryModal()">
-    <div class="glass-panel led-active-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in">
+  <div id="sanctuaryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto" onclick="if(event.target===this) closeSanctuaryModal()">
+    <div class="glass-panel led-active-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in my-auto">
       <div class="flex items-center gap-3.5 mb-4">
         <div id="modalCrocIcon" class="croc-trigger croc-chomp-active p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/50">
           <svg class="w-11 h-11 croc-glow-svg" viewBox="0 0 64 56" fill="none">
@@ -533,15 +141,45 @@
           </svg>
         </div>
         <div>
-          <h3 id="modalTitle" class="text-lg font-bold text-white">Acceso a Sanctuary</h3>
-          <p id="modalSubtitle" class="text-xs text-slate-400">Introduce el código de autorización para habilitar Sanctuary y el Modo Edición.</p>
+          <h3 id="modalTitle" class="text-lg font-bold text-white">Verificación de Doble Factor</h3>
+          <p id="modalSubtitle" class="text-xs text-slate-400">Ingresa tu clave de acceso y el código TOTP de 6 dígitos para desbloquear.</p>
         </div>
       </div>
 
-      <form onsubmit="verifySanctuaryKey(event)" class="space-y-4">
+      <form onsubmit="verifySanctuaryKey(event)" class="space-y-3.5">
         <div>
-          <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Código de Acceso</label>
-          <input type="password" id="masterKeyInput" required autocomplete="off" placeholder="Ingresa el código..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-sm text-white font-mono focus:outline-none focus:border-emerald-400" />
+          <label class="block text-xs font-mono uppercase text-slate-300 mb-1">1. Clave de Acceso</label>
+          <input type="password" id="masterKeyInput" required autocomplete="off" placeholder="Ingresa la clave maestra..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-sm text-white font-mono focus:outline-none focus:border-emerald-400" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-mono uppercase text-slate-300">2. Código TOTP (6 dígitos)</label>
+            <span id="totpTimerBadge" class="text-[11px] font-mono text-emerald-400">30s</span>
+          </div>
+          <input type="text" id="totpCodeInput" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-base text-center tracking-[0.45em] text-emerald-300 font-mono font-bold focus:outline-none focus:border-emerald-400" />
+        </div>
+
+        <!-- Botón discreto para vincular App Authenticator -->
+        <div class="pt-0.5">
+          <button type="button" onclick="toggleModalQrSetup()" class="text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-4 font-medium cursor-pointer">
+            Vincular App (QR / Clave)
+          </button>
+
+          <div id="modalQrSetupBox" class="hidden mt-3 p-3.5 rounded-xl bg-slate-950/95 border border-emerald-500/30 space-y-2.5">
+            <div class="flex items-center gap-3">
+              <div id="modalQrHolder" class="p-2 rounded-lg bg-white shrink-0"></div>
+              <div class="space-y-1.5 min-w-0">
+                <p class="text-[11px] text-slate-300 leading-snug">Escanea con <strong class="text-emerald-300">Google Authenticator</strong>, <strong class="text-emerald-300">Authy</strong> o <strong class="text-emerald-300">Microsoft Authenticator</strong>:</p>
+                <div class="flex items-center gap-1.5">
+                  <code id="modalSecretText" class="px-2 py-1 rounded bg-black border border-slate-800 font-mono text-[11px] text-emerald-300 truncate block"></code>
+                  <button type="button" onclick="copyCurrentTotpSecret()" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] text-emerald-200 shrink-0 cursor-pointer">
+                    Copiar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="modalError" class="text-xs text-rose-400 min-h-[18px]"></div>
@@ -551,7 +189,7 @@
             Cancelar
           </button>
           <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-[0_0_18px_rgba(16,185,129,0.35)] cursor-pointer">
-            Autorizar
+            Verificar y Desbloquear
           </button>
         </div>
       </form>
@@ -563,9 +201,11 @@
 
   <script>
     // =========================================================================
-    // CONFIGURACIÓN GENERAL Y PERSISTENCIA LOCAL (SKYNET2026)
+    // CONFIGURACIÓN GENERAL Y PERSISTENCIA LOCAL (SKYNET2026 + TOTP RFC 6238)
     // =========================================================================
     const EXPECTED_KEY = "SKYNET2026";
+    const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
+    const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
     const STORAGE_PUBLIC = "mdz_trackers_v1";
     const STORAGE_VAULT = "mdz_sanctuary_items_v3";
 
@@ -574,7 +214,381 @@
     let pendingAction = "sanctuary"; // "sanctuary" | "edit"
     let selectedCategory = "ALL";
     let revealedIds = new Set();
+    let totpTicker = null;
 
+    function getTotpSecret() {
+      let secret = localStorage.getItem(STORAGE_TOTP_SECRET);
+      if (!secret || !/^[A-Z2-7]{16,64}$/.test(secret)) {
+        secret = DEFAULT_TOTP_SECRET;
+        localStorage.setItem(STORAGE_TOTP_SECRET, secret);
+      }
+      return secret;
+    }
+
+    function getOtpAuthUri(secret) {
+      return `otpauth://totp/MDZ-WORK:Sanctuary?secret=${secret}&issuer=MDZ-WORK&algorithm=SHA1&digits=6&period=30`;
+    }
+
+    // =========================================================================
+    // MOTOR TOTP RFC 6238 (HMAC-SHA1 CON WEB CRYPTO API + TOLERANCIA ±1 PASO)
+    // =========================================================================
+    function base32ToBytes(base32) {
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+      const clean = String(base32 || "").toUpperCase().replace(/=+$/, "").replace(/\s+/g, "");
+      let bits = 0;
+      let value = 0;
+      const output = [];
+      for (let i = 0; i < clean.length; i++) {
+        const idx = alphabet.indexOf(clean[i]);
+        if (idx === -1) continue;
+        value = (value << 5) | idx;
+        bits += 5;
+        if (bits >= 8) {
+          output.push((value >>> (bits - 8)) & 255);
+          bits -= 8;
+        }
+      }
+      return new Uint8Array(output);
+    }
+
+    async function generateTotpForCounter(secretBase32, counter) {
+      const keyBytes = base32ToBytes(secretBase32);
+      const cryptoKey = await crypto.subtle.importKey(
+        "raw",
+        keyBytes,
+        { name: "HMAC", hash: { name: "SHA-1" } },
+        false,
+        ["sign"]
+      );
+
+      const counterBuf = new ArrayBuffer(8);
+      const view = new DataView(counterBuf);
+      const high = Math.floor(counter / 0x100000000);
+      const low = counter >>> 0;
+      view.setUint32(0, high, false);
+      view.setUint32(4, low, false);
+
+      const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBuf));
+      const offset = hmac[hmac.length - 1] & 0x0f;
+      const binary =
+        ((hmac[offset] & 0x7f) << 24) |
+        ((hmac[offset + 1] & 0xff) << 16) |
+        ((hmac[offset + 2] & 0xff) << 8) |
+        (hmac[offset + 3] & 0xff);
+
+      return String(binary % 1000000).padStart(6, "0");
+    }
+
+    async function verifyTotpCode(userCode, secretBase32) {
+      const cleanCode = String(userCode || "").trim();
+      if (!/^\d{6}$/.test(cleanCode)) return false;
+      const currentStep = Math.floor(Date.now() / 1000 / 30);
+      // Ventana de tolerancia ±1 bloque de 30s para absorber ligeros desfases de reloj
+      for (const offset of [-1, 0, 1]) {
+        const expected = await generateTotpForCounter(secretBase32, currentStep + offset);
+        if (expected === cleanCode) return true;
+      }
+      return false;
+    }
+
+    // =========================================================================
+    // GENERADOR QR SVG AUTOCONTENIDO (SIN DEPENDENCIAS NI APIS EXTERNAS)
+    // =========================================================================
+    const QrEngine = (() => {
+      const EXP = new Uint8Array(512);
+      const LOG = new Uint8Array(256);
+      let x = 1;
+      for (let i = 0; i < 255; i++) {
+        EXP[i] = x;
+        LOG[x] = i;
+        x <<= 1;
+        if (x & 0x100) x ^= 0x11d;
+      }
+      for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+
+      function gfMul(a, b) {
+        return a === 0 || b === 0 ? 0 : EXP[LOG[a] + LOG[b]];
+      }
+
+      function rsGenPoly(nsym) {
+        let g = [1];
+        for (let i = 0; i < nsym; i++) {
+          const next = new Array(g.length + 1).fill(0);
+          for (let j = 0; j < g.length; j++) {
+            next[j] ^= g[j];
+            next[j + 1] ^= gfMul(g[j], EXP[i]);
+          }
+          g = next;
+        }
+        return g;
+      }
+
+      function rsEncode(data, nsym) {
+        const gen = rsGenPoly(nsym);
+        const res = new Uint8Array(data.length + nsym);
+        res.set(data);
+        for (let i = 0; i < data.length; i++) {
+          const coef = res[i];
+          if (coef !== 0) {
+            for (let j = 1; j < gen.length; j++) {
+              res[i + j] ^= gfMul(gen[j], coef);
+            }
+          }
+        }
+        return res.slice(data.length);
+      }
+
+      // Capacidades Byte Mode Nivel L para versiones 1..10
+      const VERSION_INFO = [
+        null,
+        { size: 21, total: 26, ec: 7, blocks: [19], align: [] },
+        { size: 25, total: 44, ec: 10, blocks: [34], align: [6, 18] },
+        { size: 29, total: 70, ec: 15, blocks: [55], align: [6, 22] },
+        { size: 33, total: 100, ec: 20, blocks: [80], align: [6, 26] },
+        { size: 37, total: 134, ec: 26, blocks: [108], align: [6, 30] },
+        { size: 41, total: 172, ec: 18, blocks: [68, 68], align: [6, 34] },
+        { size: 45, total: 196, ec: 20, blocks: [78, 78], align: [6, 22, 38] },
+        { size: 49, total: 242, ec: 24, blocks: [97, 97], align: [6, 24, 42] },
+        { size: 53, total: 292, ec: 30, blocks: [116, 116], align: [6, 26, 46] },
+        { size: 57, total: 346, ec: 18, blocks: [68, 68, 69, 69], align: [6, 28, 50] }
+      ];
+
+      function buildMatrix(text) {
+        const bytes = new TextEncoder().encode(text);
+        let ver = 1;
+        while (ver <= 10) {
+          const cap = VERSION_INFO[ver].blocks.reduce((a, b) => a + b, 0) - 2;
+          if (bytes.length <= cap) break;
+          ver++;
+        }
+        if (ver > 10) ver = 10;
+        const spec = VERSION_INFO[ver];
+        const dataCap = spec.blocks.reduce((a, b) => a + b, 0);
+
+        const bitBuf = [];
+        const pushBits = (val, len) => {
+          for (let i = len - 1; i >= 0; i--) bitBuf.push((val >>> i) & 1);
+        };
+
+        pushBits(0b0100, 4); // Byte mode
+        pushBits(bytes.length, ver <= 9 ? 8 : 16);
+        for (const b of bytes) pushBits(b, 8);
+        pushBits(0, Math.min(4, dataCap * 8 - bitBuf.length));
+        while (bitBuf.length % 8 !== 0) bitBuf.push(0);
+
+        const codewords = [];
+        for (let i = 0; i < bitBuf.length; i += 8) {
+          let byte = 0;
+          for (let j = 0; j < 8; j++) byte = (byte << 1) | bitBuf[i + j];
+          codewords.push(byte);
+        }
+        const pads = [0xec, 0x11];
+        let pIdx = 0;
+        while (codewords.length < dataCap) {
+          codewords.push(pads[pIdx % 2]);
+          pIdx++;
+        }
+
+        const dataBlocks = [];
+        const ecBlocks = [];
+        let offset = 0;
+        for (const bLen of spec.blocks) {
+          const slice = codewords.slice(offset, offset + bLen);
+          offset += bLen;
+          dataBlocks.push(slice);
+          ecBlocks.push(Array.from(rsEncode(slice, spec.ec)));
+        }
+
+        const finalStream = [];
+        const maxDataLen = Math.max(...dataBlocks.map(b => b.length));
+        for (let i = 0; i < maxDataLen; i++) {
+          for (const b of dataBlocks) if (i < b.length) finalStream.push(b[i]);
+        }
+        for (let i = 0; i < spec.ec; i++) {
+          for (const b of ecBlocks) if (i < b.length) finalStream.push(b[i]);
+        }
+
+        const n = spec.size;
+        const grid = Array.from({ length: n }, () => new Int8Array(n).fill(-1));
+        const reserved = Array.from({ length: n }, () => new Uint8Array(n));
+
+        const setModule = (r, c, val, isFunc = true) => {
+          if (r < 0 || r >= n || c < 0 || c >= n) return;
+          grid[r][c] = val ? 1 : 0;
+          if (isFunc) reserved[r][c] = 1;
+        };
+
+        const drawFinder = (r0, c0) => {
+          for (let dr = -1; dr <= 7; dr++) {
+            for (let dc = -1; dc <= 7; dc++) {
+              const r = r0 + dr, c = c0 + dc;
+              if (r < 0 || r >= n || c < 0 || c >= n) continue;
+              const inBox = dr >= 0 && dr <= 6 && dc >= 0 && dc <= 6;
+              const onBorder = dr === 0 || dr === 6 || dc === 0 || dc === 6;
+              const inCenter = dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4;
+              setModule(r, c, inBox && (onBorder || inCenter), true);
+            }
+          }
+        };
+
+        drawFinder(0, 0);
+        drawFinder(0, n - 7);
+        drawFinder(n - 7, 0);
+
+        for (let i = 8; i < n - 8; i++) {
+          setModule(6, i, i % 2 === 0, true);
+          setModule(i, 6, i % 2 === 0, true);
+        }
+
+        if (spec.align.length > 0) {
+          for (const r of spec.align) {
+            for (const c of spec.align) {
+              if (reserved[r][c]) continue;
+              for (let dr = -2; dr <= 2; dr++) {
+                for (let dc = -2; dc <= 2; dc++) {
+                  const dark = Math.abs(dr) === 2 || Math.abs(dc) === 2 || (dr === 0 && dc === 0);
+                  setModule(r + dr, c + dc, dark, true);
+                }
+              }
+            }
+          }
+        }
+
+        // Reservar áreas de formato
+        for (let i = 0; i < 9; i++) {
+          if (i !== 6) {
+            reserved[8][i] = 1;
+            reserved[i][8] = 1;
+          }
+        }
+        for (let i = 0; i < 8; i++) {
+          reserved[8][n - 1 - i] = 1;
+          reserved[n - 1 - i][8] = 1;
+        }
+        setModule(n - 8, 8, 1, true);
+
+        // Colocar bits con máscara 0 ((r + c) % 2 === 0)
+        const streamBits = [];
+        for (const byte of finalStream) {
+          for (let b = 7; b >= 0; b--) streamBits.push((byte >>> b) & 1);
+        }
+
+        let bitIdx = 0;
+        let upward = true;
+        for (let right = n - 1; right >= 1; right -= 2) {
+          if (right === 6) right = 5;
+          for (let step = 0; step < n; step++) {
+            const r = upward ? n - 1 - step : step;
+            for (let dx = 0; dx < 2; dx++) {
+              const c = right - dx;
+              if (!reserved[r][c]) {
+                const rawBit = bitIdx < streamBits.length ? streamBits[bitIdx++] : 0;
+                const masked = ((r + c) % 2 === 0) ? (rawBit ^ 1) : rawBit;
+                grid[r][c] = masked;
+              }
+            }
+          }
+          upward = !upward;
+        }
+
+        // Formato ECC Level L (01) + Mask 0 (000) => 111011111000100
+        const fmtBits = [1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0];
+        const coordsA = [[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,7],[8,8],[7,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]];
+        const coordsB = [[n-1,8],[n-2,8],[n-3,8],[n-4,8],[n-5,8],[n-6,8],[n-7,8],[8,n-8],[8,n-7],[8,n-6],[8,n-5],[8,n-4],[8,n-3],[8,n-2],[8,n-1]];
+        for (let i = 0; i < 15; i++) {
+          grid[coordsA[i][0]][coordsA[i][1]] = fmtBits[i];
+          grid[coordsB[i][0]][coordsB[i][1]] = fmtBits[i];
+        }
+
+        return grid;
+      }
+
+      function renderSvg(text, pxSize = 132) {
+        const grid = buildMatrix(text);
+        const n = grid.length;
+        const quiet = 2;
+        const total = n + quiet * 2;
+        let rects = "";
+        for (let r = 0; r < n; r++) {
+          for (let c = 0; c < n; c++) {
+            if (grid[r][c] === 1) {
+              rects += `<rect x="${c + quiet}" y="${r + quiet}" width="1" height="1" fill="#022c22"/>`;
+            }
+          }
+        }
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" width="${pxSize}" height="${pxSize}" shape-rendering="crispEdges"><rect width="${total}" height="${total}" fill="#ffffff"/>${rects}</svg>`;
+      }
+
+      return { renderSvg };
+    })();
+
+    function renderQrSetupWidgets() {
+      const secret = getTotpSecret();
+      const uri = getOtpAuthUri(secret);
+
+      const modalQr = document.getElementById("modalQrHolder");
+      const modalSec = document.getElementById("modalSecretText");
+      if (modalQr) modalQr.innerHTML = QrEngine.renderSvg(uri, 112);
+      if (modalSec) modalSec.textContent = secret;
+
+      const sancQr = document.getElementById("sanctuaryQrHolder");
+      const sancSec = document.getElementById("sanctuarySecretText");
+      if (sancQr) sancQr.innerHTML = QrEngine.renderSvg(uri, 136);
+      if (sancSec) sancSec.textContent = secret;
+    }
+
+    function toggleModalQrSetup() {
+      const box = document.getElementById("modalQrSetupBox");
+      renderQrSetupWidgets();
+      box.classList.toggle("hidden");
+    }
+
+    function toggleSanctuary2FAPanel() {
+      const panel = document.getElementById("sanctuary2FAPanel");
+      renderQrSetupWidgets();
+      panel.classList.toggle("hidden");
+      updateLiveTotpPreview();
+    }
+
+    function copyCurrentTotpSecret() {
+      copyText(getTotpSecret(), "Clave secreta Base32");
+    }
+
+    function regenerateTotpSecret() {
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+      const rand = new Uint8Array(24);
+      crypto.getRandomValues(rand);
+      const nextSecret = Array.from(rand, b => alphabet[b % 32]).join("");
+      localStorage.setItem(STORAGE_TOTP_SECRET, nextSecret);
+      renderQrSetupWidgets();
+      updateLiveTotpPreview();
+      showToast("Nueva llave 2FA generada. Escanea el nuevo QR en tu app.");
+    }
+
+    async function updateLiveTotpPreview() {
+      const remaining = 30 - (Math.floor(Date.now() / 1000) % 30);
+      const timerBadge = document.getElementById("totpTimerBadge");
+      if (timerBadge) timerBadge.textContent = `${remaining}s`;
+
+      if (isUnlocked) {
+        const previewEl = document.getElementById("sanctuaryTotpLivePreview");
+        if (previewEl && !document.getElementById("sanctuary2FAPanel").classList.contains("hidden")) {
+          const step = Math.floor(Date.now() / 1000 / 30);
+          const code = await generateTotpForCounter(getTotpSecret(), step);
+          previewEl.textContent = `Código actual: ${code} (${remaining}s)`;
+        }
+      }
+    }
+
+    function startTotpClock() {
+      if (totpTicker) clearInterval(totpTicker);
+      updateLiveTotpPreview();
+      totpTicker = setInterval(updateLiveTotpPreview, 1000);
+    }
+
+    // =========================================================================
+    // DATOS Y PERSISTENCIA DE TRACKERS & SANCTUARY
+    // =========================================================================
     const defaultTrackersSeed = [
       { id: 1, unidad: "NOVEMBER 5", placa: "BYU-795", gps: "868574042607064", detektor: "1DB199", activacion: "D7D21B3", respuesta: "3VNAF", detalles: "Cambiar Switch" },
       { id: 2, unidad: "Q2", placa: "CVJ-121", gps: "", detektor: "1DB7E5", activacion: "", respuesta: "MHC88", detalles: "PL011-93-81" },
@@ -645,7 +659,7 @@
     }
 
     // =========================================================================
-    // CONTROL DE MODO EDICIÓN Y ACCESO A SANCTUARY (SKYNET2026)
+    // CONTROL DE MODO EDICIÓN Y DOBLE FACTOR SANCTUARY
     // =========================================================================
     function toggleEditMode() {
       if (!isUnlocked) {
@@ -692,7 +706,7 @@
         formPub.classList.add("hidden");
         formPub.classList.remove("grid");
         restoreLabel.classList.add("hidden");
-        hint.textContent = "Vista protegida en modo lectura. Activa el Modo Edición para agregar, modificar o eliminar registros.";
+        hint.textContent = "Vista protegida en modo lectura. Valida el doble factor para habilitar pestañas y Modo Edición.";
 
         if (formVault) {
           formVault.classList.add("hidden");
@@ -726,20 +740,24 @@
       pendingAction = mode;
       const modal = document.getElementById("sanctuaryModal");
       const input = document.getElementById("masterKeyInput");
+      const totpInput = document.getElementById("totpCodeInput");
       const err = document.getElementById("modalError");
       const title = document.getElementById("modalTitle");
       const sub = document.getElementById("modalSubtitle");
 
       if (mode === "edit") {
-        title.textContent = "Habilitar Modo Edición";
-        sub.textContent = "Ingresa el código de autorización para desbloquear la edición de registros y Sanctuary.";
+        title.textContent = "Habilitar Modo Edición (2FA)";
+        sub.textContent = "Ingresa la clave de acceso y tu código TOTP de 6 dígitos para desbloquear pestañas y edición.";
       } else {
-        title.textContent = "Acceso a Sanctuary";
-        sub.textContent = "Introduce el código de autorización para habilitar Sanctuary y el Modo Edición.";
+        title.textContent = "Acceso a Sanctuary (2FA)";
+        sub.textContent = "Ingresa la clave de acceso y tu código TOTP de 6 dígitos para desbloquear.";
       }
 
       err.textContent = "";
       input.value = "";
+      totpInput.value = "";
+      renderQrSetupWidgets();
+      updateLiveTotpPreview();
       modal.classList.remove("hidden");
       setTimeout(() => input.focus(), 60);
     }
@@ -747,20 +765,33 @@
     function closeSanctuaryModal() {
       document.getElementById("sanctuaryModal").classList.add("hidden");
       document.getElementById("masterKeyInput").value = "";
+      document.getElementById("totpCodeInput").value = "";
       document.getElementById("modalError").textContent = "";
     }
 
-    function verifySanctuaryKey(e) {
+    async function verifySanctuaryKey(e) {
       e.preventDefault();
-      const input = document.getElementById("masterKeyInput");
+      const keyInput = document.getElementById("masterKeyInput");
+      const totpInput = document.getElementById("totpCodeInput");
       const errorEl = document.getElementById("modalError");
-      const typedKey = input.value.trim();
+
+      const typedKey = keyInput.value.trim();
+      const typedTotp = totpInput.value.trim();
 
       if (typedKey !== EXPECTED_KEY) {
         triggerCrocChomp();
-        errorEl.textContent = "Código incorrecto. Acceso denegado.";
-        input.value = "";
-        input.focus();
+        errorEl.textContent = "Clave de acceso incorrecta.";
+        keyInput.value = "";
+        keyInput.focus();
+        return;
+      }
+
+      const validTotp = await verifyTotpCode(typedTotp, getTotpSecret());
+      if (!validTotp) {
+        triggerCrocChomp();
+        errorEl.textContent = "Código TOTP de 6 dígitos inválido o expirado.";
+        totpInput.value = "";
+        totpInput.focus();
         return;
       }
 
@@ -776,10 +807,11 @@
 
       if (pendingAction === "sanctuary") {
         switchTab("sanctuary");
-        showToast("Sanctuary y Modo Edición habilitados.");
+        showToast("Doble factor verificado: Sanctuary y Modo Edición habilitados.");
         setTimeout(() => document.getElementById("smartVaultSearch")?.focus(), 100);
       } else {
-        showToast("Modo Edición y Sanctuary habilitados.");
+        switchTab("public");
+        showToast("Doble factor verificado: Modo Edición y pestañas habilitados.");
       }
 
       triggerCrocChomp();
@@ -790,452 +822,40 @@
       isEditMode = false;
       vaultItems = [];
       revealedIds.clear();
+      document.getElementById("sanctuary2FAPanel").classList.add("hidden");
       updateSanctuaryUI();
       updateEditModeUI();
       renderPublicTable();
       switchTab("public");
-      showToast("Sanctuary cerrado y Modo Edición bloqueado.");
+      showToast("Sanctuary bloqueado y capa de pestañas oculta.");
     }
 
     function updateSanctuaryUI() {
-      const tabSanctuary = document.getElementById("tabSanctuary");
+      const tabsLayer = document.getElementById("tabsLayer");
       const btnLabel = document.getElementById("sanctuaryBtnLabel");
       const btnTrigger = document.getElementById("btnSanctuaryTrigger");
 
       if (isUnlocked) {
-        tabSanctuary.classList.remove("hidden");
-        tabSanctuary.classList.add("inline-flex");
+        tabsLayer.classList.remove("hidden");
+        tabsLayer.classList.add("flex");
         btnLabel.textContent = "Bloquear Sanctuary";
         btnTrigger.classList.add("bg-emerald-500/35", "border-emerald-300");
       } else {
-        tabSanctuary.classList.add("hidden");
-        tabSanctuary.classList.remove("inline-flex");
+        tabsLayer.classList.add("hidden");
+        tabsLayer.classList.remove("flex");
         btnLabel.textContent = "Sanctuary";
         btnTrigger.classList.remove("bg-emerald-500/35", "border-emerald-300");
       }
     }
-
-    function switchTab(tab) {
-      if (tab === "sanctuary" && !isUnlocked) {
-        openSanctuaryModal("sanctuary");
-        return;
-      }
-
-      const tabPub = document.getElementById("tabPublic");
-      const tabSanc = document.getElementById("tabSanctuary");
-      const viewPub = document.getElementById("viewPublic");
-      const viewSanc = document.getElementById("viewSanctuary");
-
-      if (tab === "sanctuary") {
-        viewPub.classList.add("hidden");
-        viewSanc.classList.remove("hidden");
-
-        tabPub.classList.remove("bg-emerald-500/20", "text-emerald-300", "border", "border-emerald-500/40");
-        tabPub.classList.add("text-slate-300");
-
-        tabSanc.classList.add("bg-emerald-500/20", "text-emerald-300", "border", "border-emerald-500/40");
-        tabSanc.classList.remove("text-slate-300");
-      } else {
-        viewSanc.classList.add("hidden");
-        viewPub.classList.remove("hidden");
-
-        tabSanc.classList.remove("bg-emerald-500/20", "text-emerald-300", "border", "border-emerald-500/40");
-        tabSanc.classList.add("text-slate-300");
-
-        tabPub.classList.add("bg-emerald-500/20", "text-emerald-300", "border", "border-emerald-500/40");
-        tabPub.classList.remove("text-slate-300");
-      }
-    }
-
-    // =========================================================================
-    // BUSCADOR INTELIGENTE & GESTIÓN EN SANCTUARY
-    // =========================================================================
-    function normalizeText(str) {
-      return String(str || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
-    }
-
-    function levenshtein(a, b) {
-      if (!a.length) return b.length;
-      if (!b.length) return a.length;
-      const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
-      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-      for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; j <= a.length; j++) {
-          matrix[i][j] = b[i - 1] === a[j - 1]
-            ? matrix[i - 1][j - 1]
-            : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
-        }
-      }
-      return matrix[b.length][a.length];
-    }
-
-    function smartMatch(item, query) {
-      if (selectedCategory !== "ALL" && item.categoria !== selectedCategory) return false;
-      if (!query) return true;
-
-      const blob = normalizeText(`${item.servicio} ${item.categoria} ${item.usuario} ${item.host} ${item.notas}`);
-      const words = blob.split(/[\s\-_./:@]+/).filter(Boolean);
-      const tokens = normalizeText(query).split(/\s+/).filter(Boolean);
-
-      return tokens.every(token => {
-        if (blob.includes(token)) return true;
-        if (token.length >= 4) {
-          return words.some(w => Math.abs(w.length - token.length) <= 2 && levenshtein(w, token) <= 1);
-        }
-        return false;
-      });
-    }
-
-    function highlightMatch(text, query) {
-      if (!text) return "";
-      const safe = escapeHtml(text);
-      if (!query) return safe;
-      const tokens = query.trim().split(/\s+/).filter(t => t.length >= 2);
-      if (!tokens.length) return safe;
-      const regex = new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
-      return safe.replace(regex, "<mark>$1</mark>");
-    }
-
-    function setVaultCategory(cat, btnEl) {
-      selectedCategory = cat;
-      document.querySelectorAll("#categoryChips .chip-btn").forEach(btn => {
-        btn.classList.remove("bg-emerald-500/25", "text-emerald-200", "border-emerald-400");
-        btn.classList.add("bg-white/5", "text-slate-300", "border-white/10");
-      });
-      btnEl.classList.remove("bg-white/5", "text-slate-300", "border-white/10");
-      btnEl.classList.add("bg-emerald-500/25", "text-emerald-200", "border-emerald-400");
-      renderVaultTable();
-    }
-
-    function clearVaultSearch() {
-      document.getElementById("smartVaultSearch").value = "";
-      const firstChip = document.querySelector('#categoryChips .chip-btn[data-cat="ALL"]');
-      if (firstChip) setVaultCategory("ALL", firstChip);
-      else renderVaultTable();
-    }
-
-    function renderVaultTable() {
+// ... existing code ...
+    function exportVaultBackupJSON() {
       if (!isUnlocked) return;
-      const query = document.getElementById("smartVaultSearch").value;
-      const tbody = document.getElementById("vaultTableBody");
-      const filtered = vaultItems.filter(item => smartMatch(item, query));
-
-      document.getElementById("sanctuaryCountPill").textContent = vaultItems.length;
-      document.getElementById("vaultSearchStats").textContent = `Mostrando ${filtered.length} de ${vaultItems.length} registros`;
-
-      if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 text-xs">No se encontraron registros para "${escapeHtml(query)}".</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(item => {
-        const shown = revealedIds.has(item.id);
-        const passText = shown ? escapeHtml(item.pass) : "••••••••••••";
-        const deleteBtnHtml = isEditMode
-          ? `<button onclick="deleteVaultItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs cursor-pointer">Eliminar</button>`
-          : `<span class="text-[11px] font-mono text-slate-500">Solo lectura</span>`;
-
-        return `
-          <tr class="hover:bg-emerald-500/5 transition-colors">
-            <td class="py-3 px-4 font-semibold text-white">${highlightMatch(item.servicio, query)}</td>
-            <td class="py-3 px-4">
-              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                ${escapeHtml(item.categoria)}
-              </span>
-            </td>
-            <td class="py-3 px-4 font-mono text-xs text-slate-200">
-              <div class="flex items-center gap-1.5">
-                <span>${highlightMatch(item.usuario, query)}</span>
-                <button onclick="copyText('${escapeAttr(item.usuario)}', 'Usuario')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 cursor-pointer" title="Copiar usuario">Copiar</button>
-              </div>
-            </td>
-            <td class="py-3 px-4 font-mono text-xs text-emerald-300">
-              <div class="flex items-center gap-1.5">
-                <span>${passText}</span>
-                <button onclick="toggleReveal(${item.id})" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 cursor-pointer">${shown ? "Ocultar" : "Ver"}</button>
-                <button onclick="copyText('${escapeAttr(item.pass)}', 'Contraseña')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] text-emerald-200 border border-emerald-500/30 cursor-pointer">Clave</button>
-              </div>
-            </td>
-            <td class="py-3 px-4 font-mono text-xs text-cyan-300">${highlightMatch(item.host || "-", query)}</td>
-            <td class="py-3 px-4 text-xs text-slate-300">${highlightMatch(item.notas || "-", query)}</td>
-            <td class="py-3 px-4 text-right whitespace-nowrap">
-              ${deleteBtnHtml}
-            </td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    function addVaultItem(e) {
-      e.preventDefault();
-      if (!isUnlocked || !isEditMode) {
-        showToast("Activa el Modo Edición para agregar registros.");
-        return;
-      }
-      vaultItems.unshift({
-        id: Date.now(),
-        servicio: document.getElementById("vServicio").value.trim(),
-        categoria: document.getElementById("vCategoria").value,
-        usuario: document.getElementById("vUsuario").value.trim(),
-        pass: document.getElementById("vPass").value.trim(),
-        host: document.getElementById("vHost").value.trim(),
-        notas: document.getElementById("vNotas").value.trim()
-      });
-      persistVault();
-      e.target.reset();
-      renderVaultTable();
-      showToast("Registro guardado en Sanctuary.");
-    }
-
-    function deleteVaultItem(id) {
-      if (!isUnlocked || !isEditMode) {
-        showToast("Activa el Modo Edición para eliminar registros.");
-        return;
-      }
-      vaultItems = vaultItems.filter(i => i.id !== id);
-      persistVault();
-      renderVaultTable();
-      showToast("Registro eliminado de Sanctuary.");
-    }
-
-    function toggleReveal(id) {
-      if (revealedIds.has(id)) {
-        revealedIds.delete(id);
-      } else {
-        revealedIds.add(id);
-        setTimeout(() => {
-          if (revealedIds.delete(id) && isUnlocked) renderVaultTable();
-        }, 15000);
-      }
-      renderVaultTable();
-    }
-
-    function generateStrongPass() {
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
-      const arr = new Uint32Array(14);
-      crypto.getRandomValues(arr);
-      document.getElementById("vPass").value = Array.from(arr, x => chars[x % chars.length]).join("");
-      showToast("Contraseña generada.");
-    }
-
-    // =========================================================================
-    // TABLA, EDICIÓN PROTEGIDA Y GESTIÓN DE TRACKERS
-    // =========================================================================
-    function renderPublicTable() {
-      const q = normalizeText(document.getElementById("publicSearch").value);
-      const tbody = document.getElementById("publicTableBody");
-      const filtered = publicItems.filter(i =>
-        normalizeText(`${i.unidad} ${i.placa} ${i.gps} ${i.detektor} ${i.activacion} ${i.respuesta} ${i.detalles}`).includes(q)
-      );
-
-      document.getElementById("publicCountPill").textContent = publicItems.length;
-
-      if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400 text-xs">No se encontraron trackers que coincidan con la búsqueda.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(item => {
-        if (isEditMode) {
-          return `
-            <tr class="hover:bg-emerald-500/5 transition-colors group">
-              <td class="py-2.5 px-3.5 font-mono font-bold text-emerald-400">
-                <input type="text" value="${escapeAttr(item.unidad)}" onchange="updateTrackerField(${item.id}, 'unidad', this.value)" class="w-full min-w-[110px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-emerald-400 font-bold font-mono text-xs focus:outline-none" />
-              </td>
-              <td class="py-2.5 px-3.5 font-mono">
-                <input type="text" value="${escapeAttr(item.placa)}" onchange="updateTrackerField(${item.id}, 'placa', this.value)" class="w-full min-w-[90px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-white font-semibold font-mono text-xs uppercase focus:outline-none" />
-              </td>
-              <td class="py-2.5 px-3.5 font-mono">
-                <input type="text" value="${escapeAttr(item.gps)}" placeholder="— Agregar GPS —" onchange="updateTrackerField(${item.id}, 'gps', this.value)" class="w-full min-w-[145px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-slate-200 placeholder-slate-600 font-mono text-xs focus:outline-none" />
-              </td>
-              <td class="py-2.5 px-3.5 font-mono">
-                <input type="text" value="${escapeAttr(item.detektor)}" placeholder="—" onchange="updateTrackerField(${item.id}, 'detektor', this.value)" class="w-full min-w-[85px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-cyan-300 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
-              </td>
-              <td class="py-2.5 px-3.5 font-mono">
-                <input type="text" value="${escapeAttr(item.activacion)}" placeholder="— Agregar —" onchange="updateTrackerField(${item.id}, 'activacion', this.value)" class="w-full min-w-[95px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-amber-300 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
-              </td>
-              <td class="py-2.5 px-3.5 font-mono">
-                <input type="text" value="${escapeAttr(item.respuesta)}" placeholder="—" onchange="updateTrackerField(${item.id}, 'respuesta', this.value)" class="w-full min-w-[85px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-emerald-200 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
-              </td>
-              <td class="py-2.5 px-3.5">
-                <input type="text" value="${escapeAttr(item.detalles)}" placeholder="— Detalles —" onchange="updateTrackerField(${item.id}, 'detalles', this.value)" class="w-full min-w-[135px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-slate-200 placeholder-slate-600 text-xs focus:outline-none" />
-              </td>
-              <td class="py-2.5 px-3.5 text-right whitespace-nowrap">
-                <button onclick="copyTrackerSummary(${item.id})" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs mr-1 cursor-pointer" title="Copiar fila completa">Copiar</button>
-                <button onclick="deletePublicItem(${item.id})" class="px-2 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs cursor-pointer">Eliminar</button>
-              </td>
-            </tr>
-          `;
-        }
-
-        // Vista protegida (solo lectura)
-        return `
-          <tr class="hover:bg-emerald-500/5 transition-colors">
-            <td class="py-3 px-3.5 font-mono font-bold text-emerald-400 text-xs">${escapeHtml(item.unidad)}</td>
-            <td class="py-3 px-3.5 font-mono font-semibold text-white text-xs">${escapeHtml(item.placa)}</td>
-            <td class="py-3 px-3.5 font-mono text-slate-200 text-xs">${item.gps ? escapeHtml(item.gps) : '<span class="text-slate-600">—</span>'}</td>
-            <td class="py-3 px-3.5 font-mono text-cyan-300 text-xs">${item.detektor ? escapeHtml(item.detektor) : '<span class="text-slate-600">—</span>'}</td>
-            <td class="py-3 px-3.5 font-mono text-amber-300 text-xs">${item.activacion ? escapeHtml(item.activacion) : '<span class="text-slate-600">—</span>'}</td>
-            <td class="py-3 px-3.5 font-mono text-emerald-200 text-xs">${item.respuesta ? escapeHtml(item.respuesta) : '<span class="text-slate-600">—</span>'}</td>
-            <td class="py-3 px-3.5 text-slate-200 text-xs">${item.detalles ? escapeHtml(item.detalles) : '<span class="text-slate-600">—</span>'}</td>
-            <td class="py-3 px-3.5 text-right whitespace-nowrap">
-              <button onclick="copyTrackerSummary(${item.id})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer" title="Copiar fila completa">Copiar</button>
-            </td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    function updateTrackerField(id, field, rawValue) {
-      if (!isEditMode) return;
-      const idx = publicItems.findIndex(item => item.id === id);
-      if (idx === -1) return;
-      const upperFields = ["placa", "detektor", "activacion", "respuesta"];
-      const cleaned = upperFields.includes(field) ? rawValue.trim().toUpperCase() : rawValue.trim();
-      publicItems[idx][field] = cleaned;
-      persistTrackers("Guardado automático");
-    }
-
-    function addPublicItem(e) {
-      e.preventDefault();
-      if (!isEditMode) {
-        showToast("Activa el Modo Edición para agregar registros.");
-        return;
-      }
-      publicItems.push({
-        id: Date.now(),
-        unidad: document.getElementById("tUnidad").value.trim(),
-        placa: document.getElementById("tPlaca").value.trim().toUpperCase(),
-        gps: document.getElementById("tGps").value.trim(),
-        detektor: document.getElementById("tDetektor").value.trim().toUpperCase(),
-        activacion: document.getElementById("tActivacion").value.trim().toUpperCase(),
-        respuesta: document.getElementById("tRespuesta").value.trim().toUpperCase(),
-        detalles: document.getElementById("tDetalles").value.trim()
-      });
-      persistTrackers("Tracker guardado");
-      e.target.reset();
-      renderPublicTable();
-      showToast("Tracker agregado y guardado automáticamente.");
-    }
-
-    function deletePublicItem(id) {
-      if (!isEditMode) {
-        showToast("Activa el Modo Edición para eliminar registros.");
-        return;
-      }
-      publicItems = publicItems.filter(i => i.id !== id);
-      persistTrackers("Eliminado y guardado");
-      renderPublicTable();
-      showToast("Tracker eliminado.");
-    }
-
-    function copyTrackerSummary(id) {
-      const t = publicItems.find(i => i.id === id);
-      if (!t) return;
-      const summary = `UNIDAD: ${t.unidad} | PLACA: ${t.placa} | GPS: ${t.gps || "-"} | DETEKTOR: ${t.detektor || "-"} | L ACTIVACION: ${t.activacion || "-"} | L RESPUESTA: ${t.respuesta || "-"} | DETALLES: ${t.detalles || "-"}`;
-      copyText(summary, `Tracker ${t.unidad}`);
-    }
-
-    function exportTrackersBackupJSON() {
-      const blob = new Blob([JSON.stringify(publicItems, null, 2)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(vaultItems, null, 2)], { type: "application/json" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `MDZ_Trackers_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `MDZ_Sanctuary_Backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
-      showToast("Respaldo JSON descargado.");
-    }
-
-    function importTrackersBackupJSON(event) {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (!Array.isArray(imported)) throw new Error("Formato inválido");
-          publicItems = imported.map((row, idx) => ({
-            id: row.id || Date.now() + idx,
-            unidad: String(row.unidad || ""),
-            placa: String(row.placa || ""),
-            gps: String(row.gps || ""),
-            detektor: String(row.detektor || ""),
-            activacion: String(row.activacion || ""),
-            respuesta: String(row.respuesta || ""),
-            detalles: String(row.detalles || "")
-          }));
-          persistTrackers("Respaldo restaurado");
-          renderPublicTable();
-          showToast(`Se restauraron ${publicItems.length} trackers correctamente.`);
-        } catch (err) {
-          showToast("El archivo JSON seleccionado no es válido.");
-        }
-        event.target.value = "";
-      };
-      reader.readAsText(file);
-    }
-
-    // =========================================================================
-    // EXPORTACIÓN EXCEL CSV & ATAJOS DE TECLADO
-    // =========================================================================
-    function exportToExcelCSV() {
-      const inSanctuary = !document.getElementById("viewSanctuary").classList.contains("hidden") && isUnlocked;
-      let rows = [];
-      let filename = "";
-
-      if (inSanctuary) {
-        rows.push(["Servicio", "Categoria", "Usuario", "Contrasena", "IP_URL", "Notas"]);
-        vaultItems.forEach(i => rows.push([i.servicio, i.categoria, i.usuario, i.pass, i.host, i.notas]));
-        filename = "MDZ_Sanctuary_Privado.csv";
-      } else {
-        rows.push(["UNIDAD", "PLACA", "GPS", "DETEKTOR", "L ACTIVACION", "L RESPUESTA", "DETALLES"]);
-        publicItems.forEach(i => rows.push([i.unidad, i.placa, i.gps, i.detektor, i.activacion, i.respuesta, i.detalles]));
-        filename = "MDZ_Trackers.csv";
-      }
-
-      const csvContent = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      link.click();
-      showToast(`Archivo ${filename} descargado.`);
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        handleSanctuaryAction();
-      } else if (e.key === "/" && isUnlocked && !["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) {
-        e.preventDefault();
-        switchTab("sanctuary");
-        document.getElementById("smartVaultSearch").focus();
-      } else if (e.key === "Escape") {
-        closeSanctuaryModal();
-      }
-    });
-
-    function copyText(text, label) {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      showToast(`${label} copiado al portapapeles.`);
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.remove("translate-y-24", "opacity-0");
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => t.classList.add("translate-y-24", "opacity-0"), 2800);
+      showToast("Respaldo JSON de Sanctuary descargado.");
     }
 
     function escapeHtml(str) {
@@ -1248,6 +868,8 @@
 
     renderPublicTable();
     updateEditModeUI();
+    updateSanctuaryUI();
+    startTotpClock();
   </script>
 </body>
 </html>
