@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MDZ™ WORK | Inventario RF & Sanctuary AES-256</title>
+  <title>MDZ™ WORK | Panel de Control & Sanctuary</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -211,16 +211,19 @@
         <div>
           <div class="flex items-center gap-2.5">
             <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">MDZ™ <span class="text-emerald-400 font-mono">WORK</span></h1>
-            <span class="px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">
-              AES-256 GCM
-            </span>
           </div>
-          <p class="text-xs sm:text-sm text-slate-400">Gestión Técnica de Equipos RF/GPS & Sanctuary Cifrado</p>
+          <p class="text-xs sm:text-sm text-slate-400">Panel de Control de Unidades & Sanctuary</p>
         </div>
       </div>
 
       <!-- Acciones de Cabecera -->
       <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-between md:justify-end">
+        <!-- Botón Control de Modo Edición -->
+        <button id="btnEditModeToggle" onclick="toggleEditMode()" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-all cursor-pointer" title="Activar o desactivar la edición de registros">
+          <span id="editModeDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span id="editModeLabel">Modo Edición: Bloqueado</span>
+        </button>
+
         <button onclick="exportToExcelCSV()" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer" title="Exportar vista activa a Excel/CSV">
           <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -295,7 +298,7 @@
               Guardado automático activo
             </span>
           </div>
-          <p class="text-xs text-slate-400 mt-0.5">Haz clic sobre cualquier celda para editar en línea; los cambios se guardan automáticamente en tu navegador.</p>
+          <p id="trackersSubHint" class="text-xs text-slate-400 mt-0.5">Vista protegida en modo lectura. Activa el Modo Edición para agregar, modificar o eliminar registros.</p>
         </div>
 
         <!-- Respaldo JSON para portabilidad total -->
@@ -303,15 +306,15 @@
           <button type="button" onclick="exportTrackersBackupJSON()" class="px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer" title="Descargar copia de seguridad JSON">
             💾 Respaldo JSON
           </button>
-          <label class="px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer" title="Restaurar desde copia de seguridad JSON">
+          <label id="restoreJsonLabel" class="hidden px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-emerald-500/25 text-xs font-medium transition-all cursor-pointer" title="Restaurar desde copia de seguridad JSON">
             📂 Restaurar JSON
             <input type="file" accept=".json" onchange="importTrackersBackupJSON(event)" class="hidden" />
           </label>
         </div>
       </div>
 
-      <!-- Formulario de Registro de Tracker -->
-      <form id="formPublic" onsubmit="addPublicItem(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3 p-4 mb-5 rounded-xl bg-black/40 border border-emerald-500/15">
+      <!-- Formulario de Registro de Tracker (Visible solo con Modo Edición activo) -->
+      <form id="formPublic" onsubmit="addPublicItem(event)" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3 p-4 mb-5 rounded-xl bg-black/40 border border-emerald-500/15">
         <div>
           <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">UNIDAD *</label>
           <input type="text" id="tUnidad" required placeholder="Ej. NOVEMBER 5" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
@@ -402,9 +405,9 @@
           <div>
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
               <span>Sanctuary</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">Cifrado Activo</span>
+              <span class="px-2 py-0.5 text-[11px] font-mono rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/35">Acceso Habilitado</span>
             </h2>
-            <p class="text-xs text-slate-400">Bóveda protegida con buscador inteligente tolerante a errores y acentos.</p>
+            <p class="text-xs text-slate-400">Panel privado con buscador inteligente y filtros rápidos por categoría.</p>
           </div>
         </div>
 
@@ -423,7 +426,7 @@
             type="text"
             id="smartVaultSearch"
             oninput="renderVaultTable()"
-            placeholder="Buscador inteligente: filtra por servicio, usuario, IP, plataforma, etiqueta o nota (ej. 'mikrotik norte', 'mtc', 'gps')..."
+            placeholder="Buscador inteligente: filtra por servicio, usuario, enlace, categoría o nota..."
             class="w-full pl-11 pr-24 py-3 rounded-xl bg-black/75 border border-emerald-500/40 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25"
           />
           <button type="button" onclick="clearVaultSearch()" class="absolute right-2.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 cursor-pointer">
@@ -434,11 +437,11 @@
         <!-- Filtros rápidos por categoría -->
         <div id="categoryChips" class="flex flex-wrap items-center gap-2 mt-3">
           <button type="button" data-cat="ALL" onclick="setVaultCategory('ALL', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/25 text-emerald-200 border border-emerald-400 cursor-pointer">Todos</button>
-          <button type="button" data-cat="RF / Antenas" onclick="setVaultCategory('RF / Antenas', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">RF / Antenas</button>
-          <button type="button" data-cat="Servidores / VPN" onclick="setVaultCategory('Servidores / VPN', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Servidores / VPN</button>
-          <button type="button" data-cat="Portales / MTC" onclick="setVaultCategory('Portales / MTC', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Portales / MTC</button>
-          <button type="button" data-cat="Plataformas GPS" onclick="setVaultCategory('Plataformas GPS', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Plataformas GPS</button>
-          <button type="button" data-cat="Energía / UPS" onclick="setVaultCategory('Energía / UPS', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Energía / UPS</button>
+          <button type="button" data-cat="Sistemas" onclick="setVaultCategory('Sistemas', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Sistemas</button>
+          <button type="button" data-cat="Accesos Web" onclick="setVaultCategory('Accesos Web', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Accesos Web</button>
+          <button type="button" data-cat="Redes" onclick="setVaultCategory('Redes', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Redes</button>
+          <button type="button" data-cat="Plataformas" onclick="setVaultCategory('Plataformas', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Plataformas</button>
+          <button type="button" data-cat="Otros" onclick="setVaultCategory('Otros', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer">Otros</button>
 
           <span id="vaultSearchStats" class="ml-auto font-mono text-xs text-emerald-300">0 registros</span>
         </div>
@@ -447,41 +450,41 @@
       <!-- Formulario para Agregar Credencial en Sanctuary -->
       <form id="formVault" onsubmit="addVaultItem(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 p-4 mb-5 rounded-xl bg-black/40 border border-emerald-500/15">
         <div class="lg:col-span-1">
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Servicio / Sistema *</label>
-          <input type="text" id="vServicio" required placeholder="Ej. Repetidora Norte" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500" />
+          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Servicio / Cuenta *</label>
+          <input type="text" id="vServicio" required placeholder="Ej. Portal Principal" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500" />
         </div>
         <div>
           <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Categoría</label>
           <select id="vCategoria" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500">
-            <option value="RF / Antenas">RF / Antenas</option>
-            <option value="Servidores / VPN">Servidores / VPN</option>
-            <option value="Portales / MTC">Portales / MTC</option>
-            <option value="Plataformas GPS">Plataformas GPS</option>
-            <option value="Energía / UPS">Energía / UPS</option>
+            <option value="Sistemas">Sistemas</option>
+            <option value="Accesos Web">Accesos Web</option>
+            <option value="Redes">Redes</option>
+            <option value="Plataformas">Plataformas</option>
+            <option value="Otros">Otros</option>
           </select>
         </div>
         <div>
           <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Usuario / ID *</label>
-          <input type="text" id="vUsuario" required placeholder="Ej. admin_rf" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
+          <input type="text" id="vUsuario" required placeholder="Ej. usuario_admin" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
         </div>
         <div>
           <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Contraseña *</label>
           <div class="flex gap-1">
-            <input type="text" id="vPass" required placeholder="Clave secreta" class="w-full px-2.5 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
-            <button type="button" onclick="generateStrongPass()" class="px-2.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-mono cursor-pointer" title="Generar clave segura">Gen</button>
+            <input type="text" id="vPass" required placeholder="Clave de acceso" class="w-full px-2.5 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
+            <button type="button" onclick="generateStrongPass()" class="px-2.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-mono cursor-pointer" title="Generar clave">Gen</button>
           </div>
         </div>
         <div>
-          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">IP / URL / Puerto</label>
-          <input type="text" id="vHost" placeholder="192.168.88.1:8291" class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
+          <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Enlace / Dirección</label>
+          <input type="text" id="vHost" placeholder="https://..." class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
         </div>
         <div>
           <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Etiquetas / Notas</label>
-          <input type="text" id="vNotas" placeholder="Nodo Norte, PIN..." class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500" />
+          <input type="text" id="vNotas" placeholder="Notas adicionales..." class="w-full px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500" />
         </div>
         <div class="flex items-end">
           <button type="submit" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all shadow-[0_0_15px_rgba(16,185,129,0.25)] cursor-pointer">
-            + Cifrar
+            + Guardar
           </button>
         </div>
       </form>
@@ -491,11 +494,11 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-slate-950/95 border-b border-emerald-500/20 text-[11px] font-mono uppercase tracking-wider text-emerald-300">
-              <th class="py-3 px-4">Servicio / Sistema</th>
+              <th class="py-3 px-4">Servicio / Cuenta</th>
               <th class="py-3 px-4">Categoría</th>
               <th class="py-3 px-4">Usuario</th>
-              <th class="py-3 px-4">Contraseña / Secreto</th>
-              <th class="py-3 px-4">IP / URL</th>
+              <th class="py-3 px-4">Contraseña</th>
+              <th class="py-3 px-4">Enlace / Dirección</th>
               <th class="py-3 px-4">Etiquetas / Notas</th>
               <th class="py-3 px-4 text-right">Acciones</th>
             </tr>
@@ -507,7 +510,7 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL DE ACCESO A SANCTUARY CON COCODRILO MORDIENDO                   -->
+  <!-- MODAL DE ACCESO A SANCTUARY Y MODO EDICIÓN                            -->
   <!-- ===================================================================== -->
   <div id="sanctuaryModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="if(event.target===this) closeSanctuaryModal()">
     <div class="glass-panel led-active-border rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in">
@@ -530,15 +533,15 @@
           </svg>
         </div>
         <div>
-          <h3 class="text-lg font-bold text-white">Acceso a Sanctuary</h3>
-          <p class="text-xs text-slate-400">Introduce la clave maestra para descifrar la bóveda.</p>
+          <h3 id="modalTitle" class="text-lg font-bold text-white">Acceso a Sanctuary</h3>
+          <p id="modalSubtitle" class="text-xs text-slate-400">Introduce el código de autorización para habilitar Sanctuary y el Modo Edición.</p>
         </div>
       </div>
 
       <form onsubmit="verifySanctuaryKey(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Contraseña de Sanctuary</label>
-          <input type="password" id="masterKeyInput" required autocomplete="off" placeholder="Ingresa la clave..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-sm text-white font-mono focus:outline-none focus:border-emerald-400" />
+          <label class="block text-xs font-mono uppercase text-slate-300 mb-1.5">Código de Acceso</label>
+          <input type="password" id="masterKeyInput" required autocomplete="off" placeholder="Ingresa el código..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-sm text-white font-mono focus:outline-none focus:border-emerald-400" />
         </div>
 
         <div id="modalError" class="text-xs text-rose-400 min-h-[18px]"></div>
@@ -548,7 +551,7 @@
             Cancelar
           </button>
           <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-[0_0_18px_rgba(16,185,129,0.35)] cursor-pointer">
-            Entrar a Sanctuary
+            Autorizar
           </button>
         </div>
       </form>
@@ -560,15 +563,15 @@
 
   <script>
     // =========================================================================
-    // CRIPTOGRAFÍA AES-GCM 256-BIT & CONFIGURACIÓN SANCTUARY (SKYNET2026)
+    // CONFIGURACIÓN GENERAL Y PERSISTENCIA LOCAL (SKYNET2026)
     // =========================================================================
     const EXPECTED_KEY = "SKYNET2026";
     const STORAGE_PUBLIC = "mdz_trackers_v1";
-    const STORAGE_VAULT_ENC = "mdz_sanctuary_encrypted_v2";
-    const FIXED_SALT = new TextEncoder().encode("MDZ_SANCTUARY_SALT_2026");
+    const STORAGE_VAULT = "mdz_sanctuary_items_v3";
 
     let isUnlocked = false;
-    let activeCryptoKey = null;
+    let isEditMode = false;
+    let pendingAction = "sanctuary"; // "sanctuary" | "edit"
     let selectedCategory = "ALL";
     let revealedIds = new Set();
 
@@ -616,53 +619,88 @@
 
     let vaultItems = [];
     const defaultVaultSeed = [
-      { id: 101, servicio: "Portal VUCE / Homologaciones MTC", categoria: "Portales / MTC", usuario: "ing_supervisor_rf", pass: "Mtc#Homolog2026!", host: "https://www.vuce.gob.pe", notas: "Expedientes ST6100 y AL600" },
-      { id: 102, servicio: "Router Core MikroTik Nodo Norte", categoria: "Servidores / VPN", usuario: "admin_mdz", pass: "Mk@Norte$9921", host: "10.200.14.1:8291", notas: "Winbox VPN enlace Trujillo - Piura" },
-      { id: 103, servicio: "Repetidora RF Cerro San Cristóbal", categoria: "RF / Antenas", usuario: "rf_tech", pass: "Rf$Cristobal#440", host: "192.168.50.12", notas: "Telemetría VSWR y potencia TX" },
-      { id: 104, servicio: "Servidor Rastreo Detektor / Console", categoria: "Plataformas GPS", usuario: "ops_tracking", pass: "Dtk!Track2026*", host: "https://tracking.mdzwork.pe", notas: "Acceso consola y resetter IMEI" },
-      { id: 105, servicio: "Controlador UPS & Grupo Electrógeno", categoria: "Energía / UPS", usuario: "power_admin", pass: "Ups#Tta2026", host: "192.168.50.90", notas: "SNMP monitoreo transferencia TTA" }
+      { id: 101, servicio: "Portal Administrativo Principal", categoria: "Accesos Web", usuario: "admin_general", pass: "Adm#2026Portal!", host: "https://portal.ejemplo.com", notas: "Acceso principal de gestión" },
+      { id: 102, servicio: "Servidor Central de Operaciones", categoria: "Sistemas", usuario: "ops_root", pass: "Ops@Server9921", host: "10.0.14.1:8080", notas: "Panel de administración interna" },
+      { id: 103, servicio: "Enlace de Red Principal", categoria: "Redes", usuario: "net_admin", pass: "Net$Link#440", host: "192.168.1.1", notas: "Configuración de puerta de enlace" },
+      { id: 104, servicio: "Plataforma de Monitoreo GPS", categoria: "Plataformas", usuario: "monitoreo_01", pass: "Track!2026*", host: "https://plataforma.ejemplo.com", notas: "Consulta de unidades y reportes" },
+      { id: 105, servicio: "Respaldo y Contingencia", categoria: "Otros", usuario: "backup_user", pass: "Bkp#Safe2026", host: "192.168.1.50", notas: "Credencial de respaldo operativo" }
     ];
 
-    async function deriveAesKey(password) {
-      const enc = new TextEncoder();
-      const keyMaterial = await crypto.subtle.importKey(
-        "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
-      );
-      return crypto.subtle.deriveKey(
-        { name: "PBKDF2", salt: FIXED_SALT, iterations: 120000, hash: "SHA-256" },
-        keyMaterial,
-        { name: "AES-GCM", length: 256 },
-        false,
-        ["encrypt", "decrypt"]
-      );
+    function loadVaultFromStorage() {
+      try {
+        const saved = localStorage.getItem(STORAGE_VAULT);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (err) {
+        console.error("Error leyendo Sanctuary desde localStorage:", err);
+      }
+      localStorage.setItem(STORAGE_VAULT, JSON.stringify(defaultVaultSeed));
+      return [...defaultVaultSeed];
     }
 
-    async function encryptVaultData(dataObj, key) {
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const encoded = new TextEncoder().encode(JSON.stringify(dataObj));
-      const cipherBuffer = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded);
-
-      const payload = {
-        iv: btoa(String.fromCharCode(...iv)),
-        data: btoa(String.fromCharCode(...new Uint8Array(cipherBuffer)))
-      };
-      localStorage.setItem(STORAGE_VAULT_ENC, JSON.stringify(payload));
-    }
-
-    async function decryptVaultData(key) {
-      const raw = localStorage.getItem(STORAGE_VAULT_ENC);
-      if (!raw) return null;
-      const payload = JSON.parse(raw);
-      const iv = Uint8Array.from(atob(payload.iv), c => c.charCodeAt(0));
-      const cipherBytes = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
-
-      const decryptedBuffer = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, cipherBytes);
-      return JSON.parse(new TextDecoder().decode(decryptedBuffer));
+    function persistVault() {
+      localStorage.setItem(STORAGE_VAULT, JSON.stringify(vaultItems));
     }
 
     // =========================================================================
-    // CONTROL DE ACCESO A SANCTUARY (SKYNET2026) & ANIMACIÓN COCODRILO
+    // CONTROL DE MODO EDICIÓN Y ACCESO A SANCTUARY (SKYNET2026)
     // =========================================================================
+    function toggleEditMode() {
+      if (!isUnlocked) {
+        triggerCrocChomp();
+        openSanctuaryModal("edit");
+        return;
+      }
+
+      isEditMode = !isEditMode;
+      updateEditModeUI();
+      renderPublicTable();
+      if (isUnlocked) renderVaultTable();
+      showToast(isEditMode ? "Modo Edición activado." : "Modo Edición pausado (solo lectura).");
+    }
+
+    function updateEditModeUI() {
+      const btn = document.getElementById("btnEditModeToggle");
+      const dot = document.getElementById("editModeDot");
+      const label = document.getElementById("editModeLabel");
+      const formPub = document.getElementById("formPublic");
+      const restoreLabel = document.getElementById("restoreJsonLabel");
+      const hint = document.getElementById("trackersSubHint");
+      const formVault = document.getElementById("formVault");
+
+      if (isEditMode) {
+        btn.className = "flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/50 text-xs font-semibold transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.2)]";
+        dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        label.textContent = "Modo Edición: Activo";
+
+        formPub.classList.remove("hidden");
+        formPub.classList.add("grid");
+        restoreLabel.classList.remove("hidden");
+        hint.textContent = "Modo Edición activo: haz clic sobre cualquier celda para editar o usa los botones para agregar/eliminar.";
+
+        if (formVault) {
+          formVault.classList.remove("hidden");
+          formVault.classList.add("grid");
+        }
+      } else {
+        btn.className = "flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-all cursor-pointer";
+        dot.className = "w-2 h-2 rounded-full bg-amber-400";
+        label.textContent = isUnlocked ? "Modo Edición: Pausado" : "Modo Edición: Bloqueado";
+
+        formPub.classList.add("hidden");
+        formPub.classList.remove("grid");
+        restoreLabel.classList.add("hidden");
+        hint.textContent = "Vista protegida en modo lectura. Activa el Modo Edición para agregar, modificar o eliminar registros.";
+
+        if (formVault) {
+          formVault.classList.add("hidden");
+          formVault.classList.remove("grid");
+        }
+      }
+    }
+
     function triggerCrocChomp() {
       const boxes = ["headerCrocBox", "btnSanctuaryTrigger", "modalCrocIcon", "sanctuaryBannerCroc"];
       boxes.forEach(id => {
@@ -680,14 +718,26 @@
       if (isUnlocked) {
         lockSanctuary();
       } else {
-        openSanctuaryModal();
+        openSanctuaryModal("sanctuary");
       }
     }
 
-    function openSanctuaryModal() {
+    function openSanctuaryModal(mode = "sanctuary") {
+      pendingAction = mode;
       const modal = document.getElementById("sanctuaryModal");
       const input = document.getElementById("masterKeyInput");
       const err = document.getElementById("modalError");
+      const title = document.getElementById("modalTitle");
+      const sub = document.getElementById("modalSubtitle");
+
+      if (mode === "edit") {
+        title.textContent = "Habilitar Modo Edición";
+        sub.textContent = "Ingresa el código de autorización para desbloquear la edición de registros y Sanctuary.";
+      } else {
+        title.textContent = "Acceso a Sanctuary";
+        sub.textContent = "Introduce el código de autorización para habilitar Sanctuary y el Modo Edición.";
+      }
+
       err.textContent = "";
       input.value = "";
       modal.classList.remove("hidden");
@@ -700,7 +750,7 @@
       document.getElementById("modalError").textContent = "";
     }
 
-    async function verifySanctuaryKey(e) {
+    function verifySanctuaryKey(e) {
       e.preventDefault();
       const input = document.getElementById("masterKeyInput");
       const errorEl = document.getElementById("modalError");
@@ -708,45 +758,43 @@
 
       if (typedKey !== EXPECTED_KEY) {
         triggerCrocChomp();
-        errorEl.textContent = "Clave incorrecta. Acceso denegado.";
+        errorEl.textContent = "Código incorrecto. Acceso denegado.";
         input.value = "";
         input.focus();
         return;
       }
 
-      try {
-        activeCryptoKey = await deriveAesKey(typedKey);
-        const storedData = await decryptVaultData(activeCryptoKey);
+      vaultItems = loadVaultFromStorage();
+      isUnlocked = true;
+      isEditMode = true;
 
-        if (storedData && Array.isArray(storedData)) {
-          vaultItems = storedData;
-        } else {
-          vaultItems = [...defaultVaultSeed];
-          await encryptVaultData(vaultItems, activeCryptoKey);
-        }
+      closeSanctuaryModal();
+      updateSanctuaryUI();
+      updateEditModeUI();
+      renderPublicTable();
+      renderVaultTable();
 
-        isUnlocked = true;
-        closeSanctuaryModal();
-        updateSanctuaryUI();
+      if (pendingAction === "sanctuary") {
         switchTab("sanctuary");
-        renderVaultTable();
-        triggerCrocChomp();
-        showToast("Sanctuary desbloqueado.");
+        showToast("Sanctuary y Modo Edición habilitados.");
         setTimeout(() => document.getElementById("smartVaultSearch")?.focus(), 100);
-      } catch (err) {
-        console.error(err);
-        errorEl.textContent = "No se pudo descifrar la bóveda local.";
+      } else {
+        showToast("Modo Edición y Sanctuary habilitados.");
       }
+
+      triggerCrocChomp();
     }
 
     function lockSanctuary() {
       isUnlocked = false;
-      activeCryptoKey = null;
+      isEditMode = false;
       vaultItems = [];
       revealedIds.clear();
       updateSanctuaryUI();
+      updateEditModeUI();
+      renderPublicTable();
       switchTab("public");
-      showToast("Sanctuary bloqueado y oculto.");
+      showToast("Sanctuary cerrado y Modo Edición bloqueado.");
     }
 
     function updateSanctuaryUI() {
@@ -769,7 +817,7 @@
 
     function switchTab(tab) {
       if (tab === "sanctuary" && !isUnlocked) {
-        openSanctuaryModal();
+        openSanctuaryModal("sanctuary");
         return;
       }
 
@@ -800,7 +848,7 @@
     }
 
     // =========================================================================
-    // BUSCADOR INTELIGENTE & CRUD CIFRADO EN SANCTUARY
+    // BUSCADOR INTELIGENTE & GESTIÓN EN SANCTUARY
     // =========================================================================
     function normalizeText(str) {
       return String(str || "")
@@ -880,13 +928,17 @@
       document.getElementById("vaultSearchStats").textContent = `Mostrando ${filtered.length} de ${vaultItems.length} registros`;
 
       if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 text-xs">No se encontraron credenciales para "${escapeHtml(query)}".</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 text-xs">No se encontraron registros para "${escapeHtml(query)}".</td></tr>`;
         return;
       }
 
       tbody.innerHTML = filtered.map(item => {
         const shown = revealedIds.has(item.id);
         const passText = shown ? escapeHtml(item.pass) : "••••••••••••";
+        const deleteBtnHtml = isEditMode
+          ? `<button onclick="deleteVaultItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs cursor-pointer">Eliminar</button>`
+          : `<span class="text-[11px] font-mono text-slate-500">Solo lectura</span>`;
+
         return `
           <tr class="hover:bg-emerald-500/5 transition-colors">
             <td class="py-3 px-4 font-semibold text-white">${highlightMatch(item.servicio, query)}</td>
@@ -911,16 +963,19 @@
             <td class="py-3 px-4 font-mono text-xs text-cyan-300">${highlightMatch(item.host || "-", query)}</td>
             <td class="py-3 px-4 text-xs text-slate-300">${highlightMatch(item.notas || "-", query)}</td>
             <td class="py-3 px-4 text-right whitespace-nowrap">
-              <button onclick="deleteVaultItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs cursor-pointer">Eliminar</button>
+              ${deleteBtnHtml}
             </td>
           </tr>
         `;
       }).join("");
     }
 
-    async function addVaultItem(e) {
+    function addVaultItem(e) {
       e.preventDefault();
-      if (!isUnlocked || !activeCryptoKey) return;
+      if (!isUnlocked || !isEditMode) {
+        showToast("Activa el Modo Edición para agregar registros.");
+        return;
+      }
       vaultItems.unshift({
         id: Date.now(),
         servicio: document.getElementById("vServicio").value.trim(),
@@ -930,18 +985,21 @@
         host: document.getElementById("vHost").value.trim(),
         notas: document.getElementById("vNotas").value.trim()
       });
-      await encryptVaultData(vaultItems, activeCryptoKey);
+      persistVault();
       e.target.reset();
       renderVaultTable();
-      showToast("Credencial cifrada y guardada en Sanctuary.");
+      showToast("Registro guardado en Sanctuary.");
     }
 
-    async function deleteVaultItem(id) {
-      if (!isUnlocked || !activeCryptoKey) return;
+    function deleteVaultItem(id) {
+      if (!isUnlocked || !isEditMode) {
+        showToast("Activa el Modo Edición para eliminar registros.");
+        return;
+      }
       vaultItems = vaultItems.filter(i => i.id !== id);
-      await encryptVaultData(vaultItems, activeCryptoKey);
+      persistVault();
       renderVaultTable();
-      showToast("Credencial eliminada de Sanctuary.");
+      showToast("Registro eliminado de Sanctuary.");
     }
 
     function toggleReveal(id) {
@@ -961,11 +1019,11 @@
       const arr = new Uint32Array(14);
       crypto.getRandomValues(arr);
       document.getElementById("vPass").value = Array.from(arr, x => chars[x % chars.length]).join("");
-      showToast("Contraseña segura generada.");
+      showToast("Contraseña generada.");
     }
 
     // =========================================================================
-    // TABLA, EDICIÓN EN LÍNEA Y CRUD DE TRACKERS (PERSISTENCIA AUTOMÁTICA)
+    // TABLA, EDICIÓN PROTEGIDA Y GESTIÓN DE TRACKERS
     // =========================================================================
     function renderPublicTable() {
       const q = normalizeText(document.getElementById("publicSearch").value);
@@ -981,38 +1039,59 @@
         return;
       }
 
-      tbody.innerHTML = filtered.map(item => `
-        <tr class="hover:bg-emerald-500/5 transition-colors group">
-          <td class="py-2.5 px-3.5 font-mono font-bold text-emerald-400">
-            <input type="text" value="${escapeAttr(item.unidad)}" onchange="updateTrackerField(${item.id}, 'unidad', this.value)" class="w-full min-w-[110px] bg-transparent hover:bg-slate-900/80 focus:bg-slate-950 px-2 py-1 rounded border border-transparent focus:border-emerald-500 text-emerald-400 font-bold font-mono text-xs focus:outline-none" />
-          </td>
-          <td class="py-2.5 px-3.5 font-mono">
-            <input type="text" value="${escapeAttr(item.placa)}" onchange="updateTrackerField(${item.id}, 'placa', this.value)" class="w-full min-w-[90px] bg-transparent hover:bg-slate-900/80 focus:bg-slate-950 px-2 py-1 rounded border border-transparent focus:border-emerald-500 text-white font-semibold font-mono text-xs uppercase focus:outline-none" />
-          </td>
-          <td class="py-2.5 px-3.5 font-mono">
-            <input type="text" value="${escapeAttr(item.gps)}" placeholder="— Agregar GPS —" onchange="updateTrackerField(${item.id}, 'gps', this.value)" class="w-full min-w-[145px] bg-transparent hover:bg-slate-900/80 focus:bg-slate-950 px-2 py-1 rounded border border-transparent focus:border-emerald-500 text-slate-200 placeholder-slate-600 font-mono text-xs focus:outline-none" />
-          </td>
-          <td class="py-2.5 px-3.5 font-mono">
-            <input type="text" value="${escapeAttr(item.detektor)}" placeholder="—" onchange="updateTrackerField(${item.id}, 'detektor', this.value)" class="w-full min-w-[85px] bg-transparent hover:bg-slate-900/80 focus:bg-slate-950 px-2 py-1 rounded border border-transparent focus:border-emerald-500 text-cyan-300 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
-          </td>
-          <td class="py-2.5 px-3.5 font-mono">
-            <input type="text" value="${escapeAttr(item.activacion)}" placeholder="— Agregar —" onchange="updateTrackerField(${item.id}, 'activacion', this.value)" class="w-full min-w-[95px] bg-transparent hover:bg-slate-900/80 focus:bg-slate-950 px-2 py-1 rounded border border-transparent focus:border-emerald-500 text-amber-300 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
-          </td>
-          <td class="py-2.5 px-3.5 font-mono">
-            <input type="text" value="${escapeAttr(item.respuesta)}" placeholder="—" onchange="updateTrackerField(${item.id}, 'respuesta', this.value)" class="w-full min-w-[85px] bg-transparent hover:bg-slate-900/80 focus:bg-slate-950 px-2 py-1 rounded border border-transparent focus:border-emerald-500 text-emerald-200 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
-          </td>
-          <td class="py-2.5 px-3.5">
-            <input type="text" value="${escapeAttr(item.detalles)}" placeholder="— Detalles —" onchange="updateTrackerField(${item.id}, 'detalles', this.value)" class="w-full min-w-[135px] bg-transparent hover:bg-slate-900/80 focus:bg-slate-950 px-2 py-1 rounded border border-transparent focus:border-emerald-500 text-slate-200 placeholder-slate-600 text-xs focus:outline-none" />
-          </td>
-          <td class="py-2.5 px-3.5 text-right whitespace-nowrap">
-            <button onclick="copyTrackerSummary(${item.id})" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs mr-1 cursor-pointer" title="Copiar fila completa">Copiar</button>
-            <button onclick="deletePublicItem(${item.id})" class="px-2 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs cursor-pointer">Eliminar</button>
-          </td>
-        </tr>
-      `).join("");
+      tbody.innerHTML = filtered.map(item => {
+        if (isEditMode) {
+          return `
+            <tr class="hover:bg-emerald-500/5 transition-colors group">
+              <td class="py-2.5 px-3.5 font-mono font-bold text-emerald-400">
+                <input type="text" value="${escapeAttr(item.unidad)}" onchange="updateTrackerField(${item.id}, 'unidad', this.value)" class="w-full min-w-[110px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-emerald-400 font-bold font-mono text-xs focus:outline-none" />
+              </td>
+              <td class="py-2.5 px-3.5 font-mono">
+                <input type="text" value="${escapeAttr(item.placa)}" onchange="updateTrackerField(${item.id}, 'placa', this.value)" class="w-full min-w-[90px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-white font-semibold font-mono text-xs uppercase focus:outline-none" />
+              </td>
+              <td class="py-2.5 px-3.5 font-mono">
+                <input type="text" value="${escapeAttr(item.gps)}" placeholder="— Agregar GPS —" onchange="updateTrackerField(${item.id}, 'gps', this.value)" class="w-full min-w-[145px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-slate-200 placeholder-slate-600 font-mono text-xs focus:outline-none" />
+              </td>
+              <td class="py-2.5 px-3.5 font-mono">
+                <input type="text" value="${escapeAttr(item.detektor)}" placeholder="—" onchange="updateTrackerField(${item.id}, 'detektor', this.value)" class="w-full min-w-[85px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-cyan-300 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
+              </td>
+              <td class="py-2.5 px-3.5 font-mono">
+                <input type="text" value="${escapeAttr(item.activacion)}" placeholder="— Agregar —" onchange="updateTrackerField(${item.id}, 'activacion', this.value)" class="w-full min-w-[95px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-amber-300 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
+              </td>
+              <td class="py-2.5 px-3.5 font-mono">
+                <input type="text" value="${escapeAttr(item.respuesta)}" placeholder="—" onchange="updateTrackerField(${item.id}, 'respuesta', this.value)" class="w-full min-w-[85px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-emerald-200 placeholder-slate-600 font-mono text-xs uppercase focus:outline-none" />
+              </td>
+              <td class="py-2.5 px-3.5">
+                <input type="text" value="${escapeAttr(item.detalles)}" placeholder="— Detalles —" onchange="updateTrackerField(${item.id}, 'detalles', this.value)" class="w-full min-w-[135px] bg-slate-900/70 focus:bg-slate-950 px-2 py-1 rounded border border-emerald-500/25 focus:border-emerald-500 text-slate-200 placeholder-slate-600 text-xs focus:outline-none" />
+              </td>
+              <td class="py-2.5 px-3.5 text-right whitespace-nowrap">
+                <button onclick="copyTrackerSummary(${item.id})" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs mr-1 cursor-pointer" title="Copiar fila completa">Copiar</button>
+                <button onclick="deletePublicItem(${item.id})" class="px-2 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs cursor-pointer">Eliminar</button>
+              </td>
+            </tr>
+          `;
+        }
+
+        // Vista protegida (solo lectura)
+        return `
+          <tr class="hover:bg-emerald-500/5 transition-colors">
+            <td class="py-3 px-3.5 font-mono font-bold text-emerald-400 text-xs">${escapeHtml(item.unidad)}</td>
+            <td class="py-3 px-3.5 font-mono font-semibold text-white text-xs">${escapeHtml(item.placa)}</td>
+            <td class="py-3 px-3.5 font-mono text-slate-200 text-xs">${item.gps ? escapeHtml(item.gps) : '<span class="text-slate-600">—</span>'}</td>
+            <td class="py-3 px-3.5 font-mono text-cyan-300 text-xs">${item.detektor ? escapeHtml(item.detektor) : '<span class="text-slate-600">—</span>'}</td>
+            <td class="py-3 px-3.5 font-mono text-amber-300 text-xs">${item.activacion ? escapeHtml(item.activacion) : '<span class="text-slate-600">—</span>'}</td>
+            <td class="py-3 px-3.5 font-mono text-emerald-200 text-xs">${item.respuesta ? escapeHtml(item.respuesta) : '<span class="text-slate-600">—</span>'}</td>
+            <td class="py-3 px-3.5 text-slate-200 text-xs">${item.detalles ? escapeHtml(item.detalles) : '<span class="text-slate-600">—</span>'}</td>
+            <td class="py-3 px-3.5 text-right whitespace-nowrap">
+              <button onclick="copyTrackerSummary(${item.id})" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer" title="Copiar fila completa">Copiar</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
     }
 
     function updateTrackerField(id, field, rawValue) {
+      if (!isEditMode) return;
       const idx = publicItems.findIndex(item => item.id === id);
       if (idx === -1) return;
       const upperFields = ["placa", "detektor", "activacion", "respuesta"];
@@ -1023,6 +1102,10 @@
 
     function addPublicItem(e) {
       e.preventDefault();
+      if (!isEditMode) {
+        showToast("Activa el Modo Edición para agregar registros.");
+        return;
+      }
       publicItems.push({
         id: Date.now(),
         unidad: document.getElementById("tUnidad").value.trim(),
@@ -1040,6 +1123,10 @@
     }
 
     function deletePublicItem(id) {
+      if (!isEditMode) {
+        showToast("Activa el Modo Edición para eliminar registros.");
+        return;
+      }
       publicItems = publicItems.filter(i => i.id !== id);
       persistTrackers("Eliminado y guardado");
       renderPublicTable();
@@ -1160,6 +1247,7 @@
     }
 
     renderPublicTable();
+    updateEditModeUI();
   </script>
 </body>
 </html>
