@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MDZ™ WORK | Inventario RF & Bóveda Segura</title>
+  <style>
+    :root {
+      --bg-dark: #070d0b;
+      --bg-panel: rgba(14, 26, 22, 0.78);
+      --bg-panel-solid: #0e1a16;
+      --bg-input: rgba(8, 16, 13, 0.85);
+      --border-glass: rgba(16, 185, 129, 0.22);
+      --border-active: #10b981;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.35);
+      --accent-secondary: #34d399;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #ecfdf5;
+      --text-muted: #94a3b8;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: radial-gradient(circle at 15% 15%, #0d261d 0%, var(--bg-dark) 55%),
+                  radial-gradient(circle at 85% 85%, #091e17 0%, var(--bg-dark) 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    /* Glassmorphism & LED Animated Border */
+    .glass-panel {
+      background: var(--bg-panel);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .led-border::before {
+      content: "";
+      position: absolute;
+      top: 0; left: -100%;
+      width: 200%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), #6ee7b7, var(--accent), transparent);
+      animation: ledScan 4s linear infinite;
+    }
+
+    @keyframes ledScan {
+      0% { transform: translateX(-25%); }
+      100% { transform: translateX(25%); }
+    }
+
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 78, 59, 0.5));
+      border: 1px solid var(--accent);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 18px var(--accent-glow);
+      font-size: 22px;
+    }
+
+    .brand h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand h1 span {
+      color: var(--accent);
+      font-family: var(--font-mono);
+    }
+
+    .brand p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.86rem;
+      padding: 10px 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #032219;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    .btn-primary:hover { background: var(--accent-secondary); transform: translateY(-1px); }
+
+    .btn-glass {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--text-main);
+      border: 1px solid var(--border-glass);
+    }
+    .btn-glass:hover {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.18);
+    }
+
+    .btn-vault-locked {
+      background: rgba(245, 158, 11, 0.12);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+    .btn-vault-locked:hover {
+      background: rgba(245, 158, 11, 0.22);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-vault-unlocked {
+      background: rgba(16, 185, 129, 0.22);
+      color: #6ee7b7;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.14);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+    }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.28); }
+
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; border-radius: 8px; }
+
+    /* Navigation Tabs */
+    .tabs-bar {
+      display: flex;
+      gap: 10px;
+      padding: 0 4px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tab-btn {
+      background: rgba(14, 26, 22, 0.65);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 11px 20px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+
+    .tab-btn.active {
+      background: rgba(16, 185, 129, 0.16);
+      color: var(--text-main);
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+    }
+
+    .tab-vault {
+      display: none;
+      border-color: rgba(16, 185, 129, 0.45);
+    }
+    .tab-vault.visible { display: inline-flex; }
+
+    .kbd-hint {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: rgba(255,255,255,0.08);
+      padding: 2px 6px;
+      border-radius: 5px;
+      color: var(--text-muted);
+    }
+
+    /* Workspace Sections */
+    .workspace { display: none; padding: 24px; }
+    .workspace.active { display: block; animation: fadeIn 0.25s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Forms & Inputs */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 16px;
+      background: rgba(6, 12, 10, 0.55);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    input, select {
+      background: var(--bg-input);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 9px 12px;
+      border-radius: 9px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
+    }
+
+    /* Smart Search Bar */
+    .smart-search-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(8, 16, 13, 0.9));
+      border: 1px solid var(--border-active);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.12);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      padding: 12px 110px 12px 42px;
+      font-size: 0.98rem;
+      background: rgba(4, 10, 8, 0.9);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 10px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--accent);
+      font-size: 1.05rem;
+      pointer-events: none;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 12px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      border-radius: 6px;
+    }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .chip:hover, .chip.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--accent);
+      color: var(--text-main);
+    }
+
+    .search-stats {
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: var(--accent-secondary);
+      font-family: var(--font-mono);
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(6, 14, 11, 0.92);
+      color: var(--accent-secondary);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-glass);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: middle;
+    }
+
+    tr:hover td { background: rgba(16, 185, 129, 0.05); }
+
+    .mono { font-family: var(--font-mono); font-size: 0.83rem; }
+
+    .badge {
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .badge-ok { background: rgba(16, 185, 129, 0.16); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .badge-warn { background: rgba(245, 158, 11, 0.16); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .badge-cat { background: rgba(59, 130, 246, 0.16); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.35); }
+
+    mark {
+      background: rgba(16, 185, 129, 0.38);
+      color: #ffffff;
+      padding: 0 3px;
+      border-radius: 3px;
+    }
+
+    .secret-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Modal Command Prompt */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 5, 0.82);
+      backdrop-filter: blur(8px);
+      display: none;
+      place-items: center;
+      z-index: 999;
+      padding: 16px;
+    }
+    .modal-backdrop.open { display: grid; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 440px;
+      padding: 26px;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);
+    }
+
+    .modal-card h3 {
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-card p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .error-msg {
+      color: #fca5a5;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      background: #06281e;
+      border: 1px solid var(--accent);
+      color: #ecfdf5;
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 1000;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header class="glass-panel led-border">
+    <div class="brand">
+      <div class="brand-icon">🐊</div>
+      <div>
+        <h1>MDZ™ <span>WORK</span></h1>
+        <p>Gestión Técnica de Equipos RF/GPS & Bóveda Cifrada AES-256</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-glass" onclick="exportToExcelCSV()" title="Exportar vista actual a Excel/CSV">
+        📊 Exportar Excel
+      </button>
+      <button id="btnCommandTrigger" class="btn-vault-locked" onclick="handleCommandButton()">
+        🔐 Comando Secreto <span class="kbd-hint">Ctrl+K</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="tabs-bar">
+    <div class="tab-group">
+      <button id="tabPublic" class="tab-btn active" onclick="switchTab('public')">
+        📡 Inventario Operativo (VID / IMEI)
+      </button>
+      <button id="tabVault" class="tab-btn tab-vault" onclick="switchTab('vault')">
+        🛡️ Bóveda Privada & Buscador Inteligente
+      </button>
+    </div>
+    <span id="cryptoStatusBadge" class="badge badge-warn">Estado Bóveda: Bloqueada (Cifrado AES-GCM)</span>
+  </div>
+
+  <!-- =========================================================
+       HOJA 1: INVENTARIO OPERATIVO (PÚBLICO)
+       ========================================================= -->
+  <section id="viewPublic" class="workspace glass-panel active">
+    <form id="formPublic" class="form-grid" onsubmit="addPublicItem(event)">
+      <div class="field">
+        <label>VID / Unidad</label>
+        <input type="text" id="pubVid" placeholder="Ej. VID-88421" required />
+      </div>
+      <div class="field">
+        <label>IMEI / Serie</label>
+        <input type="text" id="pubImei" placeholder="Ej. 358492091234567" required />
+      </div>
+      <div class="field">
+        <label>Equipo / Modelo</label>
+        <input type="text" id="pubEquipo" placeholder="Ej. ST6100 / Lojack VLU" required />
+      </div>
+      <div class="field">
+        <label>SIM / ICCID</label>
+        <input type="text" id="pubSim" placeholder="Ej. 8951101234567890" />
+      </div>
+      <div class="field">
+        <label>Estado</label>
+        <select id="pubEstado">
+          <option value="Operativo">Operativo</option>
+          <option value="En Laboratorio">En Laboratorio</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+          <option value="Baja">Baja</option>
+        </select>
+      </div>
+      <div class="field" style="justify-content: flex-end;">
+        <button type="submit" class="btn-primary">+ Agregar Equipo</button>
+      </div>
+    </form>
+
+    <div class="search-input-wrap" style="margin-bottom: 14px;">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="publicSearch" placeholder="Filtrar inventario por VID, IMEI, equipo o SIM..." oninput="renderPublicTable()" />
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>VID</th>
+            <th>IMEI / Serie</th>
+            <th>Equipo / Modelo</th>
+            <th>SIM / ICCID</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="publicTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       HOJA 2: BÓVEDA PRIVADA CON BUSCADOR INTELIGENTE
+       ========================================================= -->
+  <section id="viewVault" class="workspace glass-panel led-border">
+    <!-- Buscador Inteligente -->
+    <div class="smart-search-box">
+      <div class="search-input-wrap">
+        <span class="search-icon">⚡</span>
+        <input
+          type="text"
+          id="smartVaultSearch"
+          placeholder="Buscador inteligente: escribe servicio, usuario, IP, plataforma, etiqueta o nota (ej. 'mikrotik norte', 'mtc', 'admin')..."
+          oninput="renderVaultTable()"
+        />
+        <button type="button" class="search-clear" onclick="clearVaultSearch()">Limpiar</button>
+      </div>
+
+      <div class="filter-chips" id="categoryChips">
+        <span class="chip active" data-cat="ALL" onclick="setVaultCategory('ALL', this)">Todos</span>
+        <span class="chip" data-cat="RF / Antenas" onclick="setVaultCategory('RF / Antenas', this)">RF / Antenas</span>
+        <span class="chip" data-cat="Servidores / VPN" onclick="setVaultCategory('Servidores / VPN', this)">Servidores / VPN</span>
+        <span class="chip" data-cat="Portales / MTC" onclick="setVaultCategory('Portales / MTC', this)">Portales / MTC</span>
+        <span class="chip" data-cat="Plataformas GPS" onclick="setVaultCategory('Plataformas GPS', this)">Plataformas GPS</span>
+        <span class="chip" data-cat="Energía / UPS" onclick="setVaultCategory('Energía / UPS', this)">Energía / UPS</span>
+        <span class="search-stats" id="vaultSearchStats">0 registros</span>
+      </div>
+    </div>
+
+    <!-- Formulario de Alta en Bóveda -->
+    <form id="formVault" class="form-grid" onsubmit="addVaultItem(event)">
+      <div class="field">
+        <label>Servicio / Sistema</label>
+        <input type="text" id="vServicio" placeholder="Ej. Repetidora Cerro San Cristóbal" required />
+      </div>
+      <div class="field">
+        <label>Categoría</label>
+        <select id="vCategoria">
+          <option value="RF / Antenas">RF / Antenas</option>
+          <option value="Servidores / VPN">Servidores / VPN</option>
+          <option value="Portales / MTC">Portales / MTC</option>
+          <option value="Plataformas GPS">Plataformas GPS</option>
+          <option value="Energía / UPS">Energía / UPS</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Usuario / ID</label>
+        <input type="text" id="vUsuario" placeholder="Ej. admin_rf" required />
+      </div>
+      <div class="field">
+        <label>Contraseña / Token</label>
+        <div style="display:flex; gap:6px;">
+          <input type="text" id="vPass" placeholder="Clave secreta" required style="width:100%;" />
+          <button type="button" class="btn-glass btn-sm" onclick="generateStrongPass()" title="Generar clave segura">🎲</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>IP / URL / Puerto</label>
+        <input type="text" id="vHost" placeholder="Ej. 192.168.88.1:8291" />
+      </div>
+      <div class="field">
+        <label>Etiquetas / Notas</label>
+        <input type="text" id="vNotas" placeholder="Ej. Nodo Norte, SNMP v3, PIN 4412" />
+      </div>
+      <div class="field" style="justify-content: flex-end;">
+        <button type="submit" class="btn-primary">🔒 Guardar Cifrado</button>
+      </div>
+    </form>
+
+    <!-- Tabla de Credenciales -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Servicio / Sistema</th>
+            <th>Categoría</th>
+            <th>Usuario</th>
+            <th>Contraseña / Secreto</th>
+            <th>IP / URL</th>
+            <th>Etiquetas / Notas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="vaultTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- Modal de Comando Secreto -->
+<div id="commandModal" class="modal-backdrop" onclick="if(event.target===this) closeCommandModal()">
+  <div class="modal-card glass-panel led-border">
+    <h3>🔐 Terminal de Autorización</h3>
+    <p>Ingresa la clave maestra para descifrar y habilitar la hoja privada de credenciales y buscador inteligente.</p>
+    <form onsubmit="verifyMasterCommand(event)">
+      <div class="field">
+        <label>Clave de Acceso</label>
+        <input type="password" id="masterKeyInput" placeholder="••••••••••" autocomplete="off" required />
+      </div>
+      <div id="modalError" class="error-msg"></div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
+        <button type="button" class="btn-glass" onclick="closeCommandModal()">Cancelar</button>
+        <button type="submit" class="btn-primary">Desbloquear Hoja</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  // =========================================================================
+  // CONFIGURACIÓN DE SEGURIDAD Y CRIPTOGRAFÍA (Web Crypto API AES-GCM 256)
+  // =========================================================================
+  const EXPECTED_KEY = "SKYNET2026";
+  const STORAGE_PUBLIC = "mdz_public_inventory_v1";
+  const STORAGE_VAULT_ENC = "mdz_encrypted_vault_v1";
+  const FIXED_SALT = new TextEncoder().encode("MDZ_WORK_RF_SALT_2026");
+
+  let isUnlocked = false;
+  let activeCryptoKey = null;
+  let selectedCategory = "ALL";
+  let revealedIds = new Set();
+
+  // Datos iniciales de ejemplo (Operativo)
+  let publicItems = JSON.parse(localStorage.getItem(STORAGE_PUBLIC)) || [
+    { id: 1, vid: "VID-10492", imei: "358492098812341", equipo: "Stonkam PSA827", sim: "8951101620045812", estado: "Operativo" },
+    { id: 2, vid: "VID-10493", imei: "867584051129834", equipo: "Suntech ST6100", sim: "8951101620045899", estado: "Operativo" },
+    { id: 3, vid: "VID-10510", imei: "352094087741209", equipo: "Lojack VLU Hybrid", sim: "8951101620046102", estado: "En Laboratorio" }
+  ];
+
+  // Datos iniciales de la Bóveda (se cifran automáticamente al primer acceso)
+  let vaultItems = [];
+  const defaultVaultSeed = [
+    { id: 101, servicio: "Portal VUCE / Homologaciones MTC", categoria: "Portales / MTC", usuario: "ing_supervisor_rf", pass: "Mtc#Homolog2026!", host: "https://www.vuce.gob.pe", notas: "Expedientes ST6100 y AL600" },
+    { id: 102, servicio: "Router Core MikroTik Nodo Norte", categoria: "Servidores / VPN", usuario: "admin_mdz", pass: "Mk@Norte$9921", host: "10.200.14.1:8291", notas: "Winbox VPN enlace Trujillo - Piura" },
+    { id: 103, servicio: "Repetidora RF Cerro San Cristóbal", categoria: "RF / Antenas", usuario: "rf_tech", pass: "Rf$Cristobal#440", host: "192.168.50.12", notas: "Telemetría VSWR y potencia TX" },
+    { id: 104, servicio: "Servidor Rastreo Detektor / Console", categoria: "Plataformas GPS", usuario: "ops_tracking", pass: "Dtk!Track2026*", host: "https://tracking.mdzwork.pe", notas: "Acceso consola y resetter IMEI" },
+    { id: 105, servicio: "Controlador UPS & Grupo Electrógeno", categoria: "Energía / UPS", usuario: "power_admin", pass: "Ups#Tta2026", host: "192.168.50.90", notas: "SNMP monitoreo transferencia TTA" }
+  ];
+
+  // =========================================================================
+  // FUNCIONES CRIPTOGRÁFICAS REALES (PBKDF2 + AES-GCM)
+  // =========================================================================
+  async function deriveAesKey(password) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]
+    );
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt: FIXED_SALT, iterations: 120000, hash: "SHA-256" },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+  }
+
+  async function encryptVaultData(dataObj, key) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encoded = new TextEncoder().encode(JSON.stringify(dataObj));
+    const cipherBuffer = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded);
+
+    const payload = {
+      iv: btoa(String.fromCharCode(...iv)),
+      data: btoa(String.fromCharCode(...new Uint8Array(cipherBuffer)))
+    };
+    localStorage.setItem(STORAGE_VAULT_ENC, JSON.stringify(payload));
+  }
+
+  async function decryptVaultData(key) {
+    const raw = localStorage.getItem(STORAGE_VAULT_ENC);
+    if (!raw) return null;
+    const payload = JSON.parse(raw);
+    const iv = Uint8Array.from(atob(payload.iv), c => c.charCodeAt(0));
+    const cipherBytes = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
+
+    const decryptedBuffer = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, cipherBytes);
+    return JSON.parse(new TextDecoder().decode(decryptedBuffer));
+  }
+
+  // =========================================================================
+  // CONTROL DE COMANDO SECRETO Y BLOQUEO
+  // =========================================================================
+  function handleCommandButton() {
+    if (isUnlocked) {
+      lockVault();
+    } else {
+      openCommandModal();
+    }
+  }
+
+  function openCommandModal() {
+    document.getElementById("modalError").textContent = "";
+    document.getElementById("masterKeyInput").value = "";
+    document.getElementById("commandModal").classList.add("open");
+    setTimeout(() => document.getElementById("masterKeyInput").focus(), 80);
+  }
+
+  function closeCommandModal() {
+    document.getElementById("commandModal").classList.remove("open");
+  }
+
+  async function verifyMasterCommand(e) {
+    e.preventDefault();
+    const inputPass = document.getElementById("masterKeyInput").value.trim();
+    const errorEl = document.getElementById("modalError");
+
+    if (inputPass !== EXPECTED_KEY) {
+      errorEl.textContent = "⛔ Comando inválido. Acceso denegado.";
+      document.getElementById("masterKeyInput").value = "";
+      document.getElementById("masterKeyInput").focus();
+      return;
+    }
+
+    try {
+      activeCryptoKey = await deriveAesKey(inputPass);
+      const existing = await decryptVaultData(activeCryptoKey);
+
+      if (existing) {
+        vaultItems = existing;
+      } else {
+        vaultItems = [...defaultVaultSeed];
+        await encryptVaultData(vaultItems, activeCryptoKey);
+      }
+
+      isUnlocked = true;
+      closeCommandModal();
+      updateUnlockUI();
+      switchTab("vault");
+      renderVaultTable();
+      showToast("🔓 Bóveda descifrada con AES-256. Buscador inteligente activo.");
+      setTimeout(() => document.getElementById("smartVaultSearch").focus(), 120);
+    } catch (err) {
+      errorEl.textContent = "Error al descifrar el almacenamiento local.";
+    }
+  }
+
+  function lockVault() {
+    isUnlocked = false;
+    activeCryptoKey = null;
+    vaultItems = [];
+    revealedIds.clear();
+    updateUnlockUI();
+    switchTab("public");
+    showToast("🔒 Bóveda bloqueada y memoria limpiada.");
+  }
+
+  function updateUnlockUI() {
+    const tabVault = document.getElementById("tabVault");
+    const btnCmd = document.getElementById("btnCommandTrigger");
+    const badge = document.getElementById("cryptoStatusBadge");
+
+    if (isUnlocked) {
+      tabVault.classList.add("visible");
+      btnCmd.className = "btn-vault-unlocked";
+      btnCmd.innerHTML = `🔒 Bloquear Bóveda <span class="kbd-hint">Ctrl+K</span>`;
+      badge.className = "badge badge-ok";
+      badge.textContent = "Estado Bóveda: Desbloqueada (AES-GCM 256-bit)";
+    } else {
+      tabVault.classList.remove("visible");
+      btnCmd.className = "btn-vault-locked";
+      btnCmd.innerHTML = `🔐 Comando Secreto <span class="kbd-hint">Ctrl+K</span>`;
+      badge.className = "badge badge-warn";
+      badge.textContent = "Estado Bóveda: Bloqueada (Cifrado AES-GCM)";
+    }
+  }
+
+  function switchTab(tab) {
+    document.getElementById("tabPublic").classList.toggle("active", tab === "public");
+    document.getElementById("tabVault").classList.toggle("active", tab === "vault");
+    document.getElementById("viewPublic").classList.toggle("active", tab === "public");
+    document.getElementById("viewVault").classList.toggle("active", tab === "vault");
+  }
+
+  // =========================================================================
+  // BUSCADOR INTELIGENTE (NORMALIZACIÓN, MULTI-TOKEN Y FUZZY TOLERANTE)
+  // =========================================================================
+  function normalizeText(str) {
+    return (str || "")
+      .toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  // Distancia de Levenshtein rápida para tolerar errores de tipeo
+  function levenshtein(a, b) {
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+    const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        matrix[i][j] = b[i - 1] === a[j - 1]
+          ? matrix[i - 1][j - 1]
+          : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+      }
+    }
+    return matrix[b.length][a.length];
+  }
+
+  function smartMatch(item, query) {
+    if (selectedCategory !== "ALL" && item.categoria !== selectedCategory) return false;
+    if (!query) return true;
+
+    const searchableBlob = normalizeText(
+      `${item.servicio} ${item.categoria} ${item.usuario} ${item.host} ${item.notas}`
+    );
+    const wordsInItem = searchableBlob.split(/[\s\-_./:@]+/).filter(Boolean);
+    const queryTokens = normalizeText(query).split(/\s+/).filter(Boolean);
+
+    // Cada palabra escrita en el buscador debe coincidir de forma exacta, parcial o difusa
+    return queryTokens.every(token => {
+      if (searchableBlob.includes(token)) return true;
+      if (token.length >= 4) {
+        return wordsInItem.some(w => Math.abs(w.length - token.length) <= 2 && levenshtein(w, token) <= 1);
+      }
+      return false;
+    });
+  }
+
+  function highlightMatch(text, query) {
+    if (!text) return "";
+    const safe = escapeHtml(text);
+    if (!query) return safe;
+    const tokens = query.trim().split(/\s+/).filter(t => t.length >= 2);
+    if (!tokens.length) return safe;
+    const pattern = new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
+    return safe.replace(pattern, '<mark>$1</mark>');
+  }
+
+  function setVaultCategory(cat, chipEl) {
+    selectedCategory = cat;
+    document.querySelectorAll("#categoryChips .chip").forEach(c => c.classList.remove("active"));
+    chipEl.classList.add("active");
+    renderVaultTable();
+  }
+
+  function clearVaultSearch() {
+    document.getElementById("smartVaultSearch").value = "";
+    selectedCategory = "ALL";
+    document.querySelectorAll("#categoryChips .chip").forEach((c, idx) => c.classList.toggle("active", idx === 0));
+    renderVaultTable();
+  }
+
+  // =========================================================================
+  // RENDERIZADO Y CRUD DE BÓVEDA PRIVADA
+  // =========================================================================
+  function renderVaultTable() {
+    if (!isUnlocked) return;
+    const query = document.getElementById("smartVaultSearch").value;
+    const tbody = document.getElementById("vaultTableBody");
+    const filtered = vaultItems.filter(item => smartMatch(item, query));
+
+    document.getElementById("vaultSearchStats").textContent =
+      `Mostrando ${filtered.length} de ${vaultItems.length} credenciales`;
+
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:24px;">
+        No se encontraron credenciales para "${escapeHtml(query)}". Prueba con otro término o categoría.
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(item => {
+      const isShown = revealedIds.has(item.id);
+      const passDisplay = isShown ? escapeHtml(item.pass) : "••••••••••••";
+      return `
+        <tr>
+          <td><strong>${highlightMatch(item.servicio, query)}</strong></td>
+          <td><span class="badge badge-cat">${escapeHtml(item.categoria)}</span></td>
+          <td class="mono">
+            ${highlightMatch(item.usuario, query)}
+            <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.usuario)}', 'Usuario')" title="Copiar usuario">📋</button>
+          </td>
+          <td class="mono">
+            <div class="secret-cell">
+              <span>${passDisplay}</span>
+              <button class="btn-glass btn-sm" onclick="toggleReveal(${item.id})" title="Mostrar/Ocultar">${isShown ? "🙈" : "👁️"}</button>
+              <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.pass)}', 'Contraseña')" title="Copiar clave">🔑</button>
+            </div>
+          </td>
+          <td class="mono">${highlightMatch(item.host || "-", query)}</td>
+          <td>${highlightMatch(item.notas || "-", query)}</td>
+          <td>
+            <button class="btn-danger" onclick="deleteVaultItem(${item.id})">Eliminar</button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  async function addVaultItem(e) {
+    e.preventDefault();
+    if (!isUnlocked) return;
+    const newItem = {
+      id: Date.now(),
+      servicio: document.getElementById("vServicio").value.trim(),
+      categoria: document.getElementById("vCategoria").value,
+      usuario: document.getElementById("vUsuario").value.trim(),
+      pass: document.getElementById("vPass").value.trim(),
+      host: document.getElementById("vHost").value.trim(),
+      notas: document.getElementById("vNotas").value.trim()
+    };
+    vaultItems.unshift(newItem);
+    await encryptVaultData(vaultItems, activeCryptoKey);
+    e.target.reset();
+    renderVaultTable();
+    showToast("🔒 Credencial cifrada y almacenada.");
+  }
+
+  async function deleteVaultItem(id) {
+    vaultItems = vaultItems.filter(i => i.id !== id);
+    await encryptVaultData(vaultItems, activeCryptoKey);
+    renderVaultTable();
+    showToast("🗑️ Registro eliminado de la bóveda.");
+  }
+
+  function toggleReveal(id) {
+    if (revealedIds.has(id)) {
+      revealedIds.delete(id);
+    } else {
+      revealedIds.add(id);
+      // Auto-ocultar por seguridad tras 15 segundos
+      setTimeout(() => {
+        if (revealedIds.delete(id) && isUnlocked) renderVaultTable();
+      }, 15000);
+    }
+    renderVaultTable();
+  }
+
+  function generateStrongPass() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
+    const arr = new Uint32Array(14);
+    crypto.getRandomValues(arr);
+    const pwd = Array.from(arr, x => chars[x % chars.length]).join("");
+    document.getElementById("vPass").value = pwd;
+    showToast("🎲 Contraseña segura generada.");
+  }
+
+  // =========================================================================
+  // CRUD INVENTARIO OPERATIVO (HOJA PÚBLICA)
+  // =========================================================================
+  function renderPublicTable() {
+    const q = normalizeText(document.getElementById("publicSearch").value);
+    const tbody = document.getElementById("publicTableBody");
+    const filtered = publicItems.filter(i =>
+      normalizeText(`${i.vid} ${i.imei} ${i.equipo} ${i.sim} ${i.estado}`).includes(q)
+    );
+
+    tbody.innerHTML = filtered.map(item => `
+      <tr>
+        <td class="mono"><strong>${escapeHtml(item.vid)}</strong></td>
+        <td class="mono">${escapeHtml(item.imei)}</td>
+        <td>${escapeHtml(item.equipo)}</td>
+        <td class="mono">${escapeHtml(item.sim || "-")}</td>
+        <td><span class="badge ${item.estado === 'Operativo' ? 'badge-ok' : 'badge-warn'}">${escapeHtml(item.estado)}</span></td>
+        <td>
+          <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.imei)}', 'IMEI')">📋 IMEI</button>
+          <button class="btn-danger" onclick="deletePublicItem(${item.id})">Eliminar</button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function addPublicItem(e) {
+    e.preventDefault();
+    publicItems.unshift({
+      id: Date.now(),
+      vid: document.getElementById("pubVid").value.trim(),
+      imei: document.getElementById("pubImei").value.trim(),
+      equipo: document.getElementById("pubEquipo").value.trim(),
+      sim: document.getElementById("pubSim").value.trim(),
+      estado: document.getElementById("pubEstado").value
+    });
+    localStorage.setItem(STORAGE_PUBLIC, JSON.stringify(publicItems));
+    e.target.reset();
+    renderPublicTable();
+    showToast("✅ Equipo registrado en inventario.");
+  }
+
+  function deletePublicItem(id) {
+    publicItems = publicItems.filter(i => i.id !== id);
+    localStorage.setItem(STORAGE_PUBLIC, JSON.stringify(publicItems));
+    renderPublicTable();
+  }
+
+  // =========================================================================
+  // EXPORTACIÓN EXCEL (CSV UTF-8 BOM) Y ATAJOS DE TECLADO
+  // =========================================================================
+  function exportToExcelCSV() {
+    const inVault = document.getElementById("viewVault").classList.contains("active") && isUnlocked;
+    let rows = [];
+    let filename = "";
+
+    if (inVault) {
+      rows.push(["Servicio", "Categoria", "Usuario", "Contrasena", "IP_URL", "Notas"]);
+      vaultItems.forEach(i => rows.push([i.servicio, i.categoria, i.usuario, i.pass, i.host, i.notas]));
+      filename = "MDZ_Boveda_Privada.csv";
+    } else {
+      rows.push(["VID", "IMEI", "Equipo", "SIM_ICCID", "Estado"]);
+      publicItems.forEach(i => rows.push([i.vid, i.imei, i.equipo, i.sim, i.estado]));
+      filename = "MDZ_Inventario_Equipos.csv";
+    }
+
+    const csvContent = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    showToast(`📊 Archivo ${filename} descargado.`);
+  }
+
+  // Atajos de teclado: Ctrl+K para Comando Secreto, '/' para enfocar buscador
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      handleCommandButton();
+    } else if (e.key === "/" && isUnlocked && document.activeElement.tagName !== "INPUT") {
+      e.preventDefault();
+      switchTab("vault");
+      document.getElementById("smartVaultSearch").focus();
+    } else if (e.key === "Escape") {
+      closeCommandModal();
+    }
+  });
+
+  // Utilidades
+  function copyText(text, label) {
+    navigator.clipboard.writeText(text);
+    showToast(`📋 ${label} copiado al portapapeles.`);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+  }
+
+  function escapeHtml(str) {
+    return String(str || "").replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]));
+  }
+
+  function escapeAttr(str) {
+    return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+  }
+
+  // Inicializar tabla pública
+  renderPublicTable();
+</script>
+</body>
+</html>
