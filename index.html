@@ -865,6 +865,45 @@
       font-size: 0.7rem !important;
       box-shadow: 0 2px 8px rgba(0,0,0,0.65) !important;
     }
+
+    /* Marcador Rojo Pulsante para la Unidad Trackeada (GPS) */
+    .gps-pulse-wrapper {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gps-pulse-core {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ef4444;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 0 12px #ef4444, 0 0 22px rgba(239, 68, 68, 0.9);
+      position: relative;
+      z-index: 2;
+      animation: gpsCoreBeat 1.2s ease-in-out infinite;
+    }
+    .gps-pulse-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.55);
+      border: 2px solid #f87171;
+      z-index: 1;
+      animation: gpsRadarPulse 1.6s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes gpsCoreBeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.18); }
+    }
+    @keyframes gpsRadarPulse {
+      0% { transform: scale(0.7); opacity: 0.95; }
+      75% { transform: scale(2.8); opacity: 0; }
+      100% { transform: scale(2.8); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -2173,18 +2212,22 @@
     const powerInfo = estimatePowerRating(closest.dist);
     const closestLabel = `${formatPointCode(closest)} · ${closest.punto}`;
 
-    const gpsMarker = L.circleMarker([lat, lon], {
-      radius: 9,
-      fillColor: "#f59e0b",
-      color: "#ffffff",
-      weight: 2.2,
-      opacity: 1,
-      fillOpacity: 0.95
+    const gpsPulseIcon = L.divIcon({
+      className: "",
+      html: `<div class="gps-pulse-wrapper"><span class="gps-pulse-ring"></span><span class="gps-pulse-core"></span></div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+      popupAnchor: [0, -12]
+    });
+
+    const gpsMarker = L.marker([lat, lon], {
+      icon: gpsPulseIcon,
+      zIndexOffset: 1000
     }).addTo(gpsRefLayer);
 
     gpsMarker.bindPopup(`
       <div style="font-size:0.82rem; line-height:1.5;">
-        <strong style="color:#fbbf24;">📡 Posición GPS Evaluada</strong><br/>
+        <strong style="color:#f87171;">🔴 Unidad Trackeada (GPS)</strong><br/>
         <span style="font-family:monospace;">${lat.toFixed(7)}, ${lon.toFixed(7)}</span><br/>
         <span>Más cercano: <strong>${escapeHtml(closestLabel)}</strong> (${closest.dist >= 1000 ? (closest.dist / 1000).toFixed(2) + " km" : Math.round(closest.dist) + " m"})</span><br/>
         <span class="tech-pill ${getTechBadgeClass(closest.tecnologia)}">${escapeHtml(closest.tecnologia)}</span><br/>
