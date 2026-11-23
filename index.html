@@ -947,6 +947,29 @@
     let publicItems = loadTrackersFromStorage();
 
     function persistTrackers(customLabel = "Guardado automático") {
+      try {
+        localStorage.setItem(STORAGE_PUBLIC, JSON.stringify(publicItems));
+        const indicator = document.getElementById("autoSaveIndicator");
+        if (indicator) {
+          indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> ${escapeHtml(customLabel)}`;
+          clearTimeout(window._saveBadgeTimer);
+          window._saveBadgeTimer = setTimeout(() => {
+            indicator.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Guardado automático activo`;
+          }, 2000);
+        }
+      } catch (err) {
+        console.error("Error guardando Trackers:", err);
+        showToast("Error al guardar en almacenamiento local.");
+      }
+    }
+
+    let vaultItems = [];
+    const defaultVaultSeed = [
+      { id: 101, servicio: "Portal Principal", categoria: "Accesos Web", usuario: "admin_ops", pass: "Acceso#2026!", host: "https://portal.ejemplo.com", notas: "Cuenta principal de administración" },
+      { id: 102, servicio: "Servidor Core", categoria: "Sistemas", usuario: "root_sys", pass: "Sys@Core9921", host: "192.168.1.10", notas: "Acceso SSH y panel interno" },
+      { id: 103, servicio: "Router Principal", categoria: "Redes", usuario: "net_admin", pass: "Net#Router2026", host: "192.168.1.1", notas: "Configuración VLAN y firewall" }
+    ];
+
     async function loadVaultFromStorage() {
       for (const keyName of LEGACY_VAULT_KEYS) {
         try {
@@ -1147,6 +1170,46 @@
       const panel = document.getElementById("sanctuary2FAPanel");
       if (panel && panel.classList.contains("hidden")) {
         toggleSanctuary2FAPanel();
+      }
+    }
+
+    function lockSanctuary() {
+      isUnlocked = false;
+      isEditMode = false;
+      vaultItems = [];
+      revealedIds.clear();
+      const qrPanel = document.getElementById("sanctuary2FAPanel");
+      if (qrPanel) qrPanel.classList.add("hidden");
+      updateSanctuaryUI();
+      updateEditModeUI();
+      switchTab("public");
+      renderPublicTable();
+      showToast("Sanctuary cerrado y Modo Edición bloqueado.");
+    }
+
+    function updateSanctuaryUI() {
+      const tabsLayer = document.getElementById("tabsLayer");
+      const btnTrigger = document.getElementById("btnSanctuaryTrigger");
+      const btnLabel = document.getElementById("sanctuaryBtnLabel");
+
+      if (isUnlocked) {
+        if (tabsLayer) {
+          tabsLayer.classList.remove("hidden");
+          tabsLayer.classList.add("flex");
+        }
+        if (btnTrigger) {
+          btnTrigger.className = "croc-trigger flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/45 text-xs font-bold transition-all cursor-pointer";
+        }
+        if (btnLabel) btnLabel.textContent = "Cerrar Sanctuary";
+      } else {
+        if (tabsLayer) {
+          tabsLayer.classList.add("hidden");
+          tabsLayer.classList.remove("flex");
+        }
+        if (btnTrigger) {
+          btnTrigger.className = "croc-trigger flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/45 text-xs font-bold transition-all cursor-pointer shadow-[0_0_16px_rgba(16,185,129,0.18)]";
+        }
+        if (btnLabel) btnLabel.textContent = "Sanctuary";
       }
     }
 
