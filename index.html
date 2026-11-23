@@ -661,6 +661,310 @@
     }
 
     // =========================================================================
+    // CONTROL DE ACCESO A SANCTUARY (SKYNET2026) & ANIMACIÓN COCODRILO
+    // =========================================================================
+    function triggerCrocChomp() {
+      const boxes = ["headerCrocBox", "btnSanctuaryTrigger", "modalCrocIcon", "sanctuaryBannerCroc"];
+      boxes.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove("croc-chomp-active");
+        void el.offsetWidth;
+        el.classList.add("croc-chomp-active");
+        setTimeout(() => el.classList.remove("croc-chomp-active"), 900);
+      });
+    }
+
+    function handleSanctuaryAction() {
+      triggerCrocChomp();
+      if (isUnlocked) {
+        lockSanctuary();
+      } else {
+        openSanctuaryModal();
+      }
+    }
+
+    function openSanctuaryModal() {
+      const modal = document.getElementById("sanctuaryModal");
+      const input = document.getElementById("masterKeyInput");
+      const err = document.getElementById("modalError");
+      err.textContent = "";
+      input.value = "";
+      modal.classList.remove("hidden");
+      setTimeout(() => input.focus(), 60);
+    }
+
+    function closeSanctuaryModal() {
+      document.getElementById("sanctuaryModal").classList.add("hidden");
+      document.getElementById("masterKeyInput").value = "";
+      document.getElementById("modalError").textContent = "";
+    }
+
+    async function verifySanctuaryKey(e) {
+      e.preventDefault();
+      const input = document.getElementById("masterKeyInput");
+      const errorEl = document.getElementById("modalError");
+      const typedKey = input.value.trim();
+
+      if (typedKey !== EXPECTED_KEY) {
+        triggerCrocChomp();
+        errorEl.textContent = "Clave incorrecta. Acceso denegado.";
+        input.value = "";
+        input.focus();
+        return;
+      }
+
+      try {
+        activeCryptoKey = await deriveAesKey(typedKey);
+        const storedData = await decryptVaultData(activeCryptoKey);
+
+        if (storedData && Array.isArray(storedData)) {
+          vaultItems = storedData;
+        } else {
+          vaultItems = [...defaultVaultSeed];
+          await encryptVaultData(vaultItems, activeCryptoKey);
+        }
+
+        isUnlocked = true;
+        closeSanctuaryModal();
+        updateSanctuaryUI();
+        switchTab("sanctuary");
+        renderVaultTable();
+        triggerCrocChomp();
+        showToast("Sanctuary desbloqueado.");
+        setTimeout(() => document.getElementById("smartVaultSearch")?.focus(), 100);
+      } catch (err) {
+        console.error(err);
+        errorEl.textContent = "No se pudo descifrar la bóveda local.";
+      }
+    }
+
+    function lockSanctuary() {
+      isUnlocked = false;
+      activeCryptoKey = null;
+      vaultItems = [];
+      revealedIds.clear();
+      updateSanctuaryUI();
+      switchTab("public");
+      showToast("Sanctuary bloqueado y oculto.");
+    }
+
+    function updateSanctuaryUI() {
+      const tabSanctuary = document.getElementById("tabSanctuary");
+      const btnLabel = document.getElementById("sanctuaryBtnLabel");
+      const btnTrigger = document.getElementById("btnSanctuaryTrigger");
+
+      if (isUnlocked) {
+        tabSanctuary.classList.remove("hidden");
+        tabSanctuary.classList.add("inline-flex");
+        btnLabel.textContent = "Bloquear Sanctuary";
+        btnTrigger.classList.add("bg-emerald-500/35", "border-emerald-300");
+      } else {
+        tabSanctuary.classList.add("hidden");
+        tabSanctuary.classList.remove("inline-flex");
+        btnLabel.textContent = "Sanctuary";
+        btnTrigger.classList.remove("bg-emerald-500/35", "border-emerald-300");
+      }
+    }
+
+    function switchTab(tab) {
+      if (tab === "sanctuary" && !isUnlocked) {
+        openSanctuaryModal();
+        return;
+      }
+
+      const tabPub = document.getElementById("tabPublic");
+      const tabSanc = document.getElementById("tabSanctuary");
+      const viewPub = document.getElementById("viewPublic");
+      const viewSanc = document.getElementById("viewSanctuary");
+
+      if (tab === "sanctuary") {
+        viewPub.classList.add("hidden");
+        viewSanc.classList.remove("hidden");
+
+        tabPub.classList.remove("bg-emerald-500/20", "text-emerald-300", "border", "border-emerald-500/40");
+        tabPub.classList.add("text-slate-300");
+
+        tabSanc.classList.add("bg-emerald-500/20", "text-emerald-300", "border", "border-emerald-500/40");
+        tabSanc.classList.remove("text-slate-300");
+      } else {
+        viewSanc.classList.add("hidden");
+        viewPub.classList.remove("hidden");
+
+        tabSanc.classList.remove("bg-emerald-500/20", "text-emerald-300", "border", "border-emerald-500/40");
+        tabSanc.classList.add("text-slate-300");
+
+        tabPub.classList.add("bg-emerald-500/20", "text-emerald-300", "border", "border-emerald-500/40");
+        tabPub.classList.remove("text-slate-300");
+      }
+    }
+
+    // =========================================================================
+    // BUSCADOR INTELIGENTE & CRUD CIFRADO EN SANCTUARY
+    // =========================================================================
+    function normalizeText(str) {
+      return String(str || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function levenshtein(a, b) {
+      if (!a.length) return b.length;
+      if (!b.length) return a.length;
+      const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+      for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+          matrix[i][j] = b[i - 1] === a[j - 1]
+            ? matrix[i - 1][j - 1]
+            : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+        }
+      }
+      return matrix[b.length][a.length];
+    }
+
+    function smartMatch(item, query) {
+      if (selectedCategory !== "ALL" && item.categoria !== selectedCategory) return false;
+      if (!query) return true;
+
+      const blob = normalizeText(`${item.servicio} ${item.categoria} ${item.usuario} ${item.host} ${item.notas}`);
+      const words = blob.split(/[\s\-_./:@]+/).filter(Boolean);
+      const tokens = normalizeText(query).split(/\s+/).filter(Boolean);
+
+      return tokens.every(token => {
+        if (blob.includes(token)) return true;
+        if (token.length >= 4) {
+          return words.some(w => Math.abs(w.length - token.length) <= 2 && levenshtein(w, token) <= 1);
+        }
+        return false;
+      });
+    }
+
+    function highlightMatch(text, query) {
+      if (!text) return "";
+      const safe = escapeHtml(text);
+      if (!query) return safe;
+      const tokens = query.trim().split(/\s+/).filter(t => t.length >= 2);
+      if (!tokens.length) return safe;
+      const regex = new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+      return safe.replace(regex, "<mark>$1</mark>");
+    }
+
+    function setVaultCategory(cat, btnEl) {
+      selectedCategory = cat;
+      document.querySelectorAll("#categoryChips .chip-btn").forEach(btn => {
+        btn.classList.remove("bg-emerald-500/25", "text-emerald-200", "border-emerald-400");
+        btn.classList.add("bg-white/5", "text-slate-300", "border-white/10");
+      });
+      btnEl.classList.remove("bg-white/5", "text-slate-300", "border-white/10");
+      btnEl.classList.add("bg-emerald-500/25", "text-emerald-200", "border-emerald-400");
+      renderVaultTable();
+    }
+
+    function clearVaultSearch() {
+      document.getElementById("smartVaultSearch").value = "";
+      const firstChip = document.querySelector('#categoryChips .chip-btn[data-cat="ALL"]');
+      if (firstChip) setVaultCategory("ALL", firstChip);
+      else renderVaultTable();
+    }
+
+    function renderVaultTable() {
+      if (!isUnlocked) return;
+      const query = document.getElementById("smartVaultSearch").value;
+      const tbody = document.getElementById("vaultTableBody");
+      const filtered = vaultItems.filter(item => smartMatch(item, query));
+
+      document.getElementById("sanctuaryCountPill").textContent = vaultItems.length;
+      document.getElementById("vaultSearchStats").textContent = `Mostrando ${filtered.length} de ${vaultItems.length} registros`;
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 text-xs">No se encontraron credenciales para "${escapeHtml(query)}".</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const shown = revealedIds.has(item.id);
+        const passText = shown ? escapeHtml(item.pass) : "••••••••••••";
+        return `
+          <tr class="hover:bg-emerald-500/5 transition-colors">
+            <td class="py-3 px-4 font-semibold text-white">${highlightMatch(item.servicio, query)}</td>
+            <td class="py-3 px-4">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                ${escapeHtml(item.categoria)}
+              </span>
+            </td>
+            <td class="py-3 px-4 font-mono text-xs text-slate-200">
+              <div class="flex items-center gap-1.5">
+                <span>${highlightMatch(item.usuario, query)}</span>
+                <button onclick="copyText('${escapeAttr(item.usuario)}', 'Usuario')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 cursor-pointer" title="Copiar usuario">Copiar</button>
+              </div>
+            </td>
+            <td class="py-3 px-4 font-mono text-xs text-emerald-300">
+              <div class="flex items-center gap-1.5">
+                <span>${passText}</span>
+                <button onclick="toggleReveal(${item.id})" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 cursor-pointer">${shown ? "Ocultar" : "Ver"}</button>
+                <button onclick="copyText('${escapeAttr(item.pass)}', 'Contraseña')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] text-emerald-200 border border-emerald-500/30 cursor-pointer">Clave</button>
+              </div>
+            </td>
+            <td class="py-3 px-4 font-mono text-xs text-cyan-300">${highlightMatch(item.host || "-", query)}</td>
+            <td class="py-3 px-4 text-xs text-slate-300">${highlightMatch(item.notas || "-", query)}</td>
+            <td class="py-3 px-4 text-right whitespace-nowrap">
+              <button onclick="deleteVaultItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs cursor-pointer">Eliminar</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function addVaultItem(e) {
+      e.preventDefault();
+      if (!isUnlocked || !activeCryptoKey) return;
+      vaultItems.unshift({
+        id: Date.now(),
+        servicio: document.getElementById("vServicio").value.trim(),
+        categoria: document.getElementById("vCategoria").value,
+        usuario: document.getElementById("vUsuario").value.trim(),
+        pass: document.getElementById("vPass").value.trim(),
+        host: document.getElementById("vHost").value.trim(),
+        notas: document.getElementById("vNotas").value.trim()
+      });
+      await encryptVaultData(vaultItems, activeCryptoKey);
+      e.target.reset();
+      renderVaultTable();
+      showToast("Credencial cifrada y guardada en Sanctuary.");
+    }
+
+    async function deleteVaultItem(id) {
+      if (!isUnlocked || !activeCryptoKey) return;
+      vaultItems = vaultItems.filter(i => i.id !== id);
+      await encryptVaultData(vaultItems, activeCryptoKey);
+      renderVaultTable();
+      showToast("Credencial eliminada de Sanctuary.");
+    }
+
+    function toggleReveal(id) {
+      if (revealedIds.has(id)) {
+        revealedIds.delete(id);
+      } else {
+        revealedIds.add(id);
+        setTimeout(() => {
+          if (revealedIds.delete(id) && isUnlocked) renderVaultTable();
+        }, 15000);
+      }
+      renderVaultTable();
+    }
+
+    function generateStrongPass() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
+      const arr = new Uint32Array(14);
+      crypto.getRandomValues(arr);
+      document.getElementById("vPass").value = Array.from(arr, x => chars[x % chars.length]).join("");
+      showToast("Contraseña segura generada.");
+    }
+
+    // =========================================================================
     // TABLA, EDICIÓN EN LÍNEA Y CRUD DE TRACKERS (PERSISTENCIA AUTOMÁTICA)
     // =========================================================================
     function renderPublicTable() {
