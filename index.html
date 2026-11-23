@@ -173,8 +173,8 @@
     /* Cocodrilo Lottie + Agua LED libre (Sin recuadro) */
     .croc-habitat-btn {
       position: relative;
-      width: 144px;
-      height: 54px;
+      width: 156px;
+      height: 62px;
       padding: 0;
       border: none;
       background: transparent;
@@ -186,12 +186,22 @@
       align-items: center;
       justify-content: center;
       transition: transform 0.2s ease, filter 0.25s ease;
+      --water-fill: #10b981;
+      --wave-a: #34d399;
+      --wave-b: #34d399;
+      --ripple-color: #6ee7b7;
     }
     .croc-habitat-btn:hover {
       transform: translateY(-1px);
       filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.45));
     }
+
+    /* Agua rojo verdoso al autenticarse */
     .croc-habitat-btn.btn-sanctuary-open {
+      --water-fill: #dc2626;
+      --wave-a: #ef4444;
+      --wave-b: #10b981;
+      --ripple-color: #f87171;
       filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.45));
     }
 
@@ -203,7 +213,7 @@
       justify-content: center;
       z-index: 1;
       pointer-events: none;
-      transform: translateY(-2px) scale(1.85); /* Sube o baja el 1.85 para el tamaño exacto */
+      transform: translateY(-2px) scale(1.85);
     }
     .croc-water-overlay {
       position: absolute;
@@ -993,23 +1003,23 @@
           </dotlottie-player>
         </div>
 
-        <!-- Capa 2: Agua LED transparente sin recuadro -->
-        <svg class="croc-water-overlay" width="144" height="54" viewBox="0 0 144 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Capa 2: Agua LED transparente sin recuadro (Cambia a rojo verdoso al autenticarse) -->
+        <svg class="croc-water-overlay" width="156" height="62" viewBox="0 0 156 62" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="waterGrad" x1="0" y1="35" x2="0" y2="54" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#10B981" stop-opacity="0.32"/>
-              <stop offset="100%" stop-color="#050a08" stop-opacity="0"/>
+            <linearGradient id="waterGrad" x1="0" y1="42" x2="0" y2="62" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" style="stop-color: var(--water-fill); stop-opacity: 0.36;"/>
+              <stop offset="100%" style="stop-color: #050a08; stop-opacity: 0;"/>
             </linearGradient>
-            <linearGradient id="waveFade" x1="0" y1="0" x2="144" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#34D399" stop-opacity="0"/>
-              <stop offset="18%" stop-color="#34D399" stop-opacity="0.85"/>
-              <stop offset="82%" stop-color="#34D399" stop-opacity="0.85"/>
-              <stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
+            <linearGradient id="waveFade" x1="0" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" style="stop-color: var(--wave-a); stop-opacity: 0;"/>
+              <stop offset="25%" style="stop-color: var(--wave-a); stop-opacity: 0.9;"/>
+              <stop offset="65%" style="stop-color: var(--wave-b); stop-opacity: 0.9;"/>
+              <stop offset="100%" style="stop-color: var(--wave-a); stop-opacity: 0;"/>
             </linearGradient>
           </defs>
-          <rect x="0" y="38" width="144" height="16" fill="url(#waterGrad)" />
-          <path class="water-wave-1" d="M0 39 Q 7 36, 14 39 T 28 39 T 42 39 T 56 39 T 70 39 T 84 39 T 98 39 T 112 39 T 126 39 T 140 39 T 154 39 T 168 39 T 182 39" stroke="url(#waveFade)" stroke-width="1.5" fill="none"/>
-          <ellipse class="water-ripple" cx="72" cy="41.5" rx="26" ry="2.2" stroke="#6EE7B7" stroke-width="1" fill="none"/>
+          <rect x="0" y="45" width="156" height="17" fill="url(#waterGrad)" />
+          <path class="water-wave-1" d="M0 46 Q 7 43, 14 46 T 28 46 T 42 46 T 56 46 T 70 46 T 84 46 T 98 46 T 112 46 T 126 46 T 140 46 T 154 46 T 168 46 T 182 46 T 196 46" stroke="url(#waveFade)" stroke-width="1.6" fill="none"/>
+          <ellipse class="water-ripple" cx="78" cy="49" rx="28" ry="2.4" style="stroke: var(--ripple-color);" stroke-width="1" fill="none"/>
         </svg>
       </button>
     </div>
@@ -1554,7 +1564,7 @@
     if (t.includes("REPOTENCIADO")) return "#fbbf24";
     if (t.includes("DETEKTOR")) return "#10b981";
     if (t.includes("VUT")) return "#c084fc";
-    return "#38bdf8"; // TRACKER
+    return "#38bdf8";
   }
 
   function getTechBadgeClass(tech) {
