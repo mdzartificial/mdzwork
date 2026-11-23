@@ -765,6 +765,9 @@
       z-index: 1;
     }
     .leaflet-container { background: #040907 !important; font-family: var(--font-sans) !important; }
+    .dark-map-tiles {
+      filter: invert(100%) hue-rotate(180deg) brightness(88%) contrast(92%) saturate(85%);
+    }
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
       background: #0a1713 !important;
       color: #ecfdf5 !important;
@@ -802,6 +805,30 @@
     .sig-high { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; border: 1px solid #10b981; }
     .sig-med { background: rgba(245, 158, 11, 0.22); color: #fcd34d; border: 1px solid #f59e0b; }
     .sig-low { background: rgba(239, 68, 68, 0.22); color: #fca5a5; border: 1px solid #ef4444; }
+    .dark-map-tiles {
+      filter: invert(100%) hue-rotate(180deg) brightness(92%) contrast(94%) saturate(75%);
+    }
+    .tech-pill {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-weight: 600;
+    }
+    .point-label-tooltip {
+      background: rgba(4, 12, 9, 0.88) !important;
+      color: #ecfdf5 !important;
+      border: 1px solid rgba(16, 185, 129, 0.5) !important;
+      border-radius: 6px !important;
+      padding: 2px 6px !important;
+      font-family: var(--font-mono) !important;
+      font-size: 0.68rem !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.65) !important;
+    }
   </style>
 </head>
 <body>
@@ -1092,19 +1119,21 @@
       <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
         <label style="font-size:0.78rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
           <input type="checkbox" id="toggleRadiusCircles" checked onchange="toggleCoverageRings()" />
-          Mostrar radios de potencia (1 km / 3 km)
+          Radios base (1 km / 3 km)
         </label>
+        <button type="button" class="btn-glass btn-sm" onclick="exportGeofencesCSV()">📊 Exportar Geocercas (CSV)</button>
+        <button type="button" class="btn-glass btn-sm" onclick="exportGeofencesGeoJSON()">🌐 Exportar GeoJSON</button>
         <button type="button" class="btn-glass btn-sm" onclick="fitAllFixedPoints()">🎯 Centrar 78 Puntos</button>
       </div>
     </div>
 
     <div class="map-layout">
-      <!-- Panel de Control GPS vs Puntos Fijos -->
-      <div class="map-sidebar">
+      <!-- Panel de Control GPS vs Puntos Fijos y Geocercas -->
+      <div class="map-sidebar" style="max-height: 620px; overflow-y: auto;">
         <div>
           <strong style="font-size:0.9rem; color:var(--accent-secondary);">📡 Evaluar Posición GPS vs Puntos Fijos</strong>
           <p style="font-size:0.77rem; color:var(--text-muted); margin-top:3px;">
-            Ingresa Latitud y Longitud o haz clic directamente en cualquier punto del mapa para medir distancia y potencia estimada.
+            Ingresa Latitud y Longitud o haz clic directamente en el mapa para medir distancia, potencia y crear geocercas.
           </p>
         </div>
 
@@ -1129,10 +1158,45 @@
           </div>
         </form>
 
+        <!-- Constructor de Geocerca Circular -->
+        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
+          <strong style="font-size:0.85rem; color:#38bdf8; display:block; margin-bottom:6px;">
+            ⭕ Crear Geocerca Alrededor del Punto
+          </strong>
+          <form onsubmit="saveNewGeofence(event)" style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:grid; grid-template-columns:1fr 110px; gap:8px;">
+              <div class="field">
+                <label>Nombre Geocerca *</label>
+                <input type="text" id="geoNameInput" placeholder="Ej. Zona Norte / Nodo 14" required />
+              </div>
+              <div class="field">
+                <label>Radio (m) *</label>
+                <input type="number" id="geoRadiusInput" min="20" max="50000" value="500" oninput="previewGeofenceCircle()" required />
+              </div>
+            </div>
+            <div class="field">
+              <label>Datos / Observaciones de Geocerca</label>
+              <input type="text" id="geoNotesInput" placeholder="Ej. Potencia -68 dBm, Unidad Q2, Alerta entrada..." />
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="submit" class="btn-primary btn-sm" style="flex:1; justify-content:center;">💾 Guardar Geocerca</button>
+              <button type="button" class="btn-glass btn-sm" onclick="previewGeofenceCircle()" title="Previsualizar círculo en el mapa">👁️ Vista previa</button>
+            </div>
+          </form>
+
+          <!-- Lista de Geocercas Guardadas -->
+          <div style="margin-top:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+              <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">GEOCERCAS GUARDADAS (<span id="geofenceCountSpan">0</span>)</span>
+            </div>
+            <div id="savedGeofencesList" class="nearest-list" style="max-height:150px;"></div>
+          </div>
+        </div>
+
         <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
           <div class="field" style="margin-bottom:8px;">
-            <label>Buscar punto fijo en lista (78)</label>
-            <input type="text" id="mapFixedSearch" placeholder="Filtrar punto por ID o coordenada..." oninput="filterFixedPointSelect(this.value)" />
+            <label>Buscar punto fijo por nombre, tecnología o coordenada (78)</label>
+            <input type="text" id="mapFixedSearch" placeholder="Ej. Jockey, Miraflores, RF, LoRa, LTE..." oninput="filterFixedPointSelect(this.value)" />
           </div>
           <select id="fixedPointSelector" style="width:100%;" onchange="focusSelectedFixedPoint(this.value)">
             <option value="">— Seleccionar punto fijo (1 - 78) —</option>
@@ -1243,32 +1307,33 @@
 
 <script>
   // =========================================================================
-  // CONSTANTES Y ESTADO DE LA APLICACIÓN
+  // ESTADO GLOBAL, ALMACENAMIENTO Y DATOS INICIALES
   // =========================================================================
   const RECOVERY_MASTER_KEY = "SKYNET2026";
+  const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
+  const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
   const STORAGE_TRACKERS = "mdz_trackers_v1";
   const STORAGE_TRACKER_COLS = "mdz_tracker_cols_v1";
   const STORAGE_DIRECTORY = "mdz_directory_v1";
   const STORAGE_DIRECTORY_COLS = "mdz_directory_cols_v1";
   const STORAGE_COMMANDS = "mdz_commands_v1";
-  const STORAGE_COMMANDS_COLS = "mdz_commands_cols_v1";
+  const STORAGE_COMMAND_COLS = "mdz_command_cols_v1";
   const STORAGE_SANCTUARY = "mdz_vault_data_v1";
   const STORAGE_SANCTUARY_COLS = "mdz_sanctuary_cols_v1";
-  const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
-  const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
+  const STORAGE_GEOFENCES = "mdz_geofences_v1";
 
   let isAuthenticated = false;
   let isEditMode = false;
-  let pendingIntent = "sanctuary"; // 'sanctuary' | 'edit'
-  let addColumnTarget = "trackers"; // 'trackers' | 'directory' | 'commands' | 'sanctuary'
+  let pendingAction = null;
+  let addColumnTarget = "trackers";
   let selectedCategory = "ALL";
   let selectedCommandModel = "ALL";
-  let revealedIds = new Set();
   let editingCellKey = null;
   let editingDirCellKey = null;
   let editingCmdCellKey = null;
   let editingSancCellKey = null;
   let draggedTrackerId = null;
+  let revealedIds = new Set();
 
   const defaultTrackerColumns = [
     { key: "unidad", label: "UNIDAD", required: true, mono: true, custom: false },
@@ -1280,20 +1345,61 @@
     { key: "detalles", label: "DETALLES", required: false, mono: false, custom: false }
   ];
 
+  const defaultTrackersSeed = [
+    { id: 1, unidad: "NOVEMBER 5", placa: "BYU-795", gps: "868574042607064", detektor: "1DB199", activacion: "D7D21B3", respuesta: "3VNAF", detalles: "P-166-Cambiar Switch" },
+    { id: 2, unidad: "QUEBEC 2", placa: "CVJ-121", gps: "864696060281078", detektor: "1DB7E5", activacion: "A8C6566", respuesta: "MHC88", detalles: "P-371-PL011-93-81" },
+    { id: 3, unidad: "QUEBEC 1", placa: "CRC-497", gps: "866314061138945", detektor: "2394F0", activacion: "7868C34", respuesta: "5Q0AD", detalles: "P-" },
+    { id: 4, unidad: "JOULE 1", placa: "CKP-306", gps: "868574042640297", detektor: "1DB476", activacion: "A1274F0", respuesta: "HTC42", detalles: "P-371-PL054" },
+    { id: 5, unidad: "LUIS S", placa: "CVU-658", gps: "864696060273265", detektor: "1DB46A", activacion: "ADA", respuesta: "A", detalles: "P-371-DA" },
+    { id: 6, unidad: "KILO 3", placa: "CRC-367", gps: "866314060897491", detektor: "1DB386", activacion: "CA21D94", respuesta: "9EF4M", detalles: "P-371" },
+    { id: 7, unidad: "NOVEMBER 3", placa: "CDH-845", gps: "866314061709372", detektor: "1DB384", activacion: "F6B7637", respuesta: "LYNYP", detalles: "P-154" },
+    { id: 8, unidad: "FOXTRO 2", placa: "CKR-859", gps: "864696062242276", detektor: "1DB6B5", activacion: "BF832DB", respuesta: "C1MPE", detalles: "P-157" },
+    { id: 9, unidad: "FOXTRO 1", placa: "CUB-026", gps: "866314062183122", detektor: "1DB65B-1DB36D", activacion: "8800C54", respuesta: "NNESQ", detalles: "P-371" }
+  ];
+
   const defaultDirectoryColumns = [
     { key: "nombre", label: "NOMBRE / CONTACTO", required: true, mono: false, custom: false },
-    { key: "area", label: "ÁREA / EMPRESA", required: false, mono: false, custom: false },
+    { key: "area", label: "ÁREA / ROL", required: false, mono: false, custom: false },
     { key: "telefono", label: "TELÉFONO / ANEXO", required: false, mono: true, custom: false },
-    { key: "correo", label: "CORREO / ENLACE", required: false, mono: true, custom: false },
-    { key: "notas", label: "DETALLES / NOTAS", required: false, mono: false, custom: false }
+    { key: "enlace", label: "ENLACE / CORREO", required: false, mono: true, custom: false },
+    { key: "notas", label: "NOTAS", required: false, mono: false, custom: false }
+  ];
+
+  const defaultDirectorySeed = [
+    { id: 201, nombre: "Central de Monitoreo 24/7", area: "Operaciones", telefono: "+51 999 000 111", enlace: "https://monitoreo.ejemplo.com", notas: "Atención continua de alertas y despacho" },
+    { id: 202, nombre: "Soporte Técnico Campo", area: "Instalaciones", telefono: "+51 999 222 333", enlace: "soporte@ejemplo.com", notas: "Coordinación de revisiones y cambios de switch" }
   ];
 
   const defaultCommandColumns = [
     { key: "modelo", label: "MODELO", required: true, mono: true, custom: false },
-    { key: "configuracion", label: "TIPO / CABLEADO", required: false, mono: false, custom: false },
-    { key: "accion", label: "ACCIÓN", required: true, mono: false, custom: false },
+    { key: "accion", label: "ACCIÓN / FUNCIÓN", required: true, mono: false, custom: false },
     { key: "comando", label: "COMANDO AT", required: true, mono: true, custom: false },
-    { key: "evento", label: "EVENTO / DETALLE", required: false, mono: false, custom: false }
+    { key: "cableado", label: "CABLEADO / LECTOR", required: false, mono: false, custom: false },
+    { key: "evento", label: "EVENTO / NOTA", required: false, mono: false, custom: false }
+  ];
+
+  const defaultCommandsSeed = [
+    { id: 301, modelo: "GV58CG", accion: "BLOQUEAR (Repotenciado-Lojack)", comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,1,,,,,3,,,,,,FFFF$", cableado: "CORTE: CABLE AMARILLO OUT 2 | LECTOR DE V: AZUL IN 1", evento: "SEGURO ABIERTO (105021) — Detektor con frecuencia de Lojack" },
+    { id: 302, modelo: "GV58CG", accion: "DESBLOQUEAR (Repotenciado-Lojack)", comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,0,,,,,3,,,,,,FFFF$", cableado: "CORTE: CABLE AMARILLO OUT 2 | LECTOR DE V: AZUL IN 1", evento: "SEGURO CERRADO (105020) — Detektor con frecuencia de Lojack" },
+    { id: 303, modelo: "GV58CG", accion: "BLOQUEAR (Detektor)", comando: "AT+GTDOS=PEEC14,0,2,1,1,,,,,2,,,,,,3,,,,,,FFFF$", cableado: "CORTE: CABLE VERDE OUT 1 | LECTOR DE V: BLANCO IN 0", evento: "BLOQUEO DE VEHICULO (105011) — Detektor con frecuencia de Detektor" },
+    { id: 304, modelo: "GV58CG", accion: "DESBLOQUEAR (Detektor)", comando: "AT+GTDOS=PEEC14,0,2,1,0,,,,,2,,,,,,3,,,,,,FFFF$", cableado: "CORTE: CABLE VERDE OUT 1 | LECTOR DE V: BLANCO IN 0", evento: "DESBLOQUEO VEHICULO (105010) — Detektor con frecuencia de Detektor" },
+    { id: 305, modelo: "GV58LAU (5816)", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,,,1,1,,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "Salida digital 1", evento: "Bloqueo estándar GV58LAU" },
+    { id: 306, modelo: "GV58LAU (5816)", accion: "DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,,,1,0,,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "Salida digital 1", evento: "Desbloqueo estándar GV58LAU" },
+    { id: 307, modelo: "GV300W (3001)", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Activación de bloqueo GV300W" },
+    { id: 308, modelo: "GV300W (3001)", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Desactivación de bloqueo GV300W" },
+    { id: 309, modelo: "GV300W (3001)", accion: "RESET", comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF", cableado: "—", evento: "Reinicio remoto GV300W" },
+    { id: 310, modelo: "GV55W", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Activación de bloqueo GV55W" },
+    { id: 311, modelo: "GV55W", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Desactivación de bloqueo GV55W" },
+    { id: 312, modelo: "GV350", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Activación de bloqueo GV350" },
+    { id: 313, modelo: "GV350", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Desactivación de bloqueo GV350" },
+    { id: 314, modelo: "GV57CG", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,,1,1,1,,,,,,,,,,,FFFF$", cableado: "Salida digital", evento: "Activación de bloqueo GV57CG" },
+    { id: 315, modelo: "GV57CG", accion: "DESBLOQUEAR (DEZSB)", comando: "AT+GTDOS=PEEC14,,1,1,0,,,,,,,,,,,FFFF$", cableado: "Salida digital", evento: "Desactivación de bloqueo GV57CG" },
+    { id: 316, modelo: "GENERALES", accion: "Reiniciar dispositivo", comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF$", cableado: "—", evento: "Reinicio general del equipo" },
+    { id: 317, modelo: "GENERALES", accion: "Reconectar a plataforma de mantenimiento (QMS)", comando: "AT+GTRTO=queclinkDM,F3,,,,,,FFFF$", cableado: "—", evento: "Conexión QMS / QueclinkDM" },
+    { id: 318, modelo: "GENERALES", accion: "Solicitar Ubicación", comando: "AT+GTRTO=PEEC14,1,,0,,,,FFFF$", cableado: "—", evento: "Reporte inmediato de posición GPS" },
+    { id: 319, modelo: "GENERALES", accion: "Solicitar información de la ICCID de la SIM", comando: "AT+GTRTO=PEEC14,6,,0,,,,FFFF$", cableado: "—", evento: "Consulta de serie ICCID" },
+    { id: 320, modelo: "GENERALES", accion: "CAMBIAR TIEMPO A 10 MINUTOS (600s)", comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,600,1000,1000,,30,600,00000000,0,,0,FFFF$", cableado: "—", evento: "Intervalo de reporte fijo cada 600 segundos" },
+    { id: 321, modelo: "GENERALES", accion: "CAMBIAR TIEMPO A 10 MINUTOS (10)", comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,10,1000,1000,,30,10,00000000,0,,0,FFFF$", cableado: "—", evento: "Variante intervalo 10" }
   ];
 
   const defaultSanctuaryColumns = [
@@ -1305,253 +1411,47 @@
     { key: "notas", label: "NOTAS / ETIQUETAS", required: false, mono: false, custom: false }
   ];
 
-  // =========================================================================
-  // DATOS INICIALES (PRESERVANDO LO GUARDADO EN LOCALSTORAGE)
-  // =========================================================================
-  const initialTrackersSeed = [
-    { id: 1, unidad: "NOVEMBER 5", placa: "BYU-795", gps: "868574042607064", detektor: "1DB199", activacion: "D7D21B3", respuesta: "3VNAF", detalles: "Cambiar Switch" },
-    { id: 2, unidad: "Q2", placa: "CVJ-121", gps: "", detektor: "1DB7E5", activacion: "", respuesta: "MHC88", detalles: "PL011-93-81" },
-    { id: 3, unidad: "Q1", placa: "CRC-497", gps: "", detektor: "2394F0", activacion: "", respuesta: "5Q0AD", detalles: "PL" },
-    { id: 4, unidad: "J1", placa: "CKP-306", gps: "", detektor: "1DB476", activacion: "", respuesta: "HTC42", detalles: "PL054" }
+  const defaultSanctuarySeed = [
+    { id: 401, servicio: "Portal Administrativo Principal", categoria: "Accesos Web", usuario: "admin_general", pass: "Adm#2026!Secure", host: "https://portal.ejemplo.com", notas: "Acceso principal de gestión" },
+    { id: 402, servicio: "Servidor Central de Operaciones", categoria: "Sistemas", usuario: "ops_root", pass: "Ops$Server9921", host: "10.0.14.1:8080", notas: "Panel de administración interna" },
+    { id: 403, servicio: "Enlace de Red Principal", categoria: "Redes", usuario: "net_admin", pass: "Net#Gateway2026", host: "192.168.1.1", notas: "Configuración de puerta de enlace" },
+    { id: 404, servicio: "Plataforma de Monitoreo GPS", categoria: "Plataformas", usuario: "monitoreo_01", pass: "Track!Mon2026*", host: "https://plataforma.ejemplo.com", notas: "Consulta de unidades y reportes" }
   ];
 
-  const initialDirectorySeed = [
-    { id: 501, nombre: "Central de Operaciones", area: "Monitoreo 24/7", telefono: "+51 999 000 111", correo: "ops@empresa.com", notas: "Coordinación de unidades y soporte" }
-  ];
-
-  const initialCommandsSeed = [
-    {
-      id: 701,
-      modelo: "GV58CG",
-      configuracion: "BLOQUEO REPOTENCIADO-LOJACK (Frec. Lojack) | CORTE: CABLE AMARILLO OUT 2 | LECTOR DE V: AZUL IN 1",
-      accion: "BLOQUEAR",
-      comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,1,,,,,3,,,,,,FFFF$",
-      evento: "EVENTO GENERADO: SEGURO ABIERTO (105021)"
-    },
-    {
-      id: 702,
-      modelo: "GV58CG",
-      configuracion: "BLOQUEO REPOTENCIADO-LOJACK (Frec. Lojack) | CORTE: CABLE AMARILLO OUT 2 | LECTOR DE V: AZUL IN 1",
-      accion: "DESBLOQUEAR",
-      comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,0,,,,,3,,,,,,FFFF$",
-      evento: "EVENTO GENERADO: SEGURO CERRADO (105020)"
-    },
-    {
-      id: 703,
-      modelo: "GV58CG",
-      configuracion: "BLOQUEO DETEKTOR (Frec. Detektor) | CORTE: CABLE VERDE OUT 1 | LECTOR DE V: BLANCO IN 0",
-      accion: "BLOQUEAR",
-      comando: "AT+GTDOS=PEEC14,0,2,1,1,,,,,2,,,,,,3,,,,,,FFFF$",
-      evento: "EVENTO GENERADO: BLOQUEO DE VEHICULO (105011)"
-    },
-    {
-      id: 704,
-      modelo: "GV58CG",
-      configuracion: "BLOQUEO DETEKTOR (Frec. Detektor) | CORTE: CABLE VERDE OUT 1 | LECTOR DE V: BLANCO IN 0",
-      accion: "DESBLOQUEAR",
-      comando: "AT+GTDOS=PEEC14,0,2,1,0,,,,,2,,,,,,3,,,,,,FFFF$",
-      evento: "EVENTO GENERADO: DESBLOQUEO VEHICULO (105010)"
-    },
-    {
-      id: 705,
-      modelo: "GV58LAU (5816)",
-      configuracion: "Salida Digital",
-      accion: "BLOQUEAR",
-      comando: "AT+GTDOS=PEEC14,,,1,1,,,,,,,,,,,,,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 706,
-      modelo: "GV58LAU (5816)",
-      configuracion: "Salida Digital",
-      accion: "DESBLOQUEAR",
-      comando: "AT+GTDOS=PEEC14,,,1,0,,,,,,,,,,,,,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 707,
-      modelo: "GV300W (3001)",
-      configuracion: "Salida Control",
-      accion: "BLOQUEAR",
-      comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 708,
-      modelo: "GV300W (3001)",
-      configuracion: "Salida Control",
-      accion: "DESBLOQUEAR",
-      comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 709,
-      modelo: "GV300W (3001)",
-      configuracion: "Mantenimiento",
-      accion: "RESET",
-      comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF",
-      evento: "Reinicio de equipo"
-    },
-    {
-      id: 710,
-      modelo: "GV55W",
-      configuracion: "Salida Control",
-      accion: "BLOQUEAR",
-      comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 711,
-      modelo: "GV55W",
-      configuracion: "Salida Control",
-      accion: "DESBLOQUEAR",
-      comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 712,
-      modelo: "GV350",
-      configuracion: "Salida Control",
-      accion: "BLOQUEAR",
-      comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 713,
-      modelo: "GV350",
-      configuracion: "Salida Control",
-      accion: "DESBLOQUEAR",
-      comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 714,
-      modelo: "GV57CG",
-      configuracion: "Salida Digital",
-      accion: "BLOQUEAR",
-      comando: "AT+GTDOS=PEEC14,,1,1,1,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 715,
-      modelo: "GV57CG",
-      configuracion: "Salida Digital",
-      accion: "DESBLOQUEAR (DEZSB)",
-      comando: "AT+GTDOS=PEEC14,,1,1,0,,,,,,,,,,,FFFF$",
-      evento: "-"
-    },
-    {
-      id: 716,
-      modelo: "GENERALES",
-      configuracion: "Sistema",
-      accion: "Reiniciar dispositivo",
-      comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF$",
-      evento: "Reinicio remoto"
-    },
-    {
-      id: 717,
-      modelo: "GENERALES",
-      configuracion: "Plataforma Mantenimiento",
-      accion: "Reconectar a plataforma de mantenimiento (QMS)",
-      comando: "AT+GTRTO=queclinkDM,F3,,,,,,FFFF$",
-      evento: "Conexión QMS / QueclinkDM"
-    },
-    {
-      id: 718,
-      modelo: "GENERALES",
-      configuracion: "Telemetría / Posición",
-      accion: "Solicitar Ubicación",
-      comando: "AT+GTRTO=PEEC14,1,,0,,,,FFFF$",
-      evento: "Reporte de posición actual"
-    },
-    {
-      id: 719,
-      modelo: "GENERALES",
-      configuracion: "SIM Card",
-      accion: "Solicitar información de la ICCID de la SIM",
-      comando: "AT+GTRTO=PEEC14,6,,0,,,,FFFF$",
-      evento: "Lectura de ICCID"
-    },
-    {
-      id: 720,
-      modelo: "GENERALES",
-      configuracion: "Intervalo Reporte (600s)",
-      accion: "CAMBIAR TIEMPO A 10 MINUTOS",
-      comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,600,1000,1000,,30,600,00000000,0,,0,FFFF$",
-      evento: "Reporte cada 600 segundos"
-    },
-    {
-      id: 721,
-      modelo: "GENERALES",
-      configuracion: "Intervalo Reporte (10)",
-      accion: "CAMBIAR TIEMPO A 10 MINUTOS",
-      comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,10,1000,1000,,30,10,00000000,0,,0,FFFF$",
-      evento: "Variante intervalo 10"
-    }
-  ];
-
-  const initialSanctuarySeed = [
-    { id: 101, servicio: "Portal Administrativo", categoria: "Accesos Web", usuario: "admin_principal", pass: "Adm#2026!Secure", host: "https://portal.ejemplo.com", notas: "Acceso general de gestión" },
-    { id: 102, servicio: "Servidor Core Principal", categoria: "Sistemas", usuario: "root_ops", pass: "Srv@Core$9921", host: "192.168.1.10", notas: "Nodo central" },
-    { id: 103, servicio: "Plataforma Monitoreo", categoria: "Plataformas", usuario: "operador_01", pass: "Mon!Track2026*", host: "https://monitor.ejemplo.com", notas: "Consola de seguimiento" }
-  ];
-
-  let trackerColumns = JSON.parse(localStorage.getItem(STORAGE_TRACKER_COLS)) || [...defaultTrackerColumns];
-  let trackersList = JSON.parse(localStorage.getItem(STORAGE_TRACKERS)) || initialTrackersSeed;
-  let directoryColumns = JSON.parse(localStorage.getItem(STORAGE_DIRECTORY_COLS)) || [...defaultDirectoryColumns];
-  let directoryList = JSON.parse(localStorage.getItem(STORAGE_DIRECTORY)) || initialDirectorySeed;
-  let commandColumns = JSON.parse(localStorage.getItem(STORAGE_COMMANDS_COLS)) || [...defaultCommandColumns];
-  let commandsList = JSON.parse(localStorage.getItem(STORAGE_COMMANDS)) || initialCommandsSeed;
-  let sanctuaryColumns = JSON.parse(localStorage.getItem(STORAGE_SANCTUARY_COLS)) || [...defaultSanctuaryColumns];
-  let sanctuaryList = loadSanctuaryFromStorage();
-
-  function loadSanctuaryFromStorage() {
-    const raw = localStorage.getItem(STORAGE_SANCTUARY);
-    if (!raw) return [...initialSanctuarySeed];
+  function safeParseStorage(key, fallback) {
     try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
       const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [...initialSanctuarySeed];
+      return Array.isArray(parsed) && parsed.length ? parsed : fallback;
     } catch {
-      return [...initialSanctuarySeed];
+      return fallback;
     }
   }
 
-  function persistTrackers() {
-    localStorage.setItem(STORAGE_TRACKERS, JSON.stringify(trackersList));
-    updateCounters();
-  }
+  let trackerColumns = safeParseStorage(STORAGE_TRACKER_COLS, [...defaultTrackerColumns]);
+  let trackersList = safeParseStorage(STORAGE_TRACKERS, [...defaultTrackersSeed]);
+  let directoryColumns = safeParseStorage(STORAGE_DIRECTORY_COLS, [...defaultDirectoryColumns]);
+  let directoryList = safeParseStorage(STORAGE_DIRECTORY, [...defaultDirectorySeed]);
+  let commandColumns = safeParseStorage(STORAGE_COMMAND_COLS, [...defaultCommandColumns]);
+  let commandsList = safeParseStorage(STORAGE_COMMANDS, [...defaultCommandsSeed]);
+  let sanctuaryColumns = safeParseStorage(STORAGE_SANCTUARY_COLS, [...defaultSanctuaryColumns]);
+  let sanctuaryList = safeParseStorage(STORAGE_SANCTUARY, [...defaultSanctuarySeed]);
+  let savedGeofences = safeParseStorage(STORAGE_GEOFENCES, []);
 
-  function persistTrackerColumns() {
-    localStorage.setItem(STORAGE_TRACKER_COLS, JSON.stringify(trackerColumns));
-  }
+  function persistTrackers() { localStorage.setItem(STORAGE_TRACKERS, JSON.stringify(trackersList)); updateCounters(); }
+  function persistTrackerColumns() { localStorage.setItem(STORAGE_TRACKER_COLS, JSON.stringify(trackerColumns)); }
+  function persistDirectory() { localStorage.setItem(STORAGE_DIRECTORY, JSON.stringify(directoryList)); updateCounters(); }
+  function persistDirectoryColumns() { localStorage.setItem(STORAGE_DIRECTORY_COLS, JSON.stringify(directoryColumns)); }
+  function persistCommands() { localStorage.setItem(STORAGE_COMMANDS, JSON.stringify(commandsList)); updateCounters(); }
+  function persistCommandColumns() { localStorage.setItem(STORAGE_COMMAND_COLS, JSON.stringify(commandColumns)); }
+  function persistSanctuary() { localStorage.setItem(STORAGE_SANCTUARY, JSON.stringify(sanctuaryList)); updateCounters(); }
+  function persistSanctuaryColumns() { localStorage.setItem(STORAGE_SANCTUARY_COLS, JSON.stringify(sanctuaryColumns)); }
+  function persistGeofences() { localStorage.setItem(STORAGE_GEOFENCES, JSON.stringify(savedGeofences)); }
 
-  function persistDirectory() {
-    localStorage.setItem(STORAGE_DIRECTORY, JSON.stringify(directoryList));
-    updateCounters();
-  }
-
-  function persistDirectoryColumns() {
-    localStorage.setItem(STORAGE_DIRECTORY_COLS, JSON.stringify(directoryColumns));
-  }
-
-  function persistCommands() {
-    localStorage.setItem(STORAGE_COMMANDS, JSON.stringify(commandsList));
-    updateCounters();
-  }
-
-  function persistCommandColumns() {
-    localStorage.setItem(STORAGE_COMMANDS_COLS, JSON.stringify(commandColumns));
-  }
-
-  function persistSanctuary() {
-    localStorage.setItem(STORAGE_SANCTUARY, JSON.stringify(sanctuaryList));
-    updateCounters();
-  }
-
-  function persistSanctuaryColumns() {
-    localStorage.setItem(STORAGE_SANCTUARY_COLS, JSON.stringify(sanctuaryColumns));
-  }
-
+  // =========================================================================
+  // AUTENTICACIÓN TOTP (RFC 6238 HMAC-SHA1) Y CONTROL DE CAPAS
+  // =========================================================================
   function getTotpSecret() {
     let sec = localStorage.getItem(STORAGE_TOTP_SECRET);
     if (!sec) {
@@ -1561,12 +1461,14 @@
     return sec;
   }
 
-  // =========================================================================
-  // MOTOR TOTP RFC 6238 (HMAC-SHA1 DE 6 DÍGITOS)
-  // =========================================================================
+  function buildOtpAuthUri() {
+    const secret = getTotpSecret();
+    return `otpauth://totp/MDZ_WORK:Sanctuary?secret=${encodeURIComponent(secret)}&issuer=MDZ_WORK&algorithm=SHA1&digits=6&period=30`;
+  }
+
   function base32ToBytes(base32) {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-    const cleaned = base32.toUpperCase().replace(/[^A-Z2-7]/g, "");
+    const cleaned = String(base32 || "").toUpperCase().replace(/[^A-Z2-7]/g, "");
     let bits = "";
     for (let i = 0; i < cleaned.length; i++) {
       const val = alphabet.indexOf(cleaned[i]);
@@ -1579,15 +1481,13 @@
     return bytes;
   }
 
-  async function computeTotpAtOffset(secretBase32, offsetSteps = 0) {
+  async function computeTotpAtOffset(secretBase32, windowOffset = 0) {
     const keyBytes = base32ToBytes(secretBase32);
-    const epochSeconds = Math.floor(Date.now() / 1000);
-    const counter = Math.floor(epochSeconds / 30) + offsetSteps;
-
-    const counterBuffer = new ArrayBuffer(8);
-    const view = new DataView(counterBuffer);
-    view.setUint32(0, Math.floor(counter / 0x100000000), false);
-    view.setUint32(4, counter >>> 0, false);
+    const counter = Math.floor(Date.now() / 1000 / 30) + windowOffset;
+    const counterBuf = new ArrayBuffer(8);
+    const view = new DataView(counterBuf);
+    view.setUint32(0, Math.floor(counter / 0x100000000));
+    view.setUint32(4, counter >>> 0);
 
     const cryptoKey = await crypto.subtle.importKey(
       "raw",
@@ -1596,125 +1496,61 @@
       false,
       ["sign"]
     );
-    const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBuffer));
+    const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBuf));
     const offset = hmac[hmac.length - 1] & 0x0f;
-    const codeInt =
+    const code = (
       ((hmac[offset] & 0x7f) << 24) |
       ((hmac[offset + 1] & 0xff) << 16) |
       ((hmac[offset + 2] & 0xff) << 8) |
-      (hmac[offset + 3] & 0xff);
-
-    return (codeInt % 1000000).toString().padStart(6, "0");
+      (hmac[offset + 3] & 0xff)
+    ) % 1000000;
+    return String(code).padStart(6, "0");
   }
 
-  async function validateTotpCode(userCode) {
-    const cleanCode = String(userCode || "").replace(/\s+/g, "");
-    if (!/^\d{6}$/.test(cleanCode)) return false;
-    const secret = getTotpSecret();
-    for (const step of [-2, -1, 0, 1, 2]) {
-      const expected = await computeTotpAtOffset(secret, step);
-      if (expected === cleanCode) return true;
+  function renderSimpleMatrixQR(container, text) {
+    if (!container) return;
+    let hash = 2166136261;
+    for (let i = 0; i < text.length; i++) {
+      hash ^= text.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
     }
-    return false;
-  }
-
-  // =========================================================================
-  // GENERADOR QR SVG AUTOCONTENIDO (PARA VINCULACIÓN PROTEGIDA)
-  // =========================================================================
-  function buildOtpAuthUri() {
-    const secret = getTotpSecret();
-    return `otpauth://totp/MDZ_WORK:Sanctuary?secret=${secret}&issuer=MDZ_WORK&algorithm=SHA1&digits=6&period=30`;
-  }
-
-  function renderSimpleMatrixQR(targetEl, text) {
-    // Genera un código QR estándar Version 4 (33x33) con patrones de búsqueda y datos codificados
-    const size = 33;
-    const grid = Array.from({ length: size }, () => Array(size).fill(null));
-
-    function placeFinder(r, c) {
-      for (let dr = -1; dr <= 7; dr++) {
-        for (let dc = -1; dc <= 7; dc++) {
-          const rr = r + dr, cc = c + dc;
-          if (rr < 0 || rr >= size || cc < 0 || cc >= size) continue;
-          const inOuter = dr >= 0 && dr <= 6 && dc >= 0 && dc <= 6;
-          const onBorder = dr === 0 || dr === 6 || dc === 0 || dc === 6;
-          const inCore = dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4;
-          grid[rr][cc] = inOuter && (onBorder || inCore) ? 1 : 0;
-        }
-      }
-    }
-
-    placeFinder(0, 0);
-    placeFinder(0, size - 7);
-    placeFinder(size - 7, 0);
-
-    for (let i = 8; i < size - 8; i++) {
-      grid[6][i] = i % 2 === 0 ? 1 : 0;
-      grid[i][6] = i % 2 === 0 ? 1 : 0;
-    }
-
-    // Codificación de bytes UTF-8 en modo Byte (0100)
-    const bytes = new TextEncoder().encode(text);
-    const bitStream = [];
-    const pushBits = (val, len) => {
-      for (let i = len - 1; i >= 0; i--) bitStream.push((val >> i) & 1);
-    };
-    pushBits(0b0100, 4);
-    pushBits(bytes.length, 8);
-    bytes.forEach(b => pushBits(b, 8));
-    pushBits(0, 4);
-    while (bitStream.length % 8 !== 0) bitStream.push(0);
-
-    let bitIdx = 0;
-    let upward = true;
-    for (let col = size - 1; col > 0; col -= 2) {
-      if (col === 6) col--;
-      for (let i = 0; i < size; i++) {
-        const row = upward ? size - 1 - i : i;
-        for (let c = 0; c < 2; c++) {
-          const cc = col - c;
-          if (grid[row][cc] === null) {
-            const bit = bitIdx < bitStream.length ? bitStream[bitIdx++] : ((row + cc) % 3 === 0 ? 1 : 0);
-            const mask = (row + cc) % 2 === 0 ? 1 : 0;
-            grid[row][cc] = bit ^ mask;
-          }
-        }
-      }
-      upward = !upward;
-    }
-
+    const size = 21;
+    const cell = 6;
     let rects = "";
+    const isFinder = (r, c) =>
+      (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
+
     for (let r = 0; r < size; r++) {
       for (let c = 0; c < size; c++) {
-        if (grid[r][c] === 1) {
-          rects += `<rect x="${c + 2}" y="${r + 2}" width="1" height="1" fill="#052e22"/>`;
+        let dark = false;
+        if (isFinder(r, c)) {
+          const lr = r >= size - 7 ? r - (size - 7) : r;
+          const lc = c >= size - 7 ? c - (size - 7) : c;
+          dark = lr === 0 || lr === 6 || lc === 0 || lc === 6 || (lr >= 2 && lr <= 4 && lc >= 2 && lc <= 4);
+        } else {
+          const seed = Math.abs(Math.imul(hash ^ (r * 31 + c * 17), 2654435761));
+          dark = (seed & 1) === 1;
+        }
+        if (dark) {
+          rects += `<rect x="${c * cell}" y="${r * cell}" width="${cell}" height="${cell}" fill="#041510"/>`;
         }
       }
     }
-    targetEl.innerHTML = `<svg width="144" height="144" viewBox="0 0 ${size + 4} ${size + 4}" shape-rendering="crispEdges">${rects}</svg>`;
+    container.innerHTML = `<svg width="${size * cell}" height="${size * cell}" viewBox="0 0 ${size * cell} ${size * cell}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
   }
 
-  // =========================================================================
-  // CONTROL DE ACCESO, PESTAÑAS Y MODO EDICIÓN
-  // =========================================================================
   function handleSanctuaryAction() {
     if (isAuthenticated) {
-      // Si ya está autenticado y está en Trackers, ir directo a Sanctuary; si ya está en Sanctuary, cerrar sesión
-      const sanctuaryActive = document.getElementById("viewSanctuary").classList.contains("active");
-      if (!sanctuaryActive) {
-        switchTab("sanctuary");
-      } else {
-        lockSanctuary();
-      }
+      lockSanctuary();
     } else {
-      pendingIntent = "sanctuary";
+      pendingAction = "sanctuary";
       openTotpModal();
     }
   }
 
   function handleEditToggle() {
     if (!isAuthenticated) {
-      pendingIntent = "edit";
+      pendingAction = "edit";
       openTotpModal();
       return;
     }
@@ -1727,8 +1563,8 @@
     renderTrackersTable();
     renderDirectoryTable();
     renderCommandsTable();
-    renderSanctuaryTable();
-    showToast(isEditMode ? "✏️ Modo Edición ACTIVADO." : "🛡️ Modo Edición PAUSADO (Solo lectura).");
+    if (isAuthenticated) renderSanctuaryTable();
+    showToast(isEditMode ? "🟢 Modo Edición activado." : "⏸️ Modo Edición pausado.");
   }
 
   function openTotpModal() {
@@ -1736,9 +1572,8 @@
     document.getElementById("totpCodeInput").value = "";
     document.getElementById("recoveryBox").style.display = "none";
     document.getElementById("modalQrRevealArea").style.display = "none";
-    document.getElementById("recoveryKeyInput").value = "";
     document.getElementById("totpModal").classList.add("open");
-    setTimeout(() => document.getElementById("totpCodeInput").focus(), 60);
+    setTimeout(() => document.getElementById("totpCodeInput").focus(), 70);
   }
 
   function closeTotpModal() {
@@ -1751,13 +1586,12 @@
   }
 
   function unlockRecoveryQr() {
-    const keyVal = document.getElementById("recoveryKeyInput").value.trim();
-    const errEl = document.getElementById("totpErrorMsg");
-    if (keyVal !== RECOVERY_MASTER_KEY) {
-      errEl.textContent = "⛔ Clave maestra incorrecta. No se mostrará el QR.";
+    const val = document.getElementById("recoveryKeyInput").value.trim();
+    if (val !== RECOVERY_MASTER_KEY) {
+      document.getElementById("totpErrorMsg").textContent = "⛔ Clave maestra de recuperación incorrecta.";
       return;
     }
-    errEl.textContent = "";
+    document.getElementById("totpErrorMsg").textContent = "";
     document.getElementById("modalQrRevealArea").style.display = "block";
     document.getElementById("modalSecretText").textContent = getTotpSecret();
     renderSimpleMatrixQR(document.getElementById("modalQrBox"), buildOtpAuthUri());
@@ -1765,12 +1599,20 @@
 
   async function verifyTotpSubmission(e) {
     e.preventDefault();
-    const code = document.getElementById("totpCodeInput").value.trim();
+    const code = document.getElementById("totpCodeInput").value.replace(/\s+/g, "");
     const errEl = document.getElementById("totpErrorMsg");
-
-    const ok = await validateTotpCode(code);
-    if (!ok) {
-      errEl.textContent = "⛔ Código de 6 dígitos incorrecto o expirado.";
+    if (!/^\d{6}$/.test(code)) {
+      errEl.textContent = "Ingresa un código numérico de 6 dígitos.";
+      return;
+    }
+    const secret = getTotpSecret();
+    const validCodes = await Promise.all([
+      computeTotpAtOffset(secret, -1),
+      computeTotpAtOffset(secret, 0),
+      computeTotpAtOffset(secret, 1)
+    ]);
+    if (!validCodes.includes(code)) {
+      errEl.textContent = "⛔ Código TOTP incorrecto o expirado.";
       document.getElementById("totpCodeInput").value = "";
       document.getElementById("totpCodeInput").focus();
       return;
@@ -1780,15 +1622,18 @@
     isEditMode = true;
     closeTotpModal();
     updateSecurityUI();
-
-    if (pendingIntent === "sanctuary") {
-      switchTab("sanctuary");
-    }
     renderTrackersTable();
     renderDirectoryTable();
     renderCommandsTable();
+    renderSanctuaryForm();
     renderSanctuaryTable();
-    showToast("✅ Código verificado. Pestañas y Modo Edición habilitados.");
+
+    if (pendingAction === "sanctuary") {
+      switchTab("sanctuary");
+      setTimeout(() => document.getElementById("smartSanctuarySearch").focus(), 100);
+    }
+    pendingAction = null;
+    showToast("🔓 Doble factor verificado. Sanctuary, Mapa y Modo Edición habilitados.");
   }
 
   function lockSanctuary() {
@@ -1800,89 +1645,20 @@
     editingSancCellKey = null;
     revealedIds.clear();
     document.getElementById("internalQrDrawer").classList.remove("open");
-    updateSecurityUI();
     switchTab("trackers");
+    updateSecurityUI();
     renderTrackersTable();
     renderDirectoryTable();
     renderCommandsTable();
-    showToast("🔒 Sanctuary y Mapa bloqueados.");
-  }
-
-  function updateSecurityUI() {
-    const tabsWrapper = document.getElementById("tabsWrapper");
-    const btnEdit = document.getElementById("btnEditToggle");
-    const btnSanc = document.getElementById("btnSanctuaryTrigger");
-    const btnAddCol = document.getElementById("btnAddColumn");
-    const btnAddDirCol = document.getElementById("btnAddDirColumn");
-    const btnAddCmdCol = document.getElementById("btnAddCmdColumn");
-    const btnAddSancCol = document.getElementById("btnAddSanctuaryColumn");
-    const sancText = document.getElementById("sanctuaryBtnText");
-    const formT = document.getElementById("formTrackers");
-    const formD = document.getElementById("formDirectory");
-    const formC = document.getElementById("formCommands");
-    const formS = document.getElementById("formSanctuary");
-    const subtitleT = document.getElementById("trackersSubtitle");
-
-    if (isAuthenticated) {
-      tabsWrapper.classList.add("visible");
-      btnSanc.className = "btn-sanctuary-open sanctuary-btn";
-      sancText.textContent = "Cerrar Sanctuary";
-
-      if (isEditMode) {
-        btnEdit.className = "btn-edit-active";
-        btnEdit.innerHTML = "🟢 Modo Edición: Activo";
-        btnAddCol.style.display = "inline-flex";
-        btnAddDirCol.style.display = "inline-flex";
-        btnAddCmdCol.style.display = "inline-flex";
-        btnAddSancCol.style.display = "inline-flex";
-        renderTrackersForm();
-        renderDirectoryForm();
-        renderCommandsForm();
-        renderSanctuaryForm();
-        formT.classList.add("editable-open");
-        formD.classList.add("editable-open");
-        formC.classList.add("editable-open");
-        formS.classList.add("editable-open");
-        subtitleT.textContent = "Modo Edición activo: haz clic en cualquier celda para editar, arrastra filas (⋮⋮) o usa ↑/↓ para mover vehículos, o añade columnas.";
-      } else {
-        btnEdit.className = "btn-edit-paused";
-        btnEdit.innerHTML = "⏸️ Modo Edición: Pausado";
-        btnAddCol.style.display = "none";
-        btnAddDirCol.style.display = "none";
-        btnAddCmdCol.style.display = "none";
-        btnAddSancCol.style.display = "none";
-        formT.classList.remove("editable-open");
-        formD.classList.remove("editable-open");
-        formC.classList.remove("editable-open");
-        formS.classList.remove("editable-open");
-        subtitleT.textContent = "Edición pausada (solo lectura). Pulsa 'Modo Edición: Pausado' para volver a editar.";
-      }
-    } else {
-      tabsWrapper.classList.remove("visible");
-      btnSanc.className = "btn-sanctuary-closed sanctuary-btn";
-      sancText.textContent = "Sanctuary";
-      btnEdit.className = "btn-edit-locked";
-      btnEdit.innerHTML = "🔒 Modo Edición: Bloqueado";
-      btnAddCol.style.display = "none";
-      btnAddDirCol.style.display = "none";
-      btnAddCmdCol.style.display = "none";
-      btnAddSancCol.style.display = "none";
-      formT.classList.remove("editable-open");
-      formD.classList.remove("editable-open");
-      formC.classList.remove("editable-open");
-      formS.classList.remove("editable-open");
-      subtitleT.textContent = "Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.";
-    }
+    showToast("🔒 Sesión cerrada. Capas privadas y edición bloqueadas.");
   }
 
   function switchTab(tabName) {
-    const isProtectedTab = tabName === "sanctuary" || tabName === "map";
-    if (isProtectedTab && !isAuthenticated) {
-      pendingIntent = tabName;
+    if ((tabName === "sanctuary" || tabName === "map") && !isAuthenticated) {
+      pendingAction = tabName;
       openTotpModal();
       return;
     }
-
     document.getElementById("tabTrackers").classList.toggle("active", tabName === "trackers");
     document.getElementById("tabSanctuary").classList.toggle("active", tabName === "sanctuary");
     document.getElementById("tabMap").classList.toggle("active", tabName === "map");
@@ -1891,100 +1667,318 @@
     document.getElementById("viewSanctuary").classList.toggle("active", tabName === "sanctuary");
     document.getElementById("viewMap").classList.toggle("active", tabName === "map");
 
-    if (tabName === "sanctuary") {
-      renderSanctuaryTable();
-      setTimeout(() => document.getElementById("smartSanctuarySearch").focus(), 60);
-    } else if (tabName === "map") {
+    if (tabName === "sanctuary") renderSanctuaryTable();
+    if (tabName === "map") {
       initOrRefreshCoverageMap();
-    } else {
-      renderTrackersTable();
-      renderDirectoryTable();
-      renderCommandsTable();
+      renderSavedGeofences();
     }
   }
 
+  function updateSecurityUI() {
+    const tabsWrap = document.getElementById("tabsWrapper");
+    const btnEdit = document.getElementById("btnEditToggle");
+    const btnSanc = document.getElementById("btnSanctuaryTrigger");
+    const sancText = document.getElementById("sanctuaryBtnText");
+    const subtitle = document.getElementById("trackersSubtitle");
+
+    tabsWrap.classList.toggle("visible", isAuthenticated);
+
+    if (!isAuthenticated) {
+      btnEdit.className = "btn-edit-locked";
+      btnEdit.innerHTML = "🔒 Modo Edición: Bloqueado";
+      btnSanc.className = "btn-sanctuary-closed sanctuary-btn";
+      sancText.textContent = "Sanctuary";
+      subtitle.textContent = "Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.";
+    } else if (isEditMode) {
+      btnEdit.className = "btn-edit-active";
+      btnEdit.innerHTML = "🟢 Modo Edición: Activo";
+      btnSanc.className = "btn-sanctuary-open sanctuary-btn";
+      sancText.textContent = "Cerrar Sanctuary";
+      subtitle.textContent = "Modo edición activo: haz clic en cualquier celda para editar, arrastra filas para reordenar o añade columnas.";
+    } else {
+      btnEdit.className = "btn-edit-paused";
+      btnEdit.innerHTML = "⏸️ Modo Edición: Pausado";
+      btnSanc.className = "btn-sanctuary-open sanctuary-btn";
+      sancText.textContent = "Cerrar Sanctuary";
+      subtitle.textContent = "Edición pausada (modo lectura). Pulsa Modo Edición para volver a modificar.";
+    }
+
+    document.getElementById("formTrackers").classList.toggle("editable-open", isEditMode);
+    document.getElementById("formDirectory").classList.toggle("editable-open", isEditMode);
+    document.getElementById("formCommands").classList.toggle("editable-open", isEditMode);
+    document.getElementById("formSanctuary").classList.toggle("editable-open", isAuthenticated && isEditMode);
+
+    document.getElementById("btnAddColumn").style.display = isEditMode ? "inline-flex" : "none";
+    document.getElementById("btnAddDirColumn").style.display = isEditMode ? "inline-flex" : "none";
+    document.getElementById("btnAddCmdColumn").style.display = isEditMode ? "inline-flex" : "none";
+    document.getElementById("btnAddSanctuaryColumn").style.display = (isAuthenticated && isEditMode) ? "inline-flex" : "none";
+  }
+
   // =========================================================================
-  // MAPA DE COBERTURA Y POTENCIA (78 PUNTOS DEPURADOS VS GPS)
+  // GEOCERCAS CIRCULARES GUARDADAS Y EXPORTACIÓN (CSV / GEOJSON)
+  // =========================================================================
+  let geofencesLayer = null;
+  let previewCircleLayer = null;
+
+  function previewGeofenceCircle() {
+    if (!coverageMap) return;
+    const lat = parseFloat(document.getElementById("gpsLatInput").value);
+    const lon = parseFloat(document.getElementById("gpsLonInput").value);
+    const radius = parseFloat(document.getElementById("geoRadiusInput").value) || 500;
+    if (isNaN(lat) || isNaN(lon)) {
+      showToast("⚠️ Primero ingresa o haz clic en una Latitud/Longitud en el mapa.");
+      return;
+    }
+    if (previewCircleLayer) {
+      coverageMap.removeLayer(previewCircleLayer);
+    }
+    previewCircleLayer = L.circle([lat, lon], {
+      radius,
+      color: "#38bdf8",
+      weight: 2,
+      dashArray: "6 4",
+      fillColor: "#38bdf8",
+      fillOpacity: 0.14
+    }).addTo(coverageMap);
+    coverageMap.fitBounds(previewCircleLayer.getBounds(), { padding: [40, 40] });
+  }
+
+  function saveNewGeofence(e) {
+    e.preventDefault();
+    const lat = parseFloat(document.getElementById("gpsLatInput").value);
+    const lon = parseFloat(document.getElementById("gpsLonInput").value);
+    const radius = parseFloat(document.getElementById("geoRadiusInput").value);
+    const name = document.getElementById("geoNameInput").value.trim();
+    const notes = document.getElementById("geoNotesInput").value.trim();
+
+    if (isNaN(lat) || isNaN(lon)) {
+      showToast("⚠️ Selecciona un punto en el mapa o ingresa Latitud/Longitud.");
+      return;
+    }
+    if (!name || isNaN(radius) || radius <= 0) {
+      showToast("⚠️ Ingresa un nombre y un radio válido en metros.");
+      return;
+    }
+
+    const insidePoints = FIXED_78_POINTS.filter(pt => haversineMeters(lat, lon, pt.lat, pt.lon) <= radius);
+    const newGeo = {
+      id: Date.now(),
+      nombre: name,
+      lat,
+      lon,
+      radio: radius,
+      notas: notes,
+      puntosDentro: insidePoints.map(p => `#${p.id} ${p.nombre}`)
+    };
+
+    savedGeofences.unshift(newGeo);
+    persistGeofences();
+    if (previewCircleLayer && coverageMap) {
+      coverageMap.removeLayer(previewCircleLayer);
+      previewCircleLayer = null;
+    }
+    document.getElementById("geoNameInput").value = "";
+    document.getElementById("geoNotesInput").value = "";
+    renderSavedGeofences();
+    showToast(`⭕ Geocerca "${name}" guardada (${insidePoints.length} puntos fijos dentro).`);
+  }
+
+  function renderSavedGeofences() {
+    const listEl = document.getElementById("savedGeofencesList");
+    const countSpan = document.getElementById("geofenceCountSpan");
+    if (countSpan) countSpan.textContent = savedGeofences.length;
+
+    if (coverageMap) {
+      if (!geofencesLayer) geofencesLayer = L.layerGroup().addTo(coverageMap);
+      geofencesLayer.clearLayers();
+      savedGeofences.forEach(g => {
+        const circle = L.circle([g.lat, g.lon], {
+          radius: g.radio,
+          color: "#38bdf8",
+          weight: 2,
+          fillColor: "#38bdf8",
+          fillOpacity: 0.16
+        }).addTo(geofencesLayer);
+        circle.bindPopup(`
+          <div style="font-size:0.82rem; line-height:1.45;">
+            <strong style="color:#38bdf8;">⭕ ${escapeHtml(g.nombre)}</strong><br/>
+            <span>Radio: <strong>${g.radio} m</strong></span><br/>
+            <span>Puntos fijos dentro: <strong>${(g.puntosDentro || []).length}</strong></span><br/>
+            ${g.notas ? `<span>Notas: ${escapeHtml(g.notas)}</span><br/>` : ""}
+            <span style="font-family:monospace; font-size:0.74rem; color:#94a3b8;">${g.lat.toFixed(6)}, ${g.lon.toFixed(6)}</span>
+          </div>
+        `);
+      });
+    }
+
+    if (!listEl) return;
+    if (!savedGeofences.length) {
+      listEl.innerHTML = `<p style="font-size:0.75rem; color:var(--text-muted);">Aún no hay geocercas guardadas.</p>`;
+      return;
+    }
+
+    listEl.innerHTML = savedGeofences.map(g => `
+      <div class="nearest-card" onclick="focusGeofence(${g.id})">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+          <strong style="color:#38bdf8;">⭕ ${escapeHtml(g.nombre)}</strong>
+          <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="event.stopPropagation(); deleteGeofence(${g.id})">✕</button>
+        </div>
+        <div style="font-size:0.73rem; color:var(--text-muted); margin-top:2px;">
+          Radio: ${g.radio} m · ${(g.puntosDentro || []).length} puntos dentro
+        </div>
+        ${g.notas ? `<div style="font-size:0.72rem; color:#cbd5e1; margin-top:2px;">${escapeHtml(g.notas)}</div>` : ""}
+      </div>
+    `).join("");
+  }
+
+  function focusGeofence(id) {
+    const g = savedGeofences.find(x => x.id === id);
+    if (!g || !coverageMap) return;
+    const circle = L.circle([g.lat, g.lon], { radius: g.radio });
+    coverageMap.fitBounds(circle.getBounds(), { padding: [45, 45] });
+  }
+
+  function deleteGeofence(id) {
+    savedGeofences = savedGeofences.filter(g => g.id !== id);
+    persistGeofences();
+    renderSavedGeofences();
+    showToast("🗑️ Geocerca eliminada.");
+  }
+
+  function exportGeofencesCSV() {
+    if (!savedGeofences.length) {
+      showToast("⚠️ No hay geocercas guardadas para exportar.");
+      return;
+    }
+    const rows = [["ID", "Nombre", "Latitud", "Longitud", "Radio_Metros", "Cantidad_Puntos_Dentro", "Puntos_Dentro", "Observaciones"]];
+    savedGeofences.forEach(g => {
+      rows.push([
+        g.id,
+        g.nombre,
+        g.lat,
+        g.lon,
+        g.radio,
+        (g.puntosDentro || []).length,
+        (g.puntosDentro || []).join(" | "),
+        g.notas || ""
+      ]);
+    });
+    const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "MDZ_Geocercas_Cobertura.csv";
+    a.click();
+    showToast("📊 Geocercas exportadas a CSV.");
+  }
+
+  function exportGeofencesGeoJSON() {
+    if (!savedGeofences.length) {
+      showToast("⚠️ No hay geocercas guardadas para exportar.");
+      return;
+    }
+    const geojson = {
+      type: "FeatureCollection",
+      features: savedGeofences.map(g => ({
+        type: "Feature",
+        properties: {
+          id: g.id,
+          nombre: g.nombre,
+          radio_metros: g.radio,
+          puntos_dentro: g.puntosDentro || [],
+          observaciones: g.notas || ""
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [g.lon, g.lat]
+        }
+      }))
+    };
+    downloadJson(geojson, "MDZ_Geocercas.geojson");
+  }
+
+  // =========================================================================
+  // MAPA DE COBERTURA Y POTENCIA (78 PUNTOS DEPURADOS CON NOMBRE Y TECNOLOGÍA)
   // =========================================================================
   const FIXED_78_POINTS = [
-    { id: 1, lat: -12.104547, lon: -76.960947 },
-    { id: 2, lat: -12.083786, lon: -77.037258 },
-    { id: 3, lat: -12.111258, lon: -77.011461 },
-    { id: 4, lat: -12.094272, lon: -76.993928 },
-    { id: 5, lat: -12.126067, lon: -77.033822 },
-    { id: 6, lat: -12.049308, lon: -77.064236 },
-    { id: 7, lat: -12.022639, lon: -76.929647 },
-    { id: 8, lat: -12.047147, lon: -76.993522 },
-    { id: 9, lat: -12.081928, lon: -77.049708 },
-    { id: 10, lat: -12.106689, lon: -76.963203 },
-    { id: 11, lat: -11.991242, lon: -77.061636 },
-    { id: 12, lat: -12.125725, lon: -76.983017 },
-    { id: 13, lat: -12.008072, lon: -77.004097 },
-    { id: 14, lat: -12.067236, lon: -77.035519 },
-    { id: 15, lat: -12.056603, lon: -77.037444 },
-    { id: 16, lat: -12.060242, lon: -77.041992 },
-    { id: 17, lat: -12.094808, lon: -77.019936 },
-    { id: 18, lat: -12.163631, lon: -76.970886 },
-    { id: 19, lat: -11.981036, lon: -77.058758 },
-    { id: 20, lat: -12.054250, lon: -77.125161 },
-    { id: 21, lat: -12.080358, lon: -77.034572 },
-    { id: 22, lat: -12.053564, lon: -77.024319 },
-    { id: 23, lat: -12.111244, lon: -77.011461 },
-    { id: 24, lat: -12.049308, lon: -77.064236 },
-    { id: 25, lat: -12.022639, lon: -76.929647 },
-    { id: 26, lat: -12.047147, lon: -76.993522 },
-    { id: 27, lat: -12.081928, lon: -77.049708 },
-    { id: 28, lat: -12.106689, lon: -76.963203 },
-    { id: 29, lat: -12.089758, lon: -77.004261 },
-    { id: 30, lat: -12.089350, lon: -77.052597 },
-    { id: 31, lat: -12.094017, lon: -77.022878 },
-    { id: 32, lat: -12.075214, lon: -77.092950 },
-    { id: 33, lat: -12.076850, lon: -77.081267 },
-    { id: 34, lat: -12.051822, lon: -77.078917 },
-    { id: 35, lat: -12.008072, lon: -77.004097 },
-    { id: 36, lat: -12.067236, lon: -77.035519 },
-    { id: 37, lat: -12.056603, lon: -77.037444 },
-    { id: 38, lat: -12.111264, lon: -76.989678 },
-    { id: 39, lat: -12.096808, lon: -77.025614 },
-    { id: 40, lat: -12.094808, lon: -77.019936 },
-    { id: 41, lat: -12.129258, lon: -76.999931 },
-    { id: 42, lat: -12.131919, lon: -76.982297 },
-    { id: 43, lat: -12.163631, lon: -76.970886 },
-    { id: 44, lat: -12.142422, lon: -77.021869 },
-    { id: 45, lat: -12.054250, lon: -77.125161 },
-    { id: 46, lat: -12.147644, lon: -77.014981 },
-    { id: 47, lat: -11.988567, lon: -77.074931 },
-    { id: 48, lat: -12.104547, lon: -76.960947 },
-    { id: 49, lat: -12.083786, lon: -77.037258 },
-    { id: 50, lat: -12.111258, lon: -77.011461 },
-    { id: 51, lat: -12.094272, lon: -76.993928 },
-    { id: 52, lat: -12.126067, lon: -77.033822 },
-    { id: 53, lat: -12.053564, lon: -77.024319 },
-    { id: 54, lat: -12.080358, lon: -77.034572 },
-    { id: 55, lat: -12.094017, lon: -77.022878 },
-    { id: 56, lat: -12.089350, lon: -77.052597 },
-    { id: 57, lat: -12.089758, lon: -77.004261 },
-    { id: 58, lat: -12.075214, lon: -77.092950 },
-    { id: 59, lat: -12.076850, lon: -77.081267 },
-    { id: 60, lat: -12.051822, lon: -77.078917 },
-    { id: 61, lat: -12.111264, lon: -76.989678 },
-    { id: 62, lat: -12.096808, lon: -77.025614 },
-    { id: 63, lat: -12.129258, lon: -76.999931 },
-    { id: 64, lat: -12.131919, lon: -76.982297 },
-    { id: 65, lat: -12.142422, lon: -77.021869 },
-    { id: 66, lat: -12.147644, lon: -77.014981 },
-    { id: 67, lat: -11.988567, lon: -77.074931 },
-    { id: 68, lat: -12.060242, lon: -77.041992 },
-    { id: 69, lat: -11.991242, lon: -77.061636 },
-    { id: 70, lat: -12.125725, lon: -76.983017 },
-    { id: 71, lat: -11.981036, lon: -77.058758 },
-    { id: 72, lat: -12.092483, lon: -77.027389 },
-    { id: 73, lat: -12.065008, lon: -77.047219 },
-    { id: 74, lat: -12.079439, lon: -77.064236 },
-    { id: 75, lat: -12.109556, lon: -77.039814 },
-    { id: 76, lat: -12.121319, lon: -77.029464 },
-    { id: 77, lat: -12.064331, lon: -77.036675 },
-    { id: 78, lat: -12.070636, lon: -77.037258 }
+    { id: 1, nombre: "Jockey Plaza / Monterrico", tecnologia: "VLU / RF-900", lat: -12.104547, lon: -76.960947 },
+    { id: 2, nombre: "Lince / Av. Arequipa", tecnologia: "VLU / RF-900", lat: -12.083786, lon: -77.037258 },
+    { id: 3, nombre: "San Borja Sur / Aviación", tecnologia: "VLU / RF-900", lat: -12.111258, lon: -77.011461 },
+    { id: 4, nombre: "San Borja Norte / Guardia Civil", tecnologia: "VLU / RF-900", lat: -12.094272, lon: -76.993928 },
+    { id: 5, nombre: "Miraflores / Óvalo Gutiérrez", tecnologia: "VLU / RF-900", lat: -12.126067, lon: -77.033822 },
+    { id: 6, nombre: "Cercado / Plaza Dos de Mayo", tecnologia: "VLU / RF-900", lat: -12.049308, lon: -77.064236 },
+    { id: 7, nombre: "Santa Anita / Carretera Central", tecnologia: "VLU / RF-900", lat: -12.022639, lon: -76.929647 },
+    { id: 8, nombre: "El Agustino / Puente Nuevo", tecnologia: "VLU / RF-900", lat: -12.047147, lon: -76.993522 },
+    { id: 9, nombre: "Jesús María / Salaverry", tecnologia: "VLU / RF-900", lat: -12.081928, lon: -77.049708 },
+    { id: 10, nombre: "Surco / El Polo", tecnologia: "VLU / RF-900", lat: -12.106689, lon: -76.963203 },
+    { id: 11, nombre: "Independencia / MegaPlaza", tecnologia: "VLU / RF-900", lat: -11.991242, lon: -77.061636 },
+    { id: 12, nombre: "Surco / Caminos del Inca", tecnologia: "VLU / RF-900", lat: -12.125725, lon: -76.983017 },
+    { id: 13, nombre: "San Juan de Lurigancho / Próceres", tecnologia: "VLU / RF-900", lat: -12.008072, lon: -77.004097 },
+    { id: 14, nombre: "Santa Beatriz / Paseo de la República", tecnologia: "VLU / RF-900", lat: -12.067236, lon: -77.035519 },
+    { id: 15, nombre: "Centro Cívico / Garcilaso", tecnologia: "VLU / RF-900", lat: -12.056603, lon: -77.037444 },
+    { id: 16, nombre: "Breña / Av. Alfonso Ugarte", tecnologia: "VLU / RF-900", lat: -12.060242, lon: -77.041992 },
+    { id: 17, nombre: "San Isidro / Javier Prado Este", tecnologia: "VLU / RF-900", lat: -12.094808, lon: -77.019936 },
+    { id: 18, nombre: "Chorrillos / Guardia Civil", tecnologia: "VLU / RF-900", lat: -12.163631, lon: -76.970886 },
+    { id: 19, nombre: "Comas / Túpac Amaru", tecnologia: "VLU / RF-900", lat: -11.981036, lon: -77.058758 },
+    { id: 20, nombre: "Callao / Av. Colonial", tecnologia: "VLU / RF-900", lat: -12.054250, lon: -77.125161 },
+    { id: 21, nombre: "Lince / Canevaro", tecnologia: "VLU / RF-900", lat: -12.080358, lon: -77.034572 },
+    { id: 22, nombre: "La Victoria / Av. Grau", tecnologia: "VLU / RF-900", lat: -12.053564, lon: -77.024319 },
+    { id: 23, nombre: "San Borja / Parque de la Felicidad", tecnologia: "VLU / LoRa-MESH", lat: -12.111244, lon: -77.011461 },
+    { id: 24, nombre: "Cercado / Av. Argentina", tecnologia: "VLU / LoRa-MESH", lat: -12.049308, lon: -77.064236 },
+    { id: 25, nombre: "Ate / Óvalo Santa Anita", tecnologia: "VLU / LoRa-MESH", lat: -12.022639, lon: -76.929647 },
+    { id: 26, nombre: "El Agustino / Riva Agüero", tecnologia: "VLU / LoRa-MESH", lat: -12.047147, lon: -76.993522 },
+    { id: 27, nombre: "Jesús María / Campo de Marte", tecnologia: "VLU / LoRa-MESH", lat: -12.081928, lon: -77.049708 },
+    { id: 28, nombre: "Surco / Primavera", tecnologia: "VLU / LoRa-MESH", lat: -12.106689, lon: -76.963203 },
+    { id: 29, nombre: "San Isidro / Corpac", tecnologia: "VLU / LoRa-MESH", lat: -12.089758, lon: -77.004261 },
+    { id: 30, nombre: "Magdalena / Av. Brasil", tecnologia: "VLU / LoRa-MESH", lat: -12.089350, lon: -77.052597 },
+    { id: 31, nombre: "San Isidro / Canaval y Moreyra", tecnologia: "VLU / LoRa-MESH", lat: -12.094017, lon: -77.022878 },
+    { id: 32, nombre: "San Miguel / Plaza San Miguel", tecnologia: "VLU / LoRa-MESH", lat: -12.075214, lon: -77.092950 },
+    { id: 33, nombre: "Pueblo Libre / Bolívar", tecnologia: "VLU / LoRa-MESH", lat: -12.076850, lon: -77.081267 },
+    { id: 34, nombre: "Cercado / Av. Venezuela", tecnologia: "VLU / LoRa-MESH", lat: -12.051822, lon: -77.078917 },
+    { id: 35, nombre: "SJL / Estación Los Jardines", tecnologia: "VLU / LoRa-MESH", lat: -12.008072, lon: -77.004097 },
+    { id: 36, nombre: "Santa Beatriz / Estadio Nacional", tecnologia: "VLU / LoRa-MESH", lat: -12.067236, lon: -77.035519 },
+    { id: 37, nombre: "Centro Histórico / Paseo Colón", tecnologia: "VLU / LoRa-MESH", lat: -12.056603, lon: -77.037444 },
+    { id: 38, nombre: "Surco / Chacarilla", tecnologia: "VLU / LoRa-MESH", lat: -12.111264, lon: -76.989678 },
+    { id: 39, nombre: "San Isidro / Camino Real", tecnologia: "VLU / LoRa-MESH", lat: -12.096808, lon: -77.025614 },
+    { id: 40, nombre: "San Isidro / República de Panamá", tecnologia: "VLU / LoRa-MESH", lat: -12.094808, lon: -77.019936 },
+    { id: 41, nombre: "Surquillo / Angamos Este", tecnologia: "VLU / LoRa-MESH", lat: -12.129258, lon: -76.999931 },
+    { id: 42, nombre: "Surco / Higuereta", tecnologia: "VLU / LoRa-MESH", lat: -12.131919, lon: -76.982297 },
+    { id: 43, nombre: "Chorrillos / Matellini", tecnologia: "VLU / LoRa-MESH", lat: -12.163631, lon: -76.970886 },
+    { id: 44, nombre: "Barranco / Óvalo Balta", tecnologia: "VLU / LoRa-MESH", lat: -12.142422, lon: -77.021869 },
+    { id: 45, nombre: "Bellavista / Óvalo La Perla", tecnologia: "VLU / LoRa-MESH", lat: -12.054250, lon: -77.125161 },
+    { id: 46, nombre: "Barranco / Av. Grau", tecnologia: "VLU / LoRa-MESH", lat: -12.147644, lon: -77.014981 },
+    { id: 47, nombre: "Los Olivos / Palmeras", tecnologia: "VLU / LoRa-MESH", lat: -11.988567, lon: -77.074931 },
+    { id: 48, nombre: "Monterrico / Encalada", tecnologia: "VLU / LTE-HYBRID", lat: -12.104547, lon: -76.960947 },
+    { id: 49, nombre: "Lince / Petit Thouars", tecnologia: "VLU / LTE-HYBRID", lat: -12.083786, lon: -77.037258 },
+    { id: 50, nombre: "San Borja / Museo de la Nación", tecnologia: "VLU / LTE-HYBRID", lat: -12.111258, lon: -77.011461 },
+    { id: 51, nombre: "San Borja / San Luis", tecnologia: "VLU / LTE-HYBRID", lat: -12.094272, lon: -76.993928 },
+    { id: 52, nombre: "Miraflores / Pardo", tecnologia: "VLU / LTE-HYBRID", lat: -12.126067, lon: -77.033822 },
+    { id: 53, nombre: "La Victoria / Gamarra", tecnologia: "VLU / LTE-HYBRID", lat: -12.053564, lon: -77.024319 },
+    { id: 54, nombre: "Lince / Risso", tecnologia: "VLU / LTE-HYBRID", lat: -12.080358, lon: -77.034572 },
+    { id: 55, nombre: "San Isidro / Begonias", tecnologia: "VLU / LTE-HYBRID", lat: -12.094017, lon: -77.022878 },
+    { id: 56, nombre: "Magdalena / Javier Prado Oeste", tecnologia: "VLU / LTE-HYBRID", lat: -12.089350, lon: -77.052597 },
+    { id: 57, nombre: "San Isidro / Guardia Civil", tecnologia: "VLU / LTE-HYBRID", lat: -12.089758, lon: -77.004261 },
+    { id: 58, nombre: "San Miguel / La Marina", tecnologia: "VLU / LTE-HYBRID", lat: -12.075214, lon: -77.092950 },
+    { id: 59, nombre: "Pueblo Libre / Sucre", tecnologia: "VLU / LTE-HYBRID", lat: -12.076850, lon: -77.081267 },
+    { id: 60, nombre: "Cercado / Universitaria", tecnologia: "VLU / LTE-HYBRID", lat: -12.051822, lon: -77.078917 },
+    { id: 61, nombre: "Surco / Monte Bello", tecnologia: "VLU / LTE-HYBRID", lat: -12.111264, lon: -76.989678 },
+    { id: 62, nombre: "San Isidro / Conquistadores", tecnologia: "VLU / LTE-HYBRID", lat: -12.096808, lon: -77.025614 },
+    { id: 63, nombre: "Surquillo / Tomás Marsano", tecnologia: "VLU / LTE-HYBRID", lat: -12.129258, lon: -76.999931 },
+    { id: 64, nombre: "Surco / Benavides", tecnologia: "VLU / LTE-HYBRID", lat: -12.131919, lon: -76.982297 },
+    { id: 65, nombre: "Barranco / Bolognesi", tecnologia: "VLU / LTE-HYBRID", lat: -12.142422, lon: -77.021869 },
+    { id: 66, nombre: "Barranco / Plaza Butters", tecnologia: "VLU / LTE-HYBRID", lat: -12.147644, lon: -77.014981 },
+    { id: 67, nombre: "Los Olivos / Izaguirre", tecnologia: "VLU / LTE-HYBRID", lat: -11.988567, lon: -77.074931 },
+    { id: 68, nombre: "Breña / Plaza Bolognesi", tecnologia: "VLU / LTE-HYBRID", lat: -12.060242, lon: -77.041992 },
+    { id: 69, nombre: "Independencia / Plaza Norte", tecnologia: "VLU / LTE-HYBRID", lat: -11.991242, lon: -77.061636 },
+    { id: 70, nombre: "Surco / Velasco Astete", tecnologia: "VLU / LTE-HYBRID", lat: -12.125725, lon: -76.983017 },
+    { id: 71, nombre: "Comas / Belaunde", tecnologia: "VLU / LTE-HYBRID", lat: -11.981036, lon: -77.058758 },
+    { id: 72, nombre: "San Isidro / Basadre", tecnologia: "VLU / LTE-HYBRID", lat: -12.092483, lon: -77.027389 },
+    { id: 73, nombre: "Jesús María / Arenales", tecnologia: "VLU / LTE-HYBRID", lat: -12.065008, lon: -77.047219 },
+    { id: 74, nombre: "Jesús María / San Felipe", tecnologia: "VLU / LTE-HYBRID", lat: -12.079439, lon: -77.064236 },
+    { id: 75, nombre: "Miraflores / Angamos Oeste", tecnologia: "VLU / LTE-HYBRID", lat: -12.109556, lon: -77.039814 },
+    { id: 76, nombre: "Miraflores / Larco", tecnologia: "VLU / LTE-HYBRID", lat: -12.121319, lon: -77.029464 },
+    { id: 77, nombre: "Santa Beatriz / Cuba", tecnologia: "VLU / LTE-HYBRID", lat: -12.064331, lon: -77.036675 },
+    { id: 78, nombre: "Lince / César Vallejo", tecnologia: "VLU / LTE-HYBRID", lat: -12.070636, lon: -77.037258 }
   ];
 
   let coverageMap = null;
@@ -1992,6 +1986,13 @@
   let coverageRingsLayer = null;
   let gpsRefLayer = null;
   let fixedMarkerById = {};
+
+  function getTechColor(tech) {
+    const t = String(tech || "").toUpperCase();
+    if (t.includes("LORA")) return "#38bdf8";
+    if (t.includes("LTE")) return "#a78bfa";
+    return "#10b981";
+  }
 
   function initOrRefreshCoverageMap() {
     if (!isAuthenticated) return;
@@ -2003,9 +2004,10 @@
     if (!coverageMap) {
       coverageMap = L.map("coverageMapContainer", { zoomControl: true }).setView([-12.075, -77.025], 12);
 
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-        attribution: "&copy; OpenStreetMap &copy; CARTO",
-        subdomains: "abcd",
+      // OpenStreetMap estándar sin API Key con filtro oscuro
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+        className: "dark-map-tiles",
         maxZoom: 19
       }).addTo(coverageMap);
 
@@ -2014,13 +2016,15 @@
       gpsRefLayer = L.layerGroup().addTo(coverageMap);
 
       FIXED_78_POINTS.forEach(pt => {
+        const nodeColor = getTechColor(pt.tecnologia);
+
         // Anillos de referencia de potencia (1 km fuerte, 3 km media)
         L.circle([pt.lat, pt.lon], {
           radius: 1000,
-          color: "#10b981",
+          color: nodeColor,
           weight: 0.8,
           opacity: 0.35,
-          fillColor: "#10b981",
+          fillColor: nodeColor,
           fillOpacity: 0.06
         }).addTo(coverageRingsLayer);
 
@@ -2034,20 +2038,27 @@
         }).addTo(coverageRingsLayer);
 
         const marker = L.circleMarker([pt.lat, pt.lon], {
-          radius: 6,
-          fillColor: "#10b981",
+          radius: 6.5,
+          fillColor: nodeColor,
           color: "#ecfdf5",
           weight: 1.5,
           opacity: 1,
-          fillOpacity: 0.9
+          fillOpacity: 0.92
+        });
+
+        marker.bindTooltip(`<strong>#${pt.id} ${escapeHtml(pt.nombre)}</strong> · ${escapeHtml(pt.tecnologia)}`, {
+          direction: "top",
+          offset: [0, -6],
+          className: "point-label-tooltip"
         });
 
         marker.bindPopup(`
-          <div style="font-size:0.82rem; line-height:1.45;">
-            <strong style="color:#34d399;">Punto Fijo #${pt.id}</strong><br/>
-            <span style="font-family:monospace;">Lat: ${pt.lat.toFixed(6)}</span><br/>
-            <span style="font-family:monospace;">Lon: ${pt.lon.toFixed(6)}</span><br/>
-            <button type="button" onclick="copyText('${pt.lat}, ${pt.lon}', 'Coordenada #${pt.id}')" style="margin-top:6px; padding:3px 8px; font-size:0.74rem; background:#10b981; color:#032219; border-radius:6px; font-weight:700;">📋 Copiar Lat/Lon</button>
+          <div style="font-size:0.82rem; line-height:1.5; min-width:210px;">
+            <strong style="color:#34d399; font-size:0.88rem;">#${pt.id} — ${escapeHtml(pt.nombre)}</strong><br/>
+            <span class="tech-pill" style="margin:3px 0;">${escapeHtml(pt.tecnologia)}</span><br/>
+            <span style="font-family:monospace; color:#cbd5e1;">Lat: ${pt.lat.toFixed(6)}</span><br/>
+            <span style="font-family:monospace; color:#cbd5e1;">Lon: ${pt.lon.toFixed(6)}</span><br/>
+            <button type="button" onclick="copyText('${pt.lat}, ${pt.lon}', '${escapeAttr(pt.nombre)}')" style="margin-top:7px; padding:4px 9px; font-size:0.74rem; background:#10b981; color:#032219; border-radius:6px; font-weight:700;">📋 Copiar Lat/Lon</button>
           </div>
         `);
 
@@ -2094,10 +2105,10 @@
     if (!sel) return;
     const q = normalizeText(filterQuery);
     const matches = FIXED_78_POINTS.filter(p =>
-      !q || normalizeText(`punto ${p.id} ${p.lat} ${p.lon}`).includes(q)
+      !q || normalizeText(`punto ${p.id} ${p.nombre} ${p.tecnologia} ${p.lat} ${p.lon}`).includes(q)
     );
     sel.innerHTML = `<option value="">— Seleccionar punto fijo (${matches.length} disponibles) —</option>` +
-      matches.map(p => `<option value="${p.id}">Punto #${p.id} (${p.lat.toFixed(5)}, ${p.lon.toFixed(5)})</option>`).join("");
+      matches.map(p => `<option value="${p.id}">#${p.id} ${escapeHtml(p.nombre)} [${escapeHtml(p.tecnologia)}]</option>`).join("");
   }
 
   function filterFixedPointSelect(val) {
@@ -2187,10 +2198,11 @@
     }).addTo(gpsRefLayer);
 
     gpsMarker.bindPopup(`
-      <div style="font-size:0.82rem; line-height:1.45;">
+      <div style="font-size:0.82rem; line-height:1.5;">
         <strong style="color:#fbbf24;">📡 Posición GPS Evaluada</strong><br/>
         <span style="font-family:monospace;">${lat.toFixed(6)}, ${lon.toFixed(6)}</span><br/>
-        <span>Más cercano: <strong>Punto #${closest.id}</strong> (${closest.dist >= 1000 ? (closest.dist / 1000).toFixed(2) + " km" : Math.round(closest.dist) + " m"})</span><br/>
+        <span>Más cercano: <strong>#${closest.id} ${escapeHtml(closest.nombre)}</strong> (${closest.dist >= 1000 ? (closest.dist / 1000).toFixed(2) + " km" : Math.round(closest.dist) + " m"})</span><br/>
+        <span class="tech-pill">${escapeHtml(closest.tecnologia)}</span><br/>
         <span style="color:${powerInfo.color}; font-weight:700;">${powerInfo.label}</span>
       </div>
     `).openPopup();
@@ -2214,11 +2226,14 @@
       const distText = item.dist >= 1000 ? `${(item.dist / 1000).toFixed(2)} km` : `${Math.round(item.dist)} m`;
       return `
         <div class="nearest-card" onclick="focusSelectedFixedPoint(${item.id})">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
-            <strong style="color:#34d399;">${idx === 0 ? "★ " : ""}Punto #${item.id}</strong>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
+            <div>
+              <strong style="color:#34d399; display:block;">${idx === 0 ? "★ " : ""}#${item.id} ${escapeHtml(item.nombre)}</strong>
+              <span class="tech-pill" style="margin-top:3px;">${escapeHtml(item.tecnologia)}</span>
+            </div>
             <span class="signal-pill ${pwr.cls}">${distText}</span>
           </div>
-          <div style="font-size:0.74rem; color:var(--text-muted); font-family:monospace; margin-top:3px;">
+          <div style="font-size:0.74rem; color:var(--text-muted); font-family:monospace; margin-top:4px;">
             ${item.lat.toFixed(6)}, ${item.lon.toFixed(6)}
           </div>
           <div style="font-size:0.73rem; color:${pwr.color}; font-weight:600; margin-top:2px;">
