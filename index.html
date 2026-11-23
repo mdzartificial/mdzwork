@@ -467,11 +467,21 @@
       font-size: 0.78rem;
       cursor: pointer;
       transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
     .chip:hover, .chip.active {
       background: rgba(16, 185, 129, 0.2);
       border-color: var(--accent);
       color: var(--text-main);
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
     }
 
     .search-stats {
@@ -611,7 +621,7 @@
       border-radius: 3px;
     }
 
-    /* Panel QR protegido (solo visible si se solicita con clave maestra o dentro de Sanctuary) */
+    /* Panel QR protegido */
     .qr-drawer {
       display: none;
       margin-top: 14px;
@@ -738,9 +748,21 @@
     .toast.show { transform: translateY(0); opacity: 1; }
 
     /* Estilos del Mapa de Cobertura y Potencia (Solo visible tras 2FA) */
+    .map-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 11px 14px;
+      background: rgba(5, 11, 9, 0.72);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 12px;
+    }
     .map-layout {
       display: grid;
-      grid-template-columns: 350px 1fr;
+      grid-template-columns: 365px 1fr;
       gap: 16px;
       align-items: stretch;
     }
@@ -755,10 +777,12 @@
       border: 1px solid rgba(16, 185, 129, 0.22);
       border-radius: 14px;
       padding: 15px;
+      max-height: 650px;
+      overflow-y: auto;
     }
     #coverageMapContainer {
       width: 100%;
-      min-height: 540px;
+      min-height: 650px;
       border-radius: 14px;
       border: 1px solid rgba(16, 185, 129, 0.35);
       background: #040907;
@@ -766,7 +790,7 @@
     }
     .leaflet-container { background: #040907 !important; font-family: var(--font-sans) !important; }
     .dark-map-tiles {
-      filter: invert(100%) hue-rotate(180deg) brightness(88%) contrast(92%) saturate(85%);
+      filter: invert(100%) hue-rotate(180deg) brightness(90%) contrast(94%) saturate(80%);
     }
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
       background: #0a1713 !important;
@@ -801,32 +825,44 @@
       padding: 2px 7px;
       border-radius: 99px;
       font-weight: 700;
+      white-space: nowrap;
     }
     .sig-high { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; border: 1px solid #10b981; }
     .sig-med { background: rgba(245, 158, 11, 0.22); color: #fcd34d; border: 1px solid #f59e0b; }
     .sig-low { background: rgba(239, 68, 68, 0.22); color: #fca5a5; border: 1px solid #ef4444; }
-    .dark-map-tiles {
-      filter: invert(100%) hue-rotate(180deg) brightness(92%) contrast(94%) saturate(75%);
-    }
     .tech-pill {
       display: inline-block;
       font-family: var(--font-mono);
       font-size: 0.68rem;
-      padding: 1px 6px;
+      padding: 1px 7px;
       border-radius: 6px;
-      background: rgba(56, 189, 248, 0.16);
-      color: #7dd3fc;
-      border: 1px solid rgba(56, 189, 248, 0.35);
       font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .tech-detektor { background: rgba(16, 185, 129, 0.18); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.45); }
+    .tech-repotenciado { background: rgba(245, 158, 11, 0.18); color: #fcd34d; border-color: rgba(245, 158, 11, 0.45); }
+    .tech-tracker { background: rgba(56, 189, 248, 0.18); color: #7dd3fc; border-color: rgba(56, 189, 248, 0.45); }
+    .tech-vut { background: rgba(192, 132, 252, 0.18); color: #d8b4fe; border-color: rgba(192, 132, 252, 0.45); }
+
+    .pl-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-right: 4px;
     }
     .point-label-tooltip {
-      background: rgba(4, 12, 9, 0.88) !important;
+      background: rgba(4, 12, 9, 0.92) !important;
       color: #ecfdf5 !important;
-      border: 1px solid rgba(16, 185, 129, 0.5) !important;
+      border: 1px solid rgba(16, 185, 129, 0.55) !important;
       border-radius: 6px !important;
-      padding: 2px 6px !important;
+      padding: 3px 7px !important;
       font-family: var(--font-mono) !important;
-      font-size: 0.68rem !important;
+      font-size: 0.7rem !important;
       box-shadow: 0 2px 8px rgba(0,0,0,0.65) !important;
     }
   </style>
@@ -915,17 +951,14 @@
       Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.
     </p>
 
-    <!-- Formulario dinámico para agregar nuevos Trackers (Solo visible con Modo Edición Activo) -->
     <form id="formTrackers" class="form-grid" onsubmit="addTrackerItem(event)"></form>
 
-    <!-- Buscador en Trackers -->
     <div class="search-input-wrap" style="margin-bottom: 14px;">
       <span class="search-icon">🔍</span>
       <input type="text" id="trackersSearch" placeholder="Buscar en Trackers por cualquier campo..." oninput="renderTrackersTable()" />
       <button type="button" class="search-clear" onclick="document.getElementById('trackersSearch').value=''; renderTrackersTable();">Limpiar</button>
     </div>
 
-    <!-- Tabla Trackers con encabezados dinámicos -->
     <div class="table-wrap">
       <table>
         <thead id="trackersTableHead"></thead>
@@ -933,9 +966,7 @@
       </table>
     </div>
 
-    <!-- ===================================================================
-         SUB-CUADRO EN VISTA GENERAL: COMANDOS (CONTRAÍDO POR DEFECTO)
-         =================================================================== -->
+    <!-- SUB-CUADRO: COMANDOS -->
     <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border-glass);">
       <div class="section-header" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
         <div class="section-title">
@@ -957,10 +988,8 @@
       </div>
 
       <div id="commandsCollapsibleBody" style="display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.07);">
-        <!-- Formulario dinámico de Comandos (Visible con Modo Edición Activo) -->
         <form id="formCommands" class="form-grid" onsubmit="addCommandItem(event)"></form>
 
-        <!-- Buscador y Filtros por Modelo -->
         <div class="search-input-wrap" style="margin-bottom: 10px;">
           <span class="search-icon">🔍</span>
           <input type="text" id="commandsSearch" placeholder="Buscar comando AT, modelo (GV58CG, GV300W, GV55W, GV350, GV57CG), acción, cable o evento..." oninput="renderCommandsTable()" />
@@ -978,7 +1007,6 @@
           <span class="chip" data-model="GENERALES" onclick="setCommandModelFilter('GENERALES', this)">Generales</span>
         </div>
 
-        <!-- Tabla Comandos -->
         <div class="table-wrap">
           <table>
             <thead id="commandsTableHead"></thead>
@@ -988,9 +1016,7 @@
       </div>
     </div>
 
-    <!-- ===================================================================
-         SUB-CUADRO EN VISTA GENERAL: DIRECTORIO (AL FINAL, PLEGABLE)
-         =================================================================== -->
+    <!-- SUB-CUADRO: DIRECTORIO -->
     <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border-glass);">
       <div class="section-header" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
         <div class="section-title">
@@ -1012,17 +1038,14 @@
       </div>
 
       <div id="directoryCollapsibleBody" style="display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.07);">
-        <!-- Formulario dinámico del Directorio (Visible con Modo Edición Activo) -->
         <form id="formDirectory" class="form-grid" onsubmit="addDirectoryItem(event)"></form>
 
-        <!-- Buscador del Directorio -->
         <div class="search-input-wrap" style="margin-bottom: 14px;">
           <span class="search-icon">🔍</span>
           <input type="text" id="directorySearch" placeholder="Buscar en Directorio por nombre, área, teléfono, correo, enlace o notas..." oninput="renderDirectoryTable()" />
           <button type="button" class="search-clear" onclick="document.getElementById('directorySearch').value=''; renderDirectoryTable();">Limpiar</button>
         </div>
 
-        <!-- Tabla Directorio -->
         <div class="table-wrap">
           <table>
             <thead id="directoryTableHead"></thead>
@@ -1050,7 +1073,6 @@
       </div>
     </div>
 
-    <!-- Cajón QR Interno (Solo accesible cuando ya estás dentro de Sanctuary) -->
     <div id="internalQrDrawer" class="qr-drawer">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
         <strong style="font-size:0.88rem; color:var(--accent-secondary);">Configuración de Autenticador (Solo visible dentro de Sanctuary)</strong>
@@ -1071,7 +1093,6 @@
       </div>
     </div>
 
-    <!-- Buscador Inteligente -->
     <div class="smart-search-box" style="margin-top:14px;">
       <div class="search-input-wrap">
         <span class="search-icon">⚡</span>
@@ -1095,10 +1116,8 @@
       </div>
     </div>
 
-    <!-- Formulario de Alta en Sanctuary (Solo visible si Modo Edición está Activo) -->
     <form id="formSanctuary" class="form-grid" onsubmit="addSanctuaryItem(event)"></form>
 
-    <!-- Tabla Sanctuary -->
     <div class="table-wrap">
       <table>
         <thead id="sanctuaryTableHead"></thead>
@@ -1108,32 +1127,60 @@
   </section>
 
   <!-- =====================================================================
-       SECCIÓN 3: MAPA DE COBERTURA Y POTENCIA (78 PUNTOS FIJOS VS GPS)
+       SECCIÓN 3: MAPA DE COBERTURA Y POTENCIA (78 PUNTOS OFICIALES DEL EXCEL)
        ===================================================================== -->
   <section id="viewMap" class="workspace glass-panel led-border">
     <div class="section-header">
       <div class="section-title">
         <h2>🗺️ Mapa de Cobertura & Referencia de Potencia</h2>
-        <span class="autosave-pill"><span class="dot-pulse"></span> 78 Puntos Fijos Activos (2FA)</span>
+        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="mapActiveCounter">78 / 78 Puntos Activos</span></span>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <select id="baseMapSelector" style="padding:5px 10px; font-size:0.78rem;" onchange="changeBaseMapLayer(this.value)">
+          <option value="dark">🌙 Mapa Oscuro</option>
+          <option value="satellite">🛰️ Satélite (Esri)</option>
+          <option value="light">🗺️ Calles (OSM)</option>
+        </select>
         <label style="font-size:0.78rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
           <input type="checkbox" id="toggleRadiusCircles" checked onchange="toggleCoverageRings()" />
-          Radios base (1 km / 3 km)
+          Radios (1 km / 3 km)
         </label>
-        <button type="button" class="btn-glass btn-sm" onclick="exportGeofencesCSV()">📊 Exportar Geocercas (CSV)</button>
-        <button type="button" class="btn-glass btn-sm" onclick="exportGeofencesGeoJSON()">🌐 Exportar GeoJSON</button>
-        <button type="button" class="btn-glass btn-sm" onclick="fitAllFixedPoints()">🎯 Centrar 78 Puntos</button>
+        <button type="button" class="btn-glass btn-sm" onclick="fitLimaPoints()">🏙️ Lima (51)</button>
+        <button type="button" class="btn-glass btn-sm" onclick="fitAllFixedPoints()">🇵🇪 Todo Perú (78)</button>
+        <button type="button" class="btn-glass btn-sm" onclick="exportGeofencesCSV()">📊 CSV Geocercas</button>
+        <button type="button" class="btn-glass btn-sm" onclick="exportGeofencesGeoJSON()">🌐 GeoJSON</button>
       </div>
+    </div>
+
+    <!-- Barra de Filtros Interactivos por Tecnología y Leyenda -->
+    <div class="map-toolbar">
+      <div class="filter-chips" id="mapTechFilterChips" style="margin-top:0;">
+        <span class="chip active" data-tech="ALL" onclick="setMapTechFilter('ALL', this)">Todos (78)</span>
+        <span class="chip" data-tech="DETEKTOR EVAL" onclick="setMapTechFilter('DETEKTOR EVAL', this)">
+          <span class="legend-dot" style="background:#10b981;"></span> DETEKTOR EVAL (36)
+        </span>
+        <span class="chip" data-tech="REPOTENCIADO EVAL" onclick="setMapTechFilter('REPOTENCIADO EVAL', this)">
+          <span class="legend-dot" style="background:#fbbf24;"></span> REPOTENCIADO EVAL (13)
+        </span>
+        <span class="chip" data-tech="TRACKER" onclick="setMapTechFilter('TRACKER', this)">
+          <span class="legend-dot" style="background:#38bdf8;"></span> TRACKER (15)
+        </span>
+        <span class="chip" data-tech="VUT" onclick="setMapTechFilter('VUT', this)">
+          <span class="legend-dot" style="background:#c084fc;"></span> VUT (14)
+        </span>
+      </div>
+      <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+        49 con ID PL · 29 TRACKER/VUT
+      </span>
     </div>
 
     <div class="map-layout">
       <!-- Panel de Control GPS vs Puntos Fijos y Geocercas -->
-      <div class="map-sidebar" style="max-height: 620px; overflow-y: auto;">
+      <div class="map-sidebar">
         <div>
           <strong style="font-size:0.9rem; color:var(--accent-secondary);">📡 Evaluar Posición GPS vs Puntos Fijos</strong>
           <p style="font-size:0.77rem; color:var(--text-muted); margin-top:3px;">
-            Ingresa Latitud y Longitud o activa el checklist inferior para marcar haciendo clic en el mapa.
+            Ingresa Latitud y Longitud o habilita el clic en el mapa para calcular los 5 nodos más cercanos.
           </p>
         </div>
 
@@ -1145,16 +1192,16 @@
         <form onsubmit="plotGpsReferencePoint(event)" style="display:flex; flex-direction:column; gap:10px;">
           <div class="field">
             <label>Pegado rápido (Latitud, Longitud)</label>
-            <input type="text" id="gpsQuickPaste" placeholder="Ej. -12.046374, -77.042793" oninput="parseQuickLatLon(this.value)" />
+            <input type="text" id="gpsQuickPaste" placeholder="Ej. -12.1109345, -77.0105818" oninput="parseQuickLatLon(this.value)" />
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
             <div class="field">
               <label>Latitud *</label>
-              <input type="number" step="any" id="gpsLatInput" placeholder="-12.0463" required />
+              <input type="number" step="any" id="gpsLatInput" placeholder="-12.1109" required />
             </div>
             <div class="field">
               <label>Longitud *</label>
-              <input type="number" step="any" id="gpsLonInput" placeholder="-77.0427" required />
+              <input type="number" step="any" id="gpsLonInput" placeholder="-77.0105" required />
             </div>
           </div>
           <div style="display:flex; gap:8px;">
@@ -1162,6 +1209,29 @@
             <button type="button" class="btn-glass btn-sm" onclick="clearGpsReference()" title="Limpiar marcador GPS">Limpiar</button>
           </div>
         </form>
+
+        <!-- Buscador y Selector de los 78 Puntos -->
+        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
+          <div class="field" style="margin-bottom:8px;">
+            <label>Buscar punto fijo por PL, nombre o tecnología</label>
+            <input type="text" id="mapFixedSearch" placeholder="Ej. PL001, Trujillo, VUT, Musa..." oninput="filterFixedPointSelect(this.value)" />
+          </div>
+          <select id="fixedPointSelector" style="width:100%;" onchange="focusSelectedFixedPoint(this.value)">
+            <option value="">— Seleccionar punto fijo (1 - 78) —</option>
+          </select>
+        </div>
+
+        <!-- Resultados de Nodos Más Cercanos -->
+        <div id="nearestResultsBox" style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
+          <strong style="font-size:0.8rem; color:var(--text-main); display:block; margin-bottom:6px;">
+            📶 Puntos Fijos Más Cercanos y Potencia:
+          </strong>
+          <div id="nearestPointsList" class="nearest-list">
+            <p style="font-size:0.78rem; color:var(--text-muted);">
+              Ingresa una coordenada GPS o marca un punto en el mapa para calcular los nodos más cercanos y el nivel de señal estimado.
+            </p>
+          </div>
+        </div>
 
         <!-- Constructor de Geocerca Circular -->
         <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
@@ -1172,7 +1242,7 @@
             <div style="display:grid; grid-template-columns:1fr 110px; gap:8px;">
               <div class="field">
                 <label>Nombre Geocerca *</label>
-                <input type="text" id="geoNameInput" placeholder="Ej. Zona Norte / Nodo 14" required />
+                <input type="text" id="geoNameInput" placeholder="Ej. Zona Norte / PL004" required />
               </div>
               <div class="field">
                 <label>Radio (m) *</label>
@@ -1189,33 +1259,11 @@
             </div>
           </form>
 
-          <!-- Lista de Geocercas Guardadas -->
           <div style="margin-top:10px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
               <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">GEOCERCAS GUARDADAS (<span id="geofenceCountSpan">0</span>)</span>
             </div>
             <div id="savedGeofencesList" class="nearest-list" style="max-height:150px;"></div>
-          </div>
-        </div>
-
-        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
-          <div class="field" style="margin-bottom:8px;">
-            <label>Buscar punto fijo por nombre, tecnología o coordenada (78)</label>
-            <input type="text" id="mapFixedSearch" placeholder="Ej. Jockey, Miraflores, RF, LoRa, LTE..." oninput="filterFixedPointSelect(this.value)" />
-          </div>
-          <select id="fixedPointSelector" style="width:100%;" onchange="focusSelectedFixedPoint(this.value)">
-            <option value="">— Seleccionar punto fijo (1 - 78) —</option>
-          </select>
-        </div>
-
-        <div id="nearestResultsBox" style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
-          <strong style="font-size:0.8rem; color:var(--text-main); display:block; margin-bottom:6px;">
-            📶 Puntos Fijos Más Cercanos y Potencia:
-          </strong>
-          <div id="nearestPointsList" class="nearest-list">
-            <p style="font-size:0.78rem; color:var(--text-muted);">
-              Ingresa una coordenada GPS o haz clic en el mapa para calcular los nodos más cercanos y el nivel de señal estimado.
-            </p>
           </div>
         </div>
       </div>
@@ -1226,9 +1274,7 @@
   </section>
 </div>
 
-<!-- =========================================================================
-     MODAL DE INGRESO (SOLO CÓDIGO DE 6 DÍGITOS - SIN QR EXPUESTO)
-     ========================================================================= -->
+<!-- MODAL DE INGRESO TOTP -->
 <div id="totpModal" class="modal-backdrop" onclick="if(event.target===this) closeTotpModal()">
   <div class="modal-card glass-panel led-border">
     <div class="modal-header-croc croc-chomp">
@@ -1269,7 +1315,6 @@
       </div>
     </form>
 
-    <!-- Recuperación protegida con clave maestra para mostrar QR -->
     <div id="recoveryBox" style="display:none; margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
       <div style="display:flex; gap:8px;">
         <input type="password" id="recoveryKeyInput" placeholder="Clave maestra de recuperación..." style="flex:1;" />
@@ -1288,7 +1333,7 @@
   </div>
 </div>
 
-<!-- Modal para Añadir Nueva Columna (Trackers / Directorio / Sanctuary) -->
+<!-- Modal para Añadir Nueva Columna -->
 <div id="addColumnModal" class="modal-backdrop" onclick="if(event.target===this) closeAddColumnModal()">
   <div class="modal-card glass-panel led-border" style="max-width:380px;">
     <h3 id="addColumnModalTitle" style="font-size:1.08rem; margin-bottom:6px;">➕ Nueva Columna</h3>
@@ -1312,100 +1357,121 @@
 
 <script>
   // =========================================================================
-  // MAPA DE COBERTURA Y POTENCIA (78 PUNTOS OFICIALES: ID, PUNTO, LATITUD, LONGITUD, TECNOLOGIA)
+  // MAPA DE COBERTURA Y POTENCIA (78 PUNTOS EXACTOS DE lista_78_puntos_prioridad_PL.xlsx)
   // =========================================================================
-  let FIXED_78_POINTS = [
-    { id: 1, punto: "LIMA-BASE", lat: -12.1109345, lon: -77.0105818, tecnologia: "DETEKTOR EVAL" },
-    { id: 2, punto: "LIMA-LA MILLA", lat: -12.0191580, lon: -77.0687180, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 3, punto: "LIMA-50 COMAS", lat: -11.9787660, lon: -77.0551450, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 4, punto: "LIMA-CARABAYLLO", lat: -11.8881730, lon: -77.0201800, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 5, punto: "LIMA-VERDE", lat: -12.1849140, lon: -76.9529800, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 6, punto: "LIMA-SATELITE", lat: -11.8651640, lon: -77.1311190, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 7, punto: "LIMA-SAN BARTOLO", lat: -12.3905100, lon: -76.7801500, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 8, punto: "LIMA-LURIN", lat: -12.2752800, lon: -76.8719400, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 9, punto: "LIMA-PACHACAMAC", lat: -12.2286100, lon: -76.8594400, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 10, punto: "LIMA-VILLA EL SALVADOR", lat: -12.2127800, lon: -76.9388900, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 11, punto: "LIMA-SAN JUAN DE MIRAFLORES", lat: -12.1563900, lon: -76.9686100, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 12, punto: "LIMA-CHORRILLOS", lat: -12.1636310, lon: -76.9708860, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 13, punto: "LIMA-BARRANCO", lat: -12.1424220, lon: -77.0218690, tecnologia: "DETEKTOR EVAL" },
-    { id: 14, punto: "LIMA-MIRAFLORES", lat: -12.1260670, lon: -77.0338220, tecnologia: "DETEKTOR EVAL" },
-    { id: 15, punto: "LIMA-LARCO", lat: -12.1213190, lon: -77.0294640, tecnologia: "DETEKTOR EVAL" },
-    { id: 16, punto: "LIMA-ANGAMOS", lat: -12.1292580, lon: -76.9999310, tecnologia: "DETEKTOR EVAL" },
-    { id: 17, punto: "LIMA-HIGUERETA", lat: -12.1319190, lon: -76.9822970, tecnologia: "DETEKTOR EVAL" },
-    { id: 18, punto: "LIMA-CAMINOS DEL INCA", lat: -12.1257250, lon: -76.9830170, tecnologia: "DETEKTOR EVAL" },
-    { id: 19, punto: "LIMA-CHACARILLA", lat: -12.1112640, lon: -76.9896780, tecnologia: "DETEKTOR EVAL" },
-    { id: 20, punto: "LIMA-SAN BORJA", lat: -12.1112580, lon: -77.0114610, tecnologia: "DETEKTOR EVAL" },
-    { id: 21, punto: "LIMA-EL POLO", lat: -12.1066890, lon: -76.9632030, tecnologia: "DETEKTOR EVAL" },
-    { id: 22, punto: "LIMA-EL SOL", lat: -12.1045470, lon: -76.9609470, tecnologia: "DETEKTOR EVAL" },
-    { id: 23, punto: "LIMA-LA MOLINA", lat: -12.0786100, lon: -76.9425000, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 24, punto: "LIMA-CIENEGUILLA", lat: -12.1125000, lon: -76.8166700, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 25, punto: "LIMA-GUARDIA CIVIL", lat: -12.0942720, lon: -76.9939280, tecnologia: "DETEKTOR EVAL" },
-    { id: 26, punto: "LIMA-CORPAC", lat: -12.0897580, lon: -77.0042610, tecnologia: "DETEKTOR EVAL" },
-    { id: 27, punto: "LIMA-JAVIER PRADO", lat: -12.0948080, lon: -77.0199360, tecnologia: "DETEKTOR EVAL" },
-    { id: 28, punto: "LIMA-CANAVAL", lat: -12.0940170, lon: -77.0228780, tecnologia: "DETEKTOR EVAL" },
-    { id: 29, punto: "LIMA-CAMINO REAL", lat: -12.0968080, lon: -77.0256140, tecnologia: "DETEKTOR EVAL" },
-    { id: 30, punto: "LIMA-BASADRE", lat: -12.0924830, lon: -77.0273890, tecnologia: "DETEKTOR EVAL" },
-    { id: 31, punto: "LIMA-LINCE", lat: -12.0837860, lon: -77.0372580, tecnologia: "DETEKTOR EVAL" },
-    { id: 32, punto: "LIMA-CANEVARO", lat: -12.0803580, lon: -77.0345720, tecnologia: "DETEKTOR EVAL" },
-    { id: 33, punto: "LIMA-SALAVERRY", lat: -12.0819280, lon: -77.0497080, tecnologia: "DETEKTOR EVAL" },
-    { id: 34, punto: "LIMA-SAN FELIPE", lat: -12.0794390, lon: -77.0642360, tecnologia: "DETEKTOR EVAL" },
-    { id: 35, punto: "LIMA-BRASIL", lat: -12.0893500, lon: -77.0525970, tecnologia: "DETEKTOR EVAL" },
-    { id: 36, punto: "LIMA-MAGDALENA", lat: -12.0919400, lon: -77.0702800, tecnologia: "DETEKTOR EVAL" },
-    { id: 37, punto: "LIMA-BOLIVAR", lat: -12.0768500, lon: -77.0812670, tecnologia: "DETEKTOR EVAL" },
-    { id: 38, punto: "LIMA-SAN MIGUEL", lat: -12.0752140, lon: -77.0929500, tecnologia: "DETEKTOR EVAL" },
-    { id: 39, punto: "LIMA-LA PERLA", lat: -12.0672200, lon: -77.1155600, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 40, punto: "LIMA-CALLAO COLONIAL", lat: -12.0542500, lon: -77.1251610, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 41, punto: "LIMA-CALLAO PUERTO", lat: -12.0502800, lon: -77.1419400, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 42, punto: "LIMA-AEROPUERTO", lat: -12.0219400, lon: -77.1144400, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 43, punto: "LIMA-VENTANILLA", lat: -11.8780600, lon: -77.1277800, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 44, punto: "LIMA-ANCON", lat: -11.7741700, lon: -77.1763900, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 45, punto: "LIMA-VENEZUELA", lat: -12.0518220, lon: -77.0789170, tecnologia: "DETEKTOR EVAL" },
-    { id: 46, punto: "LIMA-DOS DE MAYO", lat: -12.0493080, lon: -77.0642360, tecnologia: "DETEKTOR EVAL" },
-    { id: 47, punto: "LIMA-ARENALES", lat: -12.0650080, lon: -77.0472190, tecnologia: "DETEKTOR EVAL" },
-    { id: 48, punto: "LIMA-SANTA BEATRIZ", lat: -12.0672360, lon: -77.0355190, tecnologia: "DETEKTOR EVAL" },
-    { id: 49, punto: "LIMA-CESAR VALLEJO", lat: -12.0706360, lon: -77.0372580, tecnologia: "DETEKTOR EVAL" },
-    { id: 50, punto: "LIMA-ALFONSO UGARTE", lat: -12.0602420, lon: -77.0419920, tecnologia: "DETEKTOR EVAL" },
-    { id: 51, punto: "LIMA-CENTRO CIVICO", lat: -12.0566030, lon: -77.0374440, tecnologia: "DETEKTOR EVAL" },
-    { id: 52, punto: "LIMA-GRAU", lat: -12.0535640, lon: -77.0243190, tecnologia: "DETEKTOR EVAL" },
-    { id: 53, punto: "LIMA-LA VICTORIA", lat: -12.0652800, lon: -77.0169400, tecnologia: "DETEKTOR EVAL" },
-    { id: 54, punto: "LIMA-GAMARRA", lat: -12.0663900, lon: -77.0119400, tecnologia: "DETEKTOR EVAL" },
-    { id: 55, punto: "LIMA-EL AGUSTINO", lat: -12.0488900, lon: -77.0019400, tecnologia: "DETEKTOR EVAL" },
-    { id: 56, punto: "LIMA-PUENTE NUEVO", lat: -12.0471470, lon: -76.9935220, tecnologia: "DETEKTOR EVAL" },
-    { id: 57, punto: "LIMA-SANTA ANITA", lat: -12.0226390, lon: -76.9296470, tecnologia: "DETEKTOR EVAL" },
-    { id: 58, punto: "LIMA-ATE VITARTE", lat: -12.0269400, lon: -76.9175000, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 59, punto: "LIMA-HUAYCAN", lat: -12.0127800, lon: -76.8236100, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 60, punto: "LIMA-CHACLACAYO", lat: -11.9763900, lon: -76.7686100, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 61, punto: "LIMA-CHOSICA", lat: -11.9430600, lon: -76.7094400, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 62, punto: "LIMA-SJL ZARATE", lat: -12.0277800, lon: -77.0013900, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 63, punto: "LIMA-SJL PROCERES", lat: -12.0080720, lon: -77.0040970, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 64, punto: "LIMA-SJL CANTO GRANDE", lat: -11.9819400, lon: -77.0063900, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 65, punto: "LIMA-SJL BAYOVAR", lat: -11.9588900, lon: -76.9958300, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 66, punto: "LIMA-RIMAC", lat: -12.0352800, lon: -77.0358300, tecnologia: "DETEKTOR EVAL" },
-    { id: 67, punto: "LIMA-SAN MARTIN DE PORRES", lat: -12.0119400, lon: -77.0541700, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 68, punto: "LIMA-MEGAPLAZA", lat: -11.9912420, lon: -77.0616360, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 69, punto: "LIMA-LOS OLIVOS", lat: -11.9885670, lon: -77.0749310, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 70, punto: "LIMA-NARANJAL", lat: -11.9772200, lon: -77.0611100, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 71, punto: "LIMA-INDEPENDENCIA", lat: -11.9905600, lon: -77.0513900, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 72, punto: "LIMA-COMAS BELAUNDE", lat: -11.9469400, lon: -77.0491700, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 73, punto: "LIMA-COLLIQUE", lat: -11.9194400, lon: -77.0369400, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 74, punto: "LIMA-PUENTE PIEDRA", lat: -11.8669400, lon: -77.0769400, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 75, punto: "LIMA-ZAPALLAL", lat: -11.8258300, lon: -77.1186100, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 76, punto: "LIMA-SANTA ROSA", lat: -11.7972200, lon: -77.1536100, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 77, punto: "LIMA-MANCHAY", lat: -12.1388900, lon: -76.8763900, tecnologia: "REPOTENCIADO EVAL" },
-    { id: 78, punto: "LIMA-PUNTA HERMOSA", lat: -12.3333300, lon: -76.8236100, tecnologia: "REPOTENCIADO EVAL" }
+  const FIXED_78_POINTS = [
+    { num: 1, pl: "PL001", punto: "LIMA-BASE", lat: -12.1109345, lon: -77.0105818, tecnologia: "DETEKTOR EVAL" },
+    { num: 2, pl: "PL003", punto: "LIMA-LA MILLA", lat: -12.0191580, lon: -77.0687180, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 3, pl: "PL004", punto: "LIMA-50 COMAS", lat: -11.9787660, lon: -77.0551450, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 4, pl: "PL005", punto: "LIMA-CARABAYLLO", lat: -11.8881730, lon: -77.0201800, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 5, pl: "PL006", punto: "LIMA-VERDE", lat: -12.1849140, lon: -76.9529800, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 6, pl: "PL007", punto: "LIMA-SATELITE", lat: -11.8651640, lon: -77.1311190, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 7, pl: "PL008", punto: "LIMA-LOMAS", lat: -11.8661540, lon: -77.0194170, tecnologia: "DETEKTOR EVAL" },
+    { num: 8, pl: "PL009", punto: "LIMA-MUSA", lat: -12.0876695, lon: -76.8835200, tecnologia: "DETEKTOR EVAL" },
+    { num: 9, pl: "PL011", punto: "LIMA-VIOLETA", lat: -11.8652745, lon: -77.0604212, tecnologia: "DETEKTOR EVAL" },
+    { num: 10, pl: "PL012", punto: "LIMA-SAN DIEGO", lat: -11.9621520, lon: -77.0867310, tecnologia: "DETEKTOR EVAL" },
+    { num: 11, pl: "PL013", punto: "LIMA-CRUZADO", lat: -11.9988820, lon: -77.1175840, tecnologia: "DETEKTOR EVAL" },
+    { num: 12, pl: "PL014", punto: "LIMA-HUAMPANI GOLF", lat: -11.9680060, lon: -76.7948060, tecnologia: "DETEKTOR EVAL" },
+    { num: 13, pl: "PL015", punto: "LIMA-REAL", lat: -11.7787995, lon: -77.1718517, tecnologia: "DETEKTOR EVAL" },
+    { num: 14, pl: "PL016", punto: "LIMA-COLLIQUE", lat: -11.9136010, lon: -77.0171970, tecnologia: "DETEKTOR EVAL" },
+    { num: 15, pl: "PL017", punto: "LIMA-VALLE", lat: -11.9754780, lon: -77.1209260, tecnologia: "DETEKTOR EVAL" },
+    { num: 16, pl: "PL018", punto: "LIMA-TRAPICHE", lat: -11.9032700, lon: -77.0531230, tecnologia: "DETEKTOR EVAL" },
+    { num: 17, pl: "PL019", punto: "LIMA-MARQUEZ", lat: -11.9433250, lon: -77.1317060, tecnologia: "DETEKTOR EVAL" },
+    { num: 18, pl: "PL020", punto: "LIMA-SARITA", lat: -12.0249880, lon: -77.1297610, tecnologia: "DETEKTOR EVAL" },
+    { num: 19, pl: "PL021", punto: "LIMA-MARTIN", lat: -11.9863700, lon: -77.0843510, tecnologia: "DETEKTOR EVAL" },
+    { num: 20, pl: "PL022", punto: "LIMA-VIOLETA2", lat: -11.8319555, lon: -77.1057242, tecnologia: "DETEKTOR EVAL" },
+    { num: 21, pl: "PL023", punto: "LIMA-IZQUIERDO", lat: -12.0524440, lon: -77.1068040, tecnologia: "DETEKTOR EVAL" },
+    { num: 22, pl: "PL024", punto: "LIMA-CONDOR2", lat: -11.9231230, lon: -76.9598460, tecnologia: "DETEKTOR EVAL" },
+    { num: 23, pl: "PL025", punto: "LIMA-SALVADOR", lat: -12.2070397, lon: -76.9283685, tecnologia: "DETEKTOR EVAL" },
+    { num: 24, pl: "PL026", punto: "LIMA-CONDOR", lat: -12.0023550, lon: -77.0075450, tecnologia: "DETEKTOR EVAL" },
+    { num: 25, pl: "PL027", punto: "LIMA-CONDOR3", lat: -11.9611570, lon: -76.9939880, tecnologia: "DETEKTOR EVAL" },
+    { num: 26, pl: "PL028", punto: "P-TRUJILLO-PORVENIR", lat: -8.0861568, lon: -78.9937905, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 27, pl: "PL029", punto: "LIMA-HUACHO", lat: -11.1154690, lon: -77.5890050, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 28, pl: "PL030", punto: "LIMA-IMPERIO", lat: -12.0479520, lon: -77.0370480, tecnologia: "DETEKTOR EVAL" },
+    { num: 29, pl: "PL031", punto: "LIMA-PACIFICO", lat: -11.9335680, lon: -77.0427700, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 30, pl: "PL032", punto: "LIMA-LURIN", lat: -12.2657800, lon: -76.8808980, tecnologia: "DETEKTOR EVAL" },
+    { num: 31, pl: "PL033", punto: "LIMA-PACHA2", lat: -11.9825580, lon: -76.9429780, tecnologia: "DETEKTOR EVAL" },
+    { num: 32, pl: "PL035", punto: "P-PUNO-PUNO", lat: -15.8417180, lon: -70.0330890, tecnologia: "DETEKTOR EVAL" },
+    { num: 33, pl: "PL036", punto: "LIMA-VERDE 2", lat: -12.2332660, lon: -76.9094700, tecnologia: "DETEKTOR EVAL" },
+    { num: 34, pl: "PL037", punto: "LIMA-PACHA3", lat: -11.9728060, lon: -76.8952410, tecnologia: "DETEKTOR EVAL" },
+    { num: 35, pl: "PL039", punto: "LIMA-NUEVO AMANECER", lat: -11.9126150, lon: -77.0884960, tecnologia: "DETEKTOR EVAL" },
+    { num: 36, pl: "PL045", punto: "LIMA-SANTA ANITA", lat: -12.0357940, lon: -76.9585870, tecnologia: "DETEKTOR EVAL" },
+    { num: 37, pl: "PL054", punto: "LIMA-MARRON", lat: -12.1401900, lon: -76.9790950, tecnologia: "DETEKTOR EVAL" },
+    { num: 38, pl: "PL055", punto: "LIMA-HUAYCAN", lat: -12.0229960, lon: -76.8094560, tecnologia: "DETEKTOR EVAL" },
+    { num: 39, pl: "PL058", punto: "LIMA-CHOSICA", lat: -11.9202140, lon: -76.6723345, tecnologia: "DETEKTOR EVAL" },
+    { num: 40, pl: "PL065", punto: "P-PIURA SAN PABLO", lat: -5.2921715, lon: -80.6184025, tecnologia: "DETEKTOR EVAL" },
+    { num: 41, pl: "PL068", punto: "LIMA-ORO", lat: -12.0805900, lon: -77.0327800, tecnologia: "DETEKTOR EVAL" },
+    { num: 42, pl: "PL069", punto: "LIMA-LA QUIPA", lat: -12.4608590, lon: -76.7711807, tecnologia: "DETEKTOR EVAL" },
+    { num: 43, pl: "PL070", punto: "LIMA-IMPERIAL CAÑETE", lat: -13.0735963, lon: -76.3824983, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 44, pl: "PL075", punto: "LIMA-PANTANO", lat: -12.1902598, lon: -77.0210615, tecnologia: "DETEKTOR EVAL" },
+    { num: 45, pl: "PL076", punto: "LIMA-PACHACAMAC", lat: -12.2203100, lon: -76.8870300, tecnologia: "DETEKTOR EVAL" },
+    { num: 46, pl: "PL086", punto: "LIMA-PATIVILCA", lat: -10.6697563, lon: -77.7938537, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 47, pl: "PL091", punto: "LIMA-BARRANCA", lat: -10.7476310, lon: -77.7489468, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 48, pl: "PL092", punto: "LIMA-CHANCAY", lat: -11.5637175, lon: -77.2661747, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 49, pl: "PL094", punto: "P-LA LIBERTAD-SALAVERRY", lat: -8.1866750, lon: -78.9823330, tecnologia: "REPOTENCIADO EVAL" },
+    { num: 50, pl: "", punto: "LIMA-AZUL", lat: -12.0713610, lon: -76.9900310, tecnologia: "TRACKER" },
+    { num: 51, pl: "", punto: "LIMA-MIRONES", lat: -12.0680610, lon: -77.0737940, tecnologia: "TRACKER" },
+    { num: 52, pl: "", punto: "LIMA-PACHA", lat: -12.0164970, lon: -76.9003690, tecnologia: "TRACKER" },
+    { num: 53, pl: "", punto: "P-ANCASH-CHIMBOTE", lat: -9.0640830, lon: -78.5882810, tecnologia: "TRACKER" },
+    { num: 54, pl: "", punto: "P-ANCASH-HUARAZ", lat: -9.5408310, lon: -77.5218000, tecnologia: "TRACKER" },
+    { num: 55, pl: "", punto: "P-AREQUIPA-AREQUIPA SUR", lat: -16.5285110, lon: -71.7807390, tecnologia: "TRACKER" },
+    { num: 56, pl: "", punto: "P-AREQUIPA-ATICO", lat: -16.2286690, lon: -73.6147690, tecnologia: "TRACKER" },
+    { num: 57, pl: "", punto: "P-AYACUCHO-AYACUCHO", lat: -13.1602690, lon: -74.2381140, tecnologia: "TRACKER" },
+    { num: 58, pl: "", punto: "P-ICA-ICA", lat: -14.0638440, lon: -75.7429970, tecnologia: "TRACKER" },
+    { num: 59, pl: "", punto: "P-ICA-SAN CLEMENTE", lat: -13.6829140, lon: -76.1582030, tecnologia: "TRACKER" },
+    { num: 60, pl: "", punto: "P-JUNIN-LA OROYA", lat: -11.5247800, lon: -75.9118700, tecnologia: "TRACKER" },
+    { num: 61, pl: "", punto: "P-LA LIBERTAD-PACASMAYO", lat: -7.3033600, lon: -79.4766500, tecnologia: "TRACKER" },
+    { num: 62, pl: "", punto: "P-LAMBAYEQUE-CHICLAYO 1", lat: -6.7494420, lon: -79.8691420, tecnologia: "TRACKER" },
+    { num: 63, pl: "", punto: "P-PUNO-JULIACA", lat: -15.4954310, lon: -70.1588750, tecnologia: "TRACKER" },
+    { num: 64, pl: "", punto: "P-TRUJILLO-CENTRO", lat: -8.1212360, lon: -79.0211500, tecnologia: "TRACKER" },
+    { num: 65, pl: "", punto: "LIMA-AGUSTINO(PE)", lat: -12.0525580, lon: -77.0029390, tecnologia: "VUT" },
+    { num: 66, pl: "", punto: "LIMA-ASIA(PE)", lat: -12.7588690, lon: -76.5991190, tecnologia: "VUT" },
+    { num: 67, pl: "", punto: "LIMA-PURUCHUCO(PE)", lat: -12.0515280, lon: -76.9293190, tecnologia: "VUT" },
+    { num: 68, pl: "", punto: "P-ANCASH-CASMA(PE)", lat: -9.4698690, lon: -78.3132390, tecnologia: "VUT" },
+    { num: 69, pl: "", punto: "P-ANCASH-NUEVO CHIMBOTE(PE)", lat: -9.1090190, lon: -78.5394670, tecnologia: "VUT" },
+    { num: 70, pl: "", punto: "P-AREQUIPA-AREQUIPA PUNO(PE)", lat: -16.3430080, lon: -71.5835360, tecnologia: "VUT" },
+    { num: 71, pl: "", punto: "P-HUANUCO-HUANUCO(PE)", lat: -9.9532280, lon: -76.2503670, tecnologia: "VUT" },
+    { num: 72, pl: "", punto: "P-ICA-CHINCHA(PE)", lat: -13.4082500, lon: -76.1300750, tecnologia: "VUT" },
+    { num: 73, pl: "", punto: "P-LA LIBERTAD-CHAO(PE)", lat: -8.5391220, lon: -78.6749390, tecnologia: "VUT" },
+    { num: 74, pl: "", punto: "P-MOQUEGUA-MOQUEGUA(PE)", lat: -17.1707280, lon: -70.9075500, tecnologia: "VUT" },
+    { num: 75, pl: "", punto: "P-PIURA-PIURA CENTRO(PE)", lat: -5.2002670, lon: -80.6215940, tecnologia: "VUT" },
+    { num: 76, pl: "", punto: "P-TACNA-TACNA(PE)", lat: -17.9962560, lon: -70.2604030, tecnologia: "VUT" },
+    { num: 77, pl: "", punto: "P-TRUJILLO NORTE(PE)", lat: -8.0157890, lon: -79.0678360, tecnologia: "VUT" },
+    { num: 78, pl: "", punto: "P-TUMBES-TUMBES(PE)", lat: -3.5730920, lon: -80.4567530, tecnologia: "VUT" }
   ];
 
   let coverageMap = null;
+  let currentBaseLayer = null;
   let fixedMarkersLayer = null;
   let coverageRingsLayer = null;
   let gpsRefLayer = null;
-  let fixedMarkerById = {};
+  let fixedMarkerByNum = {};
+  let activeMapTechFilter = "ALL";
+  let lastEvaluatedGps = null;
 
   function getTechColor(tech) {
     const t = String(tech || "").toUpperCase();
     if (t.includes("REPOTENCIADO")) return "#fbbf24";
     if (t.includes("DETEKTOR")) return "#10b981";
-    return "#38bdf8";
+    if (t.includes("VUT")) return "#c084fc";
+    return "#38bdf8"; // TRACKER
+  }
+
+  function getTechBadgeClass(tech) {
+    const t = String(tech || "").toUpperCase();
+    if (t.includes("REPOTENCIADO")) return "tech-repotenciado";
+    if (t.includes("DETEKTOR")) return "tech-detektor";
+    if (t.includes("VUT")) return "tech-vut";
+    return "tech-tracker";
+  }
+
+  function formatPointCode(pt) {
+    return pt.pl ? `${pt.pl}` : `#${pt.num}`;
+  }
+
+  function getFilteredFixedPoints() {
+    if (activeMapTechFilter === "ALL") return FIXED_78_POINTS;
+    return FIXED_78_POINTS.filter(p => p.tecnologia === activeMapTechFilter);
   }
 
   // =========================================================================
@@ -1735,6 +1801,8 @@
     if (pendingAction === "sanctuary") {
       switchTab("sanctuary");
       setTimeout(() => document.getElementById("smartSanctuarySearch").focus(), 100);
+    } else if (pendingAction === "map") {
+      switchTab("map");
     }
     pendingAction = null;
     showToast("🔓 Doble factor verificado. Sanctuary, Mapa y Modo Edición habilitados.");
@@ -1819,10 +1887,346 @@
   }
 
   // =========================================================================
-  // GEOCERCAS CIRCULARES GUARDADAS Y EXPORTACIÓN (CSV / GEOJSON)
+  // MAPA DE COBERTURA: RENDERIZADO, CAPAS BASE, FILTROS Y GEOCERCAS
   // =========================================================================
   let geofencesLayer = null;
   let previewCircleLayer = null;
+
+  function createBaseTileLayer(mode) {
+    if (mode === "satellite") {
+      return L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Tiles &copy; Esri",
+        maxZoom: 19
+      });
+    }
+    if (mode === "light") {
+      return L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+        maxZoom: 19
+      });
+    }
+    return L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+      className: "dark-map-tiles",
+      maxZoom: 19
+    });
+  }
+
+  function changeBaseMapLayer(mode) {
+    if (!coverageMap) return;
+    if (currentBaseLayer) coverageMap.removeLayer(currentBaseLayer);
+    currentBaseLayer = createBaseTileLayer(mode);
+    currentBaseLayer.addTo(coverageMap);
+    currentBaseLayer.bringToBack();
+  }
+
+  function initOrRefreshCoverageMap() {
+    if (!isAuthenticated) return;
+    if (typeof L === "undefined") {
+      showToast("⚠️ No se pudo cargar la librería de mapas. Verifica tu conexión.");
+      return;
+    }
+
+    if (!coverageMap) {
+      coverageMap = L.map("coverageMapContainer", { zoomControl: true }).setView([-12.04, -77.02], 11);
+      currentBaseLayer = createBaseTileLayer("dark").addTo(coverageMap);
+
+      coverageRingsLayer = L.layerGroup().addTo(coverageMap);
+      fixedMarkersLayer = L.layerGroup().addTo(coverageMap);
+      gpsRefLayer = L.layerGroup().addTo(coverageMap);
+
+      renderFixedPointsOnMap();
+      populateFixedPointSelector("");
+
+      coverageMap.on("click", e => {
+        const allowClick = document.getElementById("enableMapClickPlacement");
+        if (!allowClick || !allowClick.checked) return;
+
+        const lat = Number(e.latlng.lat.toFixed(7));
+        const lon = Number(e.latlng.lng.toFixed(7));
+        document.getElementById("gpsLatInput").value = lat;
+        document.getElementById("gpsLonInput").value = lon;
+        document.getElementById("gpsQuickPaste").value = `${lat}, ${lon}`;
+        evaluateGpsAgainstFixed(lat, lon, false);
+      });
+    }
+
+    setTimeout(() => {
+      coverageMap.invalidateSize();
+    }, 120);
+  }
+
+  function renderFixedPointsOnMap() {
+    if (!coverageMap || !fixedMarkersLayer || !coverageRingsLayer) return;
+    fixedMarkersLayer.clearLayers();
+    coverageRingsLayer.clearLayers();
+    fixedMarkerByNum = {};
+
+    const visiblePoints = getFilteredFixedPoints();
+    const counterEl = document.getElementById("mapActiveCounter");
+    if (counterEl) {
+      counterEl.textContent = `${visiblePoints.length} / ${FIXED_78_POINTS.length} Puntos Activos`;
+    }
+
+    visiblePoints.forEach(pt => {
+      const nodeColor = getTechColor(pt.tecnologia);
+      const badgeCls = getTechBadgeClass(pt.tecnologia);
+      const codeLabel = pt.pl ? `<span class="pl-badge">${escapeHtml(pt.pl)}</span>` : `<span class="pl-badge">#${pt.num}</span>`;
+      const gmapsUrl = `https://www.google.com/maps?q=${pt.lat},${pt.lon}`;
+
+      L.circle([pt.lat, pt.lon], {
+        radius: 1000,
+        color: nodeColor,
+        weight: 0.9,
+        opacity: 0.38,
+        fillColor: nodeColor,
+        fillOpacity: 0.06
+      }).addTo(coverageRingsLayer);
+
+      L.circle([pt.lat, pt.lon], {
+        radius: 3000,
+        color: nodeColor,
+        weight: 0.65,
+        opacity: 0.22,
+        dashArray: "4 4",
+        fillOpacity: 0
+      }).addTo(coverageRingsLayer);
+
+      const marker = L.circleMarker([pt.lat, pt.lon], {
+        radius: pt.pl ? 7 : 6.2,
+        fillColor: nodeColor,
+        color: "#ecfdf5",
+        weight: 1.5,
+        opacity: 1,
+        fillOpacity: 0.94
+      });
+
+      marker.bindTooltip(
+        `<strong>${pt.pl ? escapeHtml(pt.pl) + " · " : "#" + pt.num + " · "}${escapeHtml(pt.punto)}</strong> <span style="opacity:0.8;">(${escapeHtml(pt.tecnologia)})</span>`,
+        {
+          direction: "top",
+          offset: [0, -6],
+          className: "point-label-tooltip"
+        }
+      );
+
+      marker.bindPopup(`
+        <div style="font-size:0.82rem; line-height:1.55; min-width:240px;">
+          <div style="margin-bottom:4px;">
+            ${codeLabel}<strong style="color:#34d399; font-size:0.88rem;">${escapeHtml(pt.punto)}</strong>
+          </div>
+          <span class="tech-pill ${badgeCls}" style="margin-bottom:5px;">${escapeHtml(pt.tecnologia)}</span>
+          <div style="font-size:0.75rem; color:#94a3b8;">N.º Excel: <strong>${pt.num}</strong>${pt.pl ? ` · ID: <strong>${escapeHtml(pt.pl)}</strong>` : " · Sin ID PL"}</div>
+          <div style="font-family:monospace; color:#cbd5e1; margin-top:3px;">LAT: ${pt.lat.toFixed(7)}</div>
+          <div style="font-family:monospace; color:#cbd5e1;">LON: ${pt.lon.toFixed(7)}</div>
+          <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+            <button type="button" onclick="copyText('${pt.lat}, ${pt.lon}', '${escapeAttr(pt.punto)}')" style="padding:4px 9px; font-size:0.74rem; background:#10b981; color:#032219; border-radius:6px; font-weight:700;">📋 Copiar</button>
+            <a href="${gmapsUrl}" target="_blank" rel="noopener noreferrer" style="padding:4px 9px; font-size:0.74rem; background:rgba(56,189,248,0.18); color:#7dd3fc; border:1px solid rgba(56,189,248,0.4); border-radius:6px; text-decoration:none; font-weight:600;">🗺️ Google Maps</a>
+          </div>
+        </div>
+      `);
+
+      marker.addTo(fixedMarkersLayer);
+      fixedMarkerByNum[pt.num] = marker;
+    });
+
+    toggleCoverageRings();
+  }
+
+  function setMapTechFilter(tech, el) {
+    activeMapTechFilter = tech;
+    document.querySelectorAll("#mapTechFilterChips .chip").forEach(c => c.classList.remove("active"));
+    if (el) el.classList.add("active");
+    renderFixedPointsOnMap();
+    populateFixedPointSelector(document.getElementById("mapFixedSearch").value);
+    if (lastEvaluatedGps) {
+      evaluateGpsAgainstFixed(lastEvaluatedGps.lat, lastEvaluatedGps.lon, false);
+    }
+  }
+
+  function toggleCoverageRings() {
+    if (!coverageMap || !coverageRingsLayer) return;
+    const checked = document.getElementById("toggleRadiusCircles").checked;
+    if (checked) {
+      if (!coverageMap.hasLayer(coverageRingsLayer)) coverageRingsLayer.addTo(coverageMap);
+    } else {
+      if (coverageMap.hasLayer(coverageRingsLayer)) coverageMap.removeLayer(coverageRingsLayer);
+    }
+  }
+
+  function fitAllFixedPoints() {
+    if (!coverageMap) return;
+    const pts = getFilteredFixedPoints();
+    if (!pts.length) return;
+    const bounds = L.latLngBounds(pts.map(p => [p.lat, p.lon]));
+    coverageMap.fitBounds(bounds, { padding: [30, 30] });
+  }
+
+  function fitLimaPoints() {
+    if (!coverageMap) return;
+    const pts = getFilteredFixedPoints().filter(p => p.punto.startsWith("LIMA-"));
+    if (!pts.length) {
+      showToast("⚠️ No hay puntos de Lima con el filtro actual.");
+      return;
+    }
+    const bounds = L.latLngBounds(pts.map(p => [p.lat, p.lon]));
+    coverageMap.fitBounds(bounds, { padding: [30, 30] });
+  }
+
+  function populateFixedPointSelector(filterQuery) {
+    const sel = document.getElementById("fixedPointSelector");
+    if (!sel) return;
+    const q = normalizeText(filterQuery);
+    const basePts = getFilteredFixedPoints();
+    const matches = basePts.filter(p =>
+      !q || normalizeText(`${p.num} ${p.pl} ${p.punto} ${p.tecnologia} ${p.lat} ${p.lon}`).includes(q)
+    );
+    sel.innerHTML = `<option value="">— Seleccionar punto fijo (${matches.length} de ${basePts.length}) —</option>` +
+      matches.map(p => {
+        const tag = p.pl ? `${p.pl} | ` : `#${p.num} | `;
+        return `<option value="${p.num}">${escapeHtml(tag + p.punto)} [${escapeHtml(p.tecnologia)}]</option>`;
+      }).join("");
+  }
+
+  function filterFixedPointSelect(val) {
+    populateFixedPointSelector(val);
+  }
+
+  function focusSelectedFixedPoint(numStr) {
+    const num = parseInt(numStr, 10);
+    const pt = FIXED_78_POINTS.find(p => p.num === num);
+    if (!pt || !coverageMap) return;
+    coverageMap.setView([pt.lat, pt.lon], 15);
+    if (fixedMarkerByNum[num]) fixedMarkerByNum[num].openPopup();
+  }
+
+  function parseQuickLatLon(raw) {
+    const parts = String(raw || "").split(/[,;\s]+/).map(s => s.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      const lat = parseFloat(parts[0]);
+      const lon = parseFloat(parts[1]);
+      if (!isNaN(lat) && !isNaN(lon)) {
+        document.getElementById("gpsLatInput").value = lat;
+        document.getElementById("gpsLonInput").value = lon;
+      }
+    }
+  }
+
+  function plotGpsReferencePoint(e) {
+    e.preventDefault();
+    const lat = parseFloat(document.getElementById("gpsLatInput").value);
+    const lon = parseFloat(document.getElementById("gpsLonInput").value);
+    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      showToast("⛔ Coordenadas inválidas. Verifica Latitud (-90 a 90) y Longitud (-180 a 180).");
+      return;
+    }
+    evaluateGpsAgainstFixed(lat, lon, true);
+  }
+
+  function clearGpsReference() {
+    lastEvaluatedGps = null;
+    if (gpsRefLayer) gpsRefLayer.clearLayers();
+    if (previewCircleLayer && coverageMap) {
+      coverageMap.removeLayer(previewCircleLayer);
+      previewCircleLayer = null;
+    }
+    document.getElementById("gpsQuickPaste").value = "";
+    document.getElementById("gpsLatInput").value = "";
+    document.getElementById("gpsLonInput").value = "";
+    document.getElementById("nearestPointsList").innerHTML = `
+      <p style="font-size:0.78rem; color:var(--text-muted);">
+        Ingresa una coordenada GPS o marca un punto en el mapa para calcular los nodos más cercanos y el nivel de señal estimado.
+      </p>`;
+  }
+
+  function haversineMeters(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const toRad = d => (d * Math.PI) / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function estimatePowerRating(distMeters) {
+    if (distMeters <= 1000) return { label: "POTENCIA ALTA (Óptima)", cls: "sig-high", color: "#10b981" };
+    if (distMeters <= 3000) return { label: "POTENCIA MEDIA (Estable)", cls: "sig-med", color: "#f59e0b" };
+    return { label: "POTENCIA BAJA (Lejana)", cls: "sig-low", color: "#ef4444" };
+  }
+
+  function evaluateGpsAgainstFixed(lat, lon, centerMap) {
+    if (!coverageMap || !gpsRefLayer) return;
+    lastEvaluatedGps = { lat, lon };
+    gpsRefLayer.clearLayers();
+
+    const pool = getFilteredFixedPoints();
+    if (!pool.length) return;
+
+    const ranked = pool.map(pt => ({
+      ...pt,
+      dist: haversineMeters(lat, lon, pt.lat, pt.lon)
+    })).sort((a, b) => a.dist - b.dist);
+
+    const top5 = ranked.slice(0, 5);
+    const closest = top5[0];
+    const powerInfo = estimatePowerRating(closest.dist);
+    const closestLabel = `${formatPointCode(closest)} · ${closest.punto}`;
+
+    const gpsMarker = L.circleMarker([lat, lon], {
+      radius: 9,
+      fillColor: "#f59e0b",
+      color: "#ffffff",
+      weight: 2.2,
+      opacity: 1,
+      fillOpacity: 0.95
+    }).addTo(gpsRefLayer);
+
+    gpsMarker.bindPopup(`
+      <div style="font-size:0.82rem; line-height:1.5;">
+        <strong style="color:#fbbf24;">📡 Posición GPS Evaluada</strong><br/>
+        <span style="font-family:monospace;">${lat.toFixed(7)}, ${lon.toFixed(7)}</span><br/>
+        <span>Más cercano: <strong>${escapeHtml(closestLabel)}</strong> (${closest.dist >= 1000 ? (closest.dist / 1000).toFixed(2) + " km" : Math.round(closest.dist) + " m"})</span><br/>
+        <span class="tech-pill ${getTechBadgeClass(closest.tecnologia)}">${escapeHtml(closest.tecnologia)}</span><br/>
+        <span style="color:${powerInfo.color}; font-weight:700;">${powerInfo.label}</span>
+      </div>
+    `).openPopup();
+
+    L.polyline([[lat, lon], [closest.lat, closest.lon]], {
+      color: powerInfo.color,
+      weight: 2.5,
+      dashArray: "6 6"
+    }).addTo(gpsRefLayer);
+
+    if (centerMap) {
+      const pairBounds = L.latLngBounds([[lat, lon], [closest.lat, closest.lon]]);
+      coverageMap.fitBounds(pairBounds, { padding: [60, 60], maxZoom: 15 });
+    }
+
+    const listEl = document.getElementById("nearestPointsList");
+    listEl.innerHTML = top5.map((item, idx) => {
+      const pwr = estimatePowerRating(item.dist);
+      const distText = item.dist >= 1000 ? `${(item.dist / 1000).toFixed(2)} km` : `${Math.round(item.dist)} m`;
+      const codeText = item.pl ? item.pl : `#${item.num}`;
+      return `
+        <div class="nearest-card" onclick="focusSelectedFixedPoint(${item.num})">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
+            <div>
+              <strong style="color:#34d399; display:block;">${idx === 0 ? "★ " : ""}${escapeHtml(codeText)} · ${escapeHtml(item.punto)}</strong>
+              <span class="tech-pill ${getTechBadgeClass(item.tecnologia)}" style="margin-top:3px;">${escapeHtml(item.tecnologia)}</span>
+            </div>
+            <span class="signal-pill ${pwr.cls}">${distText}</span>
+          </div>
+          <div style="font-size:0.74rem; color:var(--text-muted); font-family:monospace; margin-top:4px;">
+            ${item.lat.toFixed(7)}, ${item.lon.toFixed(7)}
+          </div>
+          <div style="font-size:0.73rem; color:${pwr.color}; font-weight:600; margin-top:2px;">
+            ${pwr.label}
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
 
   function previewGeofenceCircle() {
     if (!coverageMap) return;
@@ -1872,7 +2276,7 @@
       lon,
       radio: radius,
       notas: notes,
-      puntosDentro: insidePoints.map(p => `#${p.id} ${p.punto}`)
+      puntosDentro: insidePoints.map(p => `${formatPointCode(p)} ${p.punto}`)
     };
 
     savedGeofences.unshift(newGeo);
@@ -1999,259 +2403,6 @@
       }))
     };
     downloadJson(geojson, "MDZ_Geocercas.geojson");
-  }
-
-  function initOrRefreshCoverageMap() {
-    if (!isAuthenticated) return;
-    if (typeof L === "undefined") {
-      showToast("⚠️ No se pudo cargar la librería de mapas. Verifica tu conexión.");
-      return;
-    }
-
-    if (!coverageMap) {
-      coverageMap = L.map("coverageMapContainer", { zoomControl: true }).setView([-12.075, -77.025], 12);
-
-      // OpenStreetMap estándar sin API Key con filtro oscuro
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-        className: "dark-map-tiles",
-        maxZoom: 19
-      }).addTo(coverageMap);
-
-      coverageRingsLayer = L.layerGroup().addTo(coverageMap);
-      fixedMarkersLayer = L.layerGroup().addTo(coverageMap);
-      gpsRefLayer = L.layerGroup().addTo(coverageMap);
-
-      FIXED_78_POINTS.forEach(pt => {
-        const nodeColor = getTechColor(pt.tecnologia);
-
-        // Anillos de referencia de potencia (1 km fuerte, 3 km media)
-        L.circle([pt.lat, pt.lon], {
-          radius: 1000,
-          color: nodeColor,
-          weight: 0.8,
-          opacity: 0.35,
-          fillColor: nodeColor,
-          fillOpacity: 0.06
-        }).addTo(coverageRingsLayer);
-
-        L.circle([pt.lat, pt.lon], {
-          radius: 3000,
-          color: "#38bdf8",
-          weight: 0.6,
-          opacity: 0.22,
-          dashArray: "4 4",
-          fillOpacity: 0
-        }).addTo(coverageRingsLayer);
-
-        const marker = L.circleMarker([pt.lat, pt.lon], {
-          radius: 6.5,
-          fillColor: nodeColor,
-          color: "#ecfdf5",
-          weight: 1.5,
-          opacity: 1,
-          fillOpacity: 0.92
-        });
-
-        marker.bindTooltip(`<strong>ID ${pt.id} | ${escapeHtml(pt.punto)}</strong> · ${escapeHtml(pt.tecnologia)}`, {
-          direction: "top",
-          offset: [0, -6],
-          className: "point-label-tooltip"
-        });
-
-        marker.bindPopup(`
-          <div style="font-size:0.82rem; line-height:1.5; min-width:225px;">
-            <strong style="color:#34d399; font-size:0.88rem;">ID: ${pt.id} — ${escapeHtml(pt.punto)}</strong><br/>
-            <span class="tech-pill" style="margin:3px 0;">${escapeHtml(pt.tecnologia)}</span><br/>
-            <span style="font-family:monospace; color:#cbd5e1;">LATITUD: ${pt.lat.toFixed(7)}</span><br/>
-            <span style="font-family:monospace; color:#cbd5e1;">LONGITUD: ${pt.lon.toFixed(7)}</span><br/>
-            <button type="button" onclick="copyText('${pt.lat}, ${pt.lon}', '${escapeAttr(pt.punto)}')" style="margin-top:7px; padding:4px 9px; font-size:0.74rem; background:#10b981; color:#032219; border-radius:6px; font-weight:700;">📋 Copiar Lat/Lon</button>
-          </div>
-        `);
-
-        marker.addTo(fixedMarkersLayer);
-        fixedMarkerById[pt.id] = marker;
-      });
-
-      populateFixedPointSelector("");
-
-      // Solo posiciona punto GPS al hacer clic si el checklist está marcado
-      coverageMap.on("click", e => {
-        const allowClick = document.getElementById("enableMapClickPlacement");
-        if (!allowClick || !allowClick.checked) return;
-
-        const lat = Number(e.latlng.lat.toFixed(7));
-        const lon = Number(e.latlng.lng.toFixed(7));
-        document.getElementById("gpsLatInput").value = lat;
-        document.getElementById("gpsLonInput").value = lon;
-        document.getElementById("gpsQuickPaste").value = `${lat}, ${lon}`;
-        evaluateGpsAgainstFixed(lat, lon, false);
-      });
-    }
-
-    setTimeout(() => {
-      coverageMap.invalidateSize();
-    }, 120);
-  }
-
-  function toggleCoverageRings() {
-    if (!coverageMap || !coverageRingsLayer) return;
-    const checked = document.getElementById("toggleRadiusCircles").checked;
-    if (checked) {
-      coverageRingsLayer.addTo(coverageMap);
-    } else {
-      coverageMap.removeLayer(coverageRingsLayer);
-    }
-  }
-
-  function fitAllFixedPoints() {
-    if (!coverageMap) return;
-    const bounds = L.latLngBounds(FIXED_78_POINTS.map(p => [p.lat, p.lon]));
-    coverageMap.fitBounds(bounds, { padding: [28, 28] });
-  }
-
-  function populateFixedPointSelector(filterQuery) {
-    const sel = document.getElementById("fixedPointSelector");
-    if (!sel) return;
-    const q = normalizeText(filterQuery);
-    const matches = FIXED_78_POINTS.filter(p =>
-      !q || normalizeText(`${p.id} ${p.punto} ${p.tecnologia} ${p.lat} ${p.lon}`).includes(q)
-    );
-    sel.innerHTML = `<option value="">— Seleccionar punto fijo (${matches.length} de 78) —</option>` +
-      matches.map(p => `<option value="${p.id}">ID ${p.id} | ${escapeHtml(p.punto)} [${escapeHtml(p.tecnologia)}]</option>`).join("");
-  }
-
-  function filterFixedPointSelect(val) {
-    populateFixedPointSelector(val);
-  }
-
-  function focusSelectedFixedPoint(idStr) {
-    const id = parseInt(idStr, 10);
-    const pt = FIXED_78_POINTS.find(p => p.id === id);
-    if (!pt || !coverageMap) return;
-    coverageMap.setView([pt.lat, pt.lon], 16);
-    if (fixedMarkerById[id]) fixedMarkerById[id].openPopup();
-  }
-
-  function parseQuickLatLon(raw) {
-    const parts = String(raw || "").split(/[,;\s]+/).map(s => s.trim()).filter(Boolean);
-    if (parts.length >= 2) {
-      const lat = parseFloat(parts[0]);
-      const lon = parseFloat(parts[1]);
-      if (!isNaN(lat) && !isNaN(lon)) {
-        document.getElementById("gpsLatInput").value = lat;
-        document.getElementById("gpsLonInput").value = lon;
-      }
-    }
-  }
-
-  function plotGpsReferencePoint(e) {
-    e.preventDefault();
-    const lat = parseFloat(document.getElementById("gpsLatInput").value);
-    const lon = parseFloat(document.getElementById("gpsLonInput").value);
-    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-      showToast("⛔ Coordenadas inválidas. Verifica Latitud (-90 a 90) y Longitud (-180 a 180).");
-      return;
-    }
-    evaluateGpsAgainstFixed(lat, lon, true);
-  }
-
-  function clearGpsReference() {
-    if (gpsRefLayer) gpsRefLayer.clearLayers();
-    document.getElementById("gpsQuickPaste").value = "";
-    document.getElementById("gpsLatInput").value = "";
-    document.getElementById("gpsLonInput").value = "";
-    document.getElementById("nearestPointsList").innerHTML = `
-      <p style="font-size:0.78rem; color:var(--text-muted);">
-        Ingresa una coordenada GPS o haz clic en el mapa para calcular los nodos más cercanos y el nivel de señal estimado.
-      </p>`;
-  }
-
-  function haversineMeters(lat1, lon1, lat2, lon2) {
-    const R = 6371000;
-    const toRad = d => (d * Math.PI) / 180;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a = Math.sin(dLat / 2) ** 2 +
-              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-
-  function estimatePowerRating(distMeters) {
-    if (distMeters <= 800) return { label: "POTENCIA ALTA (Óptima)", cls: "sig-high", color: "#10b981" };
-    if (distMeters <= 2500) return { label: "POTENCIA MEDIA (Estable)", cls: "sig-med", color: "#f59e0b" };
-    return { label: "POTENCIA BAJA (Lejana)", cls: "sig-low", color: "#ef4444" };
-  }
-
-  function evaluateGpsAgainstFixed(lat, lon, centerMap) {
-    if (!coverageMap || !gpsRefLayer) return;
-    gpsRefLayer.clearLayers();
-
-    // Calcular distancia contra los 78 puntos fijos
-    const ranked = FIXED_78_POINTS.map(pt => ({
-      ...pt,
-      dist: haversineMeters(lat, lon, pt.lat, pt.lon)
-    })).sort((a, b) => a.dist - b.dist);
-
-    const top5 = ranked.slice(0, 5);
-    const closest = top5[0];
-    const powerInfo = estimatePowerRating(closest.dist);
-
-    // Marcador GPS ingresado (Ámbar / Dorado brillante)
-    const gpsMarker = L.circleMarker([lat, lon], {
-      radius: 9,
-      fillColor: "#f59e0b",
-      color: "#ffffff",
-      weight: 2.2,
-      opacity: 1,
-      fillOpacity: 0.95
-    }).addTo(gpsRefLayer);
-
-    gpsMarker.bindPopup(`
-      <div style="font-size:0.82rem; line-height:1.5;">
-        <strong style="color:#fbbf24;">📡 Posición GPS Evaluada</strong><br/>
-        <span style="font-family:monospace;">${lat.toFixed(7)}, ${lon.toFixed(7)}</span><br/>
-        <span>Más cercano: <strong>ID ${closest.id} | ${escapeHtml(closest.punto)}</strong> (${closest.dist >= 1000 ? (closest.dist / 1000).toFixed(2) + " km" : Math.round(closest.dist) + " m"})</span><br/>
-        <span class="tech-pill">${escapeHtml(closest.tecnologia)}</span><br/>
-        <span style="color:${powerInfo.color}; font-weight:700;">${powerInfo.label}</span>
-      </div>
-    `).openPopup();
-
-    // Línea de enlace visual hacia el punto fijo más cercano
-    L.polyline([[lat, lon], [closest.lat, closest.lon]], {
-      color: powerInfo.color,
-      weight: 2.5,
-      dashArray: "6 6"
-    }).addTo(gpsRefLayer);
-
-    if (centerMap) {
-      const pairBounds = L.latLngBounds([[lat, lon], [closest.lat, closest.lon]]);
-      coverageMap.fitBounds(pairBounds, { padding: [60, 60], maxZoom: 15 });
-    }
-
-    // Renderizar lista de los 5 puntos más cercanos en el panel lateral
-    const listEl = document.getElementById("nearestPointsList");
-    listEl.innerHTML = top5.map((item, idx) => {
-      const pwr = estimatePowerRating(item.dist);
-      const distText = item.dist >= 1000 ? `${(item.dist / 1000).toFixed(2)} km` : `${Math.round(item.dist)} m`;
-      return `
-        <div class="nearest-card" onclick="focusSelectedFixedPoint(${item.id})">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-            <div>
-              <strong style="color:#34d399; display:block;">${idx === 0 ? "★ " : ""}ID ${item.id} | ${escapeHtml(item.punto)}</strong>
-              <span class="tech-pill" style="margin-top:3px;">${escapeHtml(item.tecnologia)}</span>
-            </div>
-            <span class="signal-pill ${pwr.cls}">${distText}</span>
-          </div>
-          <div style="font-size:0.74rem; color:var(--text-muted); font-family:monospace; margin-top:4px;">
-            ${item.lat.toFixed(7)}, ${item.lon.toFixed(7)}
-          </div>
-          <div style="font-size:0.73rem; color:${pwr.color}; font-weight:600; margin-top:2px;">
-            ${pwr.label}
-          </div>
-        </div>
-      `;
-    }).join("");
   }
 
   // =========================================================================
@@ -2462,7 +2613,6 @@
     const tbody = document.getElementById("trackersTableBody");
     const q = normalizeText(document.getElementById("trackersSearch").value);
 
-    // Renderizar encabezados dinámicos
     const moveTh = isEditMode ? `<th style="width:76px;">ORDEN</th>` : "";
     const colsTh = trackerColumns.map(col => {
       const delColBtn = (isEditMode && col.custom)
@@ -2625,7 +2775,7 @@
   }
 
   // =========================================================================
-  // DIRECTORIO EN VISTA GENERAL (CRUD, COLUMNAS Y EDICIÓN EN LÍNEA)
+  // DIRECTORIO EN VISTA GENERAL
   // =========================================================================
   function toggleDirectoryPanel() {
     const body = document.getElementById("directoryCollapsibleBody");
@@ -2817,7 +2967,7 @@
   }
 
   // =========================================================================
-  // COMANDOS AT EN VISTA GENERAL (FILTRO POR MODELO, COPIADO Y EDICIÓN)
+  // COMANDOS AT EN VISTA GENERAL
   // =========================================================================
   function toggleCommandsPanel() {
     const body = document.getElementById("commandsCollapsibleBody");
@@ -3043,7 +3193,7 @@
   }
 
   // =========================================================================
-  // BUSCADOR INTELIGENTE Y CRUD DE SANCTUARY (CON ENLACES DIRECTOS Y COLUMNAS)
+  // BUSCADOR INTELIGENTE Y CRUD DE SANCTUARY
   // =========================================================================
   function normalizeText(str) {
     return (str || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -3416,6 +3566,7 @@
   function updateCounters() {
     document.getElementById("trackersCountPill").textContent = trackersList.length;
     document.getElementById("sanctuaryCountPill").textContent = sanctuaryList.length;
+    document.getElementById("mapPointsCountPill").textContent = FIXED_78_POINTS.length;
     const dirCounter = document.getElementById("directoryCountText");
     if (dirCounter) dirCounter.textContent = `${directoryList.length} ${directoryList.length === 1 ? "registro" : "registros"}`;
     const cmdCounter = document.getElementById("commandsCountText");
