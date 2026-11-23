@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MDZ™ WORK | Panel de Control & Sanctuary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg-dark: #050a08;
@@ -506,8 +509,41 @@
     }
 
     tr:hover td { background: rgba(16, 185, 129, 0.04); }
+    tr.drag-over td {
+      border-top: 2px solid var(--accent);
+      background: rgba(16, 185, 129, 0.12);
+    }
 
     .mono { font-family: var(--font-mono); font-size: 0.83rem; }
+    .col-unidad { color: #34d399; font-weight: 700; }
+    .col-placa { color: #f8fafc; font-weight: 700; }
+    .col-detektor { color: #38bdf8; }
+    .col-activacion { color: #fbbf24; }
+
+    .drag-handle {
+      cursor: grab;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: 5px;
+      user-select: none;
+      display: inline-block;
+    }
+    .drag-handle:hover {
+      color: var(--accent);
+      background: rgba(16, 185, 129, 0.14);
+    }
+
+    .col-del-btn {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      padding: 1px 6px;
+      font-size: 0.68rem;
+      border-radius: 5px;
+      margin-left: 6px;
+    }
+    .col-del-btn:hover { background: rgba(239, 68, 68, 0.35); }
 
     /* Celdas editables */
     .cell-editable {
@@ -755,6 +791,7 @@
         <span class="autosave-pill"><span class="dot-pulse"></span> Guardado automático activo</span>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="btnAddColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal()">➕ Añadir Columna</button>
         <button class="btn-glass btn-sm" onclick="exportTrackersBackupJSON()">💾 Respaldo JSON</button>
         <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
           📂 Restaurar JSON
@@ -767,63 +804,20 @@
       Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.
     </p>
 
-    <!-- Formulario para agregar nuevos Trackers (Solo visible con Modo Edición Activo) -->
-    <form id="formTrackers" class="form-grid" onsubmit="addTrackerItem(event)">
-      <div class="field">
-        <label>UNIDAD *</label>
-        <input type="text" id="tUnidad" placeholder="Ej. NOVEMBER 5" required />
-      </div>
-      <div class="field">
-        <label>PLACA *</label>
-        <input type="text" id="tPlaca" placeholder="Ej. BYU-795" required />
-      </div>
-      <div class="field">
-        <label>GPS</label>
-        <input type="text" id="tGps" placeholder="868574042607064" />
-      </div>
-      <div class="field">
-        <label>DETEKTOR</label>
-        <input type="text" id="tDetektor" placeholder="Ej. 1DB199" />
-      </div>
-      <div class="field">
-        <label>L ACTIVACION</label>
-        <input type="text" id="tActivacion" placeholder="Ej. D7D21B3" />
-      </div>
-      <div class="field">
-        <label>L RESPUESTA</label>
-        <input type="text" id="tRespuesta" placeholder="Ej. 3VNAF" />
-      </div>
-      <div class="field">
-        <label>DETALLES</label>
-        <input type="text" id="tDetalles" placeholder="Ej. Cambiar Switch" />
-      </div>
-      <div class="field" style="justify-content: flex-end;">
-        <button type="submit" class="btn-primary">+ Agregar</button>
-      </div>
-    </form>
+    <!-- Formulario dinámico para agregar nuevos Trackers (Solo visible con Modo Edición Activo) -->
+    <form id="formTrackers" class="form-grid" onsubmit="addTrackerItem(event)"></form>
 
     <!-- Buscador en Trackers -->
     <div class="search-input-wrap" style="margin-bottom: 14px;">
       <span class="search-icon">🔍</span>
-      <input type="text" id="trackersSearch" placeholder="Buscar en Trackers por UNIDAD, PLACA, GPS, DETEKTOR, L ACTIVACION, L RESPUESTA o DETALLES..." oninput="renderTrackersTable()" />
+      <input type="text" id="trackersSearch" placeholder="Buscar en Trackers por cualquier campo..." oninput="renderTrackersTable()" />
       <button type="button" class="search-clear" onclick="document.getElementById('trackersSearch').value=''; renderTrackersTable();">Limpiar</button>
     </div>
 
-    <!-- Tabla Trackers -->
+    <!-- Tabla Trackers con encabezados dinámicos -->
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>UNIDAD</th>
-            <th>PLACA</th>
-            <th>GPS</th>
-            <th>DETEKTOR</th>
-            <th>L ACTIVACION</th>
-            <th>L RESPUESTA</th>
-            <th>DETALLES</th>
-            <th>ACCIONES</th>
-          </tr>
-        </thead>
+        <thead id="trackersTableHead"></thead>
         <tbody id="trackersTableBody"></tbody>
       </table>
     </div>
@@ -1027,6 +1021,26 @@
   </div>
 </div>
 
+<!-- Modal para Añadir Nueva Columna en Trackers -->
+<div id="addColumnModal" class="modal-backdrop" onclick="if(event.target===this) closeAddColumnModal()">
+  <div class="modal-card glass-panel led-border" style="max-width:380px;">
+    <h3 style="font-size:1.08rem; margin-bottom:6px;">➕ Nueva Columna en Trackers</h3>
+    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+      Se añadirá a la tabla, al formulario de registro y a las exportaciones Excel/JSON.
+    </p>
+    <form onsubmit="confirmAddColumn(event)">
+      <div class="field">
+        <label>Nombre de la Columna *</label>
+        <input type="text" id="newColumnNameInput" placeholder="Ej. OPERADOR / SIM / ZONA" required />
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+        <button type="button" class="btn-glass" onclick="closeAddColumnModal()">Cancelar</button>
+        <button type="submit" class="btn-primary">Crear Columna</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script>
@@ -1035,6 +1049,7 @@
   // =========================================================================
   const RECOVERY_MASTER_KEY = "SKYNET2026";
   const STORAGE_TRACKERS = "mdz_trackers_v1";
+  const STORAGE_TRACKER_COLS = "mdz_tracker_cols_v1";
   const STORAGE_SANCTUARY = "mdz_vault_data_v1";
   const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
   const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
@@ -1045,6 +1060,17 @@
   let selectedCategory = "ALL";
   let revealedIds = new Set();
   let editingCellKey = null;
+  let draggedTrackerId = null;
+
+  const defaultTrackerColumns = [
+    { key: "unidad", label: "UNIDAD", required: true, mono: true, custom: false },
+    { key: "placa", label: "PLACA", required: true, mono: true, custom: false },
+    { key: "gps", label: "GPS", required: false, mono: true, custom: false },
+    { key: "detektor", label: "DETEKTOR", required: false, mono: true, custom: false },
+    { key: "activacion", label: "L ACTIVACION", required: false, mono: true, custom: false },
+    { key: "respuesta", label: "L RESPUESTA", required: false, mono: true, custom: false },
+    { key: "detalles", label: "DETALLES", required: false, mono: false, custom: false }
+  ];
 
   // =========================================================================
   // DATOS INICIALES (PRESERVANDO LO GUARDADO EN LOCALSTORAGE)
@@ -1062,6 +1088,7 @@
     { id: 103, servicio: "Plataforma Monitoreo", categoria: "Plataformas", usuario: "operador_01", pass: "Mon!Track2026*", host: "https://monitor.ejemplo.com", notas: "Consola de seguimiento" }
   ];
 
+  let trackerColumns = JSON.parse(localStorage.getItem(STORAGE_TRACKER_COLS)) || [...defaultTrackerColumns];
   let trackersList = JSON.parse(localStorage.getItem(STORAGE_TRACKERS)) || initialTrackersSeed;
   let sanctuaryList = loadSanctuaryFromStorage();
 
@@ -1079,6 +1106,10 @@
   function persistTrackers() {
     localStorage.setItem(STORAGE_TRACKERS, JSON.stringify(trackersList));
     updateCounters();
+  }
+
+  function persistTrackerColumns() {
+    localStorage.setItem(STORAGE_TRACKER_COLS, JSON.stringify(trackerColumns));
   }
 
   function persistSanctuary() {
@@ -1334,6 +1365,7 @@
     const tabsWrapper = document.getElementById("tabsWrapper");
     const btnEdit = document.getElementById("btnEditToggle");
     const btnSanc = document.getElementById("btnSanctuaryTrigger");
+    const btnAddCol = document.getElementById("btnAddColumn");
     const sancText = document.getElementById("sanctuaryBtnText");
     const formT = document.getElementById("formTrackers");
     const formS = document.getElementById("formSanctuary");
@@ -1347,12 +1379,15 @@
       if (isEditMode) {
         btnEdit.className = "btn-edit-active";
         btnEdit.innerHTML = "🟢 Modo Edición: Activo";
+        btnAddCol.style.display = "inline-flex";
+        renderTrackersForm();
         formT.classList.add("editable-open");
         formS.classList.add("editable-open");
-        subtitleT.textContent = "Modo Edición activo: haz clic sobre cualquier celda para editar en línea o usa los botones para agregar/eliminar.";
+        subtitleT.textContent = "Modo Edición activo: haz clic en cualquier celda para editar, arrastra filas (⋮⋮) o usa ↑/↓ para mover vehículos, o añade columnas.";
       } else {
         btnEdit.className = "btn-edit-paused";
         btnEdit.innerHTML = "⏸️ Modo Edición: Pausado";
+        btnAddCol.style.display = "none";
         formT.classList.remove("editable-open");
         formS.classList.remove("editable-open");
         subtitleT.textContent = "Edición pausada (solo lectura). Pulsa 'Modo Edición: Pausado' para volver a editar.";
@@ -1363,6 +1398,7 @@
       sancText.textContent = "Sanctuary";
       btnEdit.className = "btn-edit-locked";
       btnEdit.innerHTML = "🔒 Modo Edición: Bloqueado";
+      btnAddCol.style.display = "none";
       formT.classList.remove("editable-open");
       formS.classList.remove("editable-open");
       subtitleT.textContent = "Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.";
@@ -1420,37 +1456,173 @@
   }
 
   // =========================================================================
-  // RENDERIZADO Y EDICIÓN DE TRACKERS
+  // COLUMNAS DINÁMICAS, REORDENAMIENTO Y RENDERIZADO DE TRACKERS
   // =========================================================================
-  function renderTrackersTable() {
-    const q = normalizeText(document.getElementById("trackersSearch").value);
-    const tbody = document.getElementById("trackersTableBody");
+  function openAddColumnModal() {
+    if (!isEditMode) return;
+    document.getElementById("newColumnNameInput").value = "";
+    document.getElementById("addColumnModal").classList.add("open");
+    setTimeout(() => document.getElementById("newColumnNameInput").focus(), 60);
+  }
 
-    const filtered = trackersList.filter(item =>
-      normalizeText(`${item.unidad} ${item.placa} ${item.gps} ${item.detektor} ${item.activacion} ${item.respuesta} ${item.detalles}`).includes(q)
-    );
+  function closeAddColumnModal() {
+    document.getElementById("addColumnModal").classList.remove("open");
+  }
+
+  function confirmAddColumn(e) {
+    e.preventDefault();
+    if (!isEditMode) return;
+    const rawLabel = document.getElementById("newColumnNameInput").value.trim().toUpperCase();
+    if (!rawLabel) return;
+
+    const slug = "col_" + rawLabel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_") + "_" + Date.now().toString().slice(-4);
+    trackerColumns.push({
+      key: slug,
+      label: rawLabel,
+      required: false,
+      mono: true,
+      custom: true
+    });
+    persistTrackerColumns();
+    closeAddColumnModal();
+    renderTrackersForm();
+    renderTrackersTable();
+    showToast(`➕ Columna "${rawLabel}" añadida.`);
+  }
+
+  function removeCustomColumn(colKey) {
+    if (!isEditMode) return;
+    const col = trackerColumns.find(c => c.key === colKey);
+    if (!col || !col.custom) return;
+    trackerColumns = trackerColumns.filter(c => c.key !== colKey);
+    persistTrackerColumns();
+    renderTrackersForm();
+    renderTrackersTable();
+    showToast(`🗑️ Columna "${col.label}" eliminada.`);
+  }
+
+  function renderTrackersForm() {
+    const formEl = document.getElementById("formTrackers");
+    const fieldsHtml = trackerColumns.map(col => `
+      <div class="field">
+        <label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label>
+        <input type="text" id="tField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} />
+      </div>
+    `).join("");
+
+    formEl.innerHTML = `
+      ${fieldsHtml}
+      <div class="field" style="justify-content: flex-end;">
+        <button type="submit" class="btn-primary">+ Agregar</button>
+      </div>
+    `;
+  }
+
+  function moveTrackerRow(id, direction) {
+    if (!isEditMode) return;
+    const idx = trackersList.findIndex(t => t.id === id);
+    if (idx === -1) return;
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= trackersList.length) return;
+
+    const [moved] = trackersList.splice(idx, 1);
+    trackersList.splice(targetIdx, 0, moved);
+    persistTrackers();
+    renderTrackersTable();
+  }
+
+  function onTrackerDragStart(e, id) {
+    if (!isEditMode) return;
+    draggedTrackerId = id;
+    e.dataTransfer.effectAllowed = "move";
+  }
+
+  function onTrackerDragOver(e) {
+    if (!isEditMode) return;
+    e.preventDefault();
+    e.currentTarget.classList.add("drag-over");
+  }
+
+  function onTrackerDragLeave(e) {
+    e.currentTarget.classList.remove("drag-over");
+  }
+
+  function onTrackerDrop(e, targetId) {
+    e.preventDefault();
+    e.currentTarget.classList.remove("drag-over");
+    if (!isEditMode || draggedTrackerId === null || draggedTrackerId === targetId) return;
+
+    const fromIdx = trackersList.findIndex(t => t.id === draggedTrackerId);
+    const toIdx = trackersList.findIndex(t => t.id === targetId);
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    const [moved] = trackersList.splice(fromIdx, 1);
+    trackersList.splice(toIdx, 0, moved);
+    draggedTrackerId = null;
+    persistTrackers();
+    renderTrackersTable();
+    showToast("↕️ Orden de vehículos actualizado.");
+  }
+
+  function getColumnStyleClass(key) {
+    if (key === "unidad") return "mono col-unidad";
+    if (key === "placa") return "mono col-placa";
+    if (key === "detektor") return "mono col-detektor";
+    if (key === "activacion") return "mono col-activacion";
+    if (key === "gps" || key === "respuesta") return "mono";
+    const colObj = trackerColumns.find(c => c.key === key);
+    return colObj && colObj.mono ? "mono" : "";
+  }
+
+  function renderTrackersTable() {
+    const thead = document.getElementById("trackersTableHead");
+    const tbody = document.getElementById("trackersTableBody");
+    const q = normalizeText(document.getElementById("trackersSearch").value);
+
+    // Renderizar encabezados dinámicos
+    const moveTh = isEditMode ? `<th style="width:76px;">ORDEN</th>` : "";
+    const colsTh = trackerColumns.map(col => {
+      const delColBtn = (isEditMode && col.custom)
+        ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}')" title="Eliminar columna">✕</button>`
+        : "";
+      return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
+    }).join("");
+    thead.innerHTML = `<tr>${moveTh}${colsTh}<th>ACCIONES</th></tr>`;
+
+    const filtered = trackersList.filter(item => {
+      const combined = trackerColumns.map(c => item[c.key] || "").join(" ");
+      return normalizeText(combined).includes(q);
+    });
 
     if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:22px;">No se encontraron registros en Trackers.</td></tr>`;
+      const totalCols = trackerColumns.length + (isEditMode ? 2 : 1);
+      tbody.innerHTML = `<tr><td colspan="${totalCols}" style="text-align:center; color:var(--text-muted); padding:22px;">No se encontraron registros en Trackers.</td></tr>`;
       return;
     }
 
-    const cols = ["unidad", "placa", "gps", "detektor", "activacion", "respuesta", "detalles"];
+    tbody.innerHTML = filtered.map((item, visibleIdx) => {
+      const orderCell = isEditMode ? `
+        <td style="white-space:nowrap;">
+          <span class="drag-handle" title="Arrastra para mover fila">⋮⋮</span>
+          <button type="button" class="btn-glass btn-sm" onclick="moveTrackerRow(${item.id}, -1)" ${visibleIdx === 0 ? "disabled style='opacity:0.35'" : ""} title="Subir">↑</button>
+          <button type="button" class="btn-glass btn-sm" onclick="moveTrackerRow(${item.id}, 1)" ${visibleIdx === filtered.length - 1 ? "disabled style='opacity:0.35'" : ""} title="Bajar">↓</button>
+        </td>
+      ` : "";
 
-    tbody.innerHTML = filtered.map(item => {
-      const cellsHtml = cols.map(field => {
+      const cellsHtml = trackerColumns.map(col => {
+        const field = col.key;
         const key = `${item.id}_${field}`;
         const rawVal = item[field] || "";
-        const isMono = ["placa", "gps", "detektor", "activacion", "respuesta"].includes(field);
+        const styleCls = getColumnStyleClass(field);
 
         if (isEditMode && editingCellKey === key) {
-          return `<td class="${isMono ? 'mono' : ''}">
+          return `<td class="${styleCls}">
             <input
               type="text"
               class="inline-input"
               id="edit_${key}"
               value="${escapeAttr(rawVal)}"
-              onblur="saveTrackerCell(${item.id}, '${field}', this.value)"
+              onblur="saveTrackerCell(${item.id}, '${escapeAttr(field)}', this.value)"
               onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCellKey=null; renderTrackersTable();}"
             />
           </td>`;
@@ -1461,19 +1633,24 @@
           : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
 
         if (isEditMode) {
-          return `<td class="${isMono ? 'mono' : ''}">
-            <span class="cell-editable" onclick="activateTrackerCell(${item.id}, '${field}')" title="Clic para editar">${displayContent}</span>
+          return `<td class="${styleCls}">
+            <span class="cell-editable" onclick="activateTrackerCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${displayContent}</span>
           </td>`;
         }
-        return `<td class="${isMono ? 'mono' : ''}"><span class="cell-readonly">${displayContent}</span></td>`;
+        return `<td class="${styleCls}"><span class="cell-readonly">${displayContent}</span></td>`;
       }).join("");
 
       const deleteBtn = isEditMode
         ? `<button class="btn-danger" onclick="deleteTrackerItem(${item.id})">Eliminar</button>`
         : "";
 
+      const dragAttrs = isEditMode
+        ? `draggable="true" ondragstart="onTrackerDragStart(event, ${item.id})" ondragover="onTrackerDragOver(event)" ondragleave="onTrackerDragLeave(event)" ondrop="onTrackerDrop(event, ${item.id})"`
+        : "";
+
       return `
-        <tr>
+        <tr ${dragAttrs}>
+          ${orderCell}
           ${cellsHtml}
           <td style="white-space:nowrap;">
             <button class="btn-glass btn-sm" onclick="copyTrackerRow(${item.id})" title="Copiar fila">Copiar</button>
@@ -1508,16 +1685,12 @@
   function addTrackerItem(e) {
     e.preventDefault();
     if (!isEditMode) return;
-    trackersList.push({
-      id: Date.now(),
-      unidad: document.getElementById("tUnidad").value.trim(),
-      placa: document.getElementById("tPlaca").value.trim(),
-      gps: document.getElementById("tGps").value.trim(),
-      detektor: document.getElementById("tDetektor").value.trim(),
-      activacion: document.getElementById("tActivacion").value.trim(),
-      respuesta: document.getElementById("tRespuesta").value.trim(),
-      detalles: document.getElementById("tDetalles").value.trim()
+    const newRow = { id: Date.now() };
+    trackerColumns.forEach(col => {
+      const el = document.getElementById(`tField_${col.key}`);
+      newRow[col.key] = el ? el.value.trim() : "";
     });
+    trackersList.push(newRow);
     persistTrackers();
     e.target.reset();
     renderTrackersTable();
@@ -1535,9 +1708,9 @@
   function copyTrackerRow(id) {
     const t = trackersList.find(x => x.id === id);
     if (!t) return;
-    const text = `UNIDAD: ${t.unidad} | PLACA: ${t.placa} | GPS: ${t.gps || '-'} | DETEKTOR: ${t.detektor || '-'} | L ACTIVACION: ${t.activacion || '-'} | L RESPUESTA: ${t.respuesta || '-'} | DETALLES: ${t.detalles || '-'}`;
+    const text = trackerColumns.map(c => `${c.label}: ${t[c.key] || "-"}`).join(" | ");
     navigator.clipboard.writeText(text);
-    showToast(`📋 Datos de ${t.unidad} copiados.`);
+    showToast(`📋 Datos de ${t.unidad || "unidad"} copiados.`);
   }
 
   // =========================================================================
@@ -1707,8 +1880,8 @@
       sanctuaryList.forEach(i => rows.push([i.servicio, i.categoria, i.usuario, i.pass, i.host, i.notas]));
       filename = "MDZ_Sanctuary.csv";
     } else {
-      rows.push(["UNIDAD", "PLACA", "GPS", "DETEKTOR", "L ACTIVACION", "L RESPUESTA", "DETALLES"]);
-      trackersList.forEach(t => rows.push([t.unidad, t.placa, t.gps, t.detektor, t.activacion, t.respuesta, t.detalles]));
+      rows.push(trackerColumns.map(c => c.label));
+      trackersList.forEach(t => rows.push(trackerColumns.map(c => t[c.key] || "")));
       filename = "MDZ_Trackers.csv";
     }
 
@@ -1781,6 +1954,7 @@
       handleSanctuaryAction();
     } else if (e.key === "Escape") {
       closeTotpModal();
+      closeAddColumnModal();
     }
   });
 
@@ -1813,6 +1987,7 @@
   // Inicialización
   getTotpSecret();
   updateCounters();
+  renderTrackersForm();
   updateSecurityUI();
   renderTrackersTable();
 </script>
