@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <style>
     :root {
       --bg-dark: #050a08;
@@ -734,6 +736,72 @@
       z-index: 1000;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Estilos del Mapa de Cobertura y Potencia (Solo visible tras 2FA) */
+    .map-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    @media (max-width: 960px) {
+      .map-layout { grid-template-columns: 1fr; }
+    }
+    .map-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(5, 11, 9, 0.72);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 14px;
+      padding: 15px;
+    }
+    #coverageMapContainer {
+      width: 100%;
+      min-height: 540px;
+      border-radius: 14px;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      background: #040907;
+      z-index: 1;
+    }
+    .leaflet-container { background: #040907 !important; font-family: var(--font-sans) !important; }
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+      background: #0a1713 !important;
+      color: #ecfdf5 !important;
+      border: 1px solid #10b981 !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.75) !important;
+    }
+    .nearest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .nearest-card {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.24);
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .nearest-card:hover {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.16);
+    }
+    .signal-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+    .sig-high { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; border: 1px solid #10b981; }
+    .sig-med { background: rgba(245, 158, 11, 0.22); color: #fcd34d; border: 1px solid #f59e0b; }
+    .sig-low { background: rgba(239, 68, 68, 0.22); color: #fca5a5; border: 1px solid #ef4444; }
   </style>
 </head>
 <body>
@@ -791,6 +859,9 @@
     </button>
     <button id="tabSanctuary" class="tab-btn" onclick="switchTab('sanctuary')">
       🐊 Sanctuary <span id="sanctuaryCountPill" class="count-pill">0</span>
+    </button>
+    <button id="tabMap" class="tab-btn" onclick="switchTab('map')">
+      🗺️ Mapa Cobertura <span id="mapPointsCountPill" class="count-pill">78</span>
     </button>
   </div>
 
@@ -1006,6 +1077,82 @@
         <thead id="sanctuaryTableHead"></thead>
         <tbody id="sanctuaryTableBody"></tbody>
       </table>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       SECCIÓN 3: MAPA DE COBERTURA Y POTENCIA (78 PUNTOS FIJOS VS GPS)
+       ===================================================================== -->
+  <section id="viewMap" class="workspace glass-panel led-border">
+    <div class="section-header">
+      <div class="section-title">
+        <h2>🗺️ Mapa de Cobertura & Referencia de Potencia</h2>
+        <span class="autosave-pill"><span class="dot-pulse"></span> 78 Puntos Fijos Activos (2FA)</span>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <label style="font-size:0.78rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+          <input type="checkbox" id="toggleRadiusCircles" checked onchange="toggleCoverageRings()" />
+          Mostrar radios de potencia (1 km / 3 km)
+        </label>
+        <button type="button" class="btn-glass btn-sm" onclick="fitAllFixedPoints()">🎯 Centrar 78 Puntos</button>
+      </div>
+    </div>
+
+    <div class="map-layout">
+      <!-- Panel de Control GPS vs Puntos Fijos -->
+      <div class="map-sidebar">
+        <div>
+          <strong style="font-size:0.9rem; color:var(--accent-secondary);">📡 Evaluar Posición GPS vs Puntos Fijos</strong>
+          <p style="font-size:0.77rem; color:var(--text-muted); margin-top:3px;">
+            Ingresa Latitud y Longitud o haz clic directamente en cualquier punto del mapa para medir distancia y potencia estimada.
+          </p>
+        </div>
+
+        <form onsubmit="plotGpsReferencePoint(event)" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="field">
+            <label>Pegado rápido (Latitud, Longitud)</label>
+            <input type="text" id="gpsQuickPaste" placeholder="Ej. -12.046374, -77.042793" oninput="parseQuickLatLon(this.value)" />
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div class="field">
+              <label>Latitud *</label>
+              <input type="number" step="any" id="gpsLatInput" placeholder="-12.0463" required />
+            </div>
+            <div class="field">
+              <label>Longitud *</label>
+              <input type="number" step="any" id="gpsLonInput" placeholder="-77.0427" required />
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="submit" class="btn-primary" style="flex:1; justify-content:center;">📍 Graficar GPS</button>
+            <button type="button" class="btn-glass btn-sm" onclick="clearGpsReference()" title="Limpiar marcador GPS">Limpiar</button>
+          </div>
+        </form>
+
+        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
+          <div class="field" style="margin-bottom:8px;">
+            <label>Buscar punto fijo en lista (78)</label>
+            <input type="text" id="mapFixedSearch" placeholder="Filtrar punto por ID o coordenada..." oninput="filterFixedPointSelect(this.value)" />
+          </div>
+          <select id="fixedPointSelector" style="width:100%;" onchange="focusSelectedFixedPoint(this.value)">
+            <option value="">— Seleccionar punto fijo (1 - 78) —</option>
+          </select>
+        </div>
+
+        <div id="nearestResultsBox" style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
+          <strong style="font-size:0.8rem; color:var(--text-main); display:block; margin-bottom:6px;">
+            📶 Puntos Fijos Más Cercanos y Potencia:
+          </strong>
+          <div id="nearestPointsList" class="nearest-list">
+            <p style="font-size:0.78rem; color:var(--text-muted);">
+              Ingresa una coordenada GPS o haz clic en el mapa para calcular los nodos más cercanos y el nivel de señal estimado.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenedor del Mapa Interactivo -->
+      <div id="coverageMapContainer"></div>
     </div>
   </section>
 </div>
@@ -1658,7 +1805,7 @@
     renderTrackersTable();
     renderDirectoryTable();
     renderCommandsTable();
-    showToast("🔒 Sanctuary cerrado y Modo Edición bloqueado.");
+    showToast("🔒 Sanctuary y Mapa bloqueados.");
   }
 
   function updateSecurityUI() {
@@ -1729,26 +1876,357 @@
   }
 
   function switchTab(tabName) {
-    const isSanctuary = tabName === "sanctuary";
-    if (isSanctuary && !isAuthenticated) {
-      pendingIntent = "sanctuary";
+    const isProtectedTab = tabName === "sanctuary" || tabName === "map";
+    if (isProtectedTab && !isAuthenticated) {
+      pendingIntent = tabName;
       openTotpModal();
       return;
     }
 
-    document.getElementById("tabTrackers").classList.toggle("active", !isSanctuary);
-    document.getElementById("tabSanctuary").classList.toggle("active", isSanctuary);
-    document.getElementById("viewTrackers").classList.toggle("active", !isSanctuary);
-    document.getElementById("viewSanctuary").classList.toggle("active", isSanctuary);
+    document.getElementById("tabTrackers").classList.toggle("active", tabName === "trackers");
+    document.getElementById("tabSanctuary").classList.toggle("active", tabName === "sanctuary");
+    document.getElementById("tabMap").classList.toggle("active", tabName === "map");
 
-    if (isSanctuary) {
+    document.getElementById("viewTrackers").classList.toggle("active", tabName === "trackers");
+    document.getElementById("viewSanctuary").classList.toggle("active", tabName === "sanctuary");
+    document.getElementById("viewMap").classList.toggle("active", tabName === "map");
+
+    if (tabName === "sanctuary") {
       renderSanctuaryTable();
       setTimeout(() => document.getElementById("smartSanctuarySearch").focus(), 60);
+    } else if (tabName === "map") {
+      initOrRefreshCoverageMap();
     } else {
       renderTrackersTable();
       renderDirectoryTable();
       renderCommandsTable();
     }
+  }
+
+  // =========================================================================
+  // MAPA DE COBERTURA Y POTENCIA (78 PUNTOS DEPURADOS VS GPS)
+  // =========================================================================
+  const FIXED_78_POINTS = [
+    { id: 1, lat: -12.104547, lon: -76.960947 },
+    { id: 2, lat: -12.083786, lon: -77.037258 },
+    { id: 3, lat: -12.111258, lon: -77.011461 },
+    { id: 4, lat: -12.094272, lon: -76.993928 },
+    { id: 5, lat: -12.126067, lon: -77.033822 },
+    { id: 6, lat: -12.049308, lon: -77.064236 },
+    { id: 7, lat: -12.022639, lon: -76.929647 },
+    { id: 8, lat: -12.047147, lon: -76.993522 },
+    { id: 9, lat: -12.081928, lon: -77.049708 },
+    { id: 10, lat: -12.106689, lon: -76.963203 },
+    { id: 11, lat: -11.991242, lon: -77.061636 },
+    { id: 12, lat: -12.125725, lon: -76.983017 },
+    { id: 13, lat: -12.008072, lon: -77.004097 },
+    { id: 14, lat: -12.067236, lon: -77.035519 },
+    { id: 15, lat: -12.056603, lon: -77.037444 },
+    { id: 16, lat: -12.060242, lon: -77.041992 },
+    { id: 17, lat: -12.094808, lon: -77.019936 },
+    { id: 18, lat: -12.163631, lon: -76.970886 },
+    { id: 19, lat: -11.981036, lon: -77.058758 },
+    { id: 20, lat: -12.054250, lon: -77.125161 },
+    { id: 21, lat: -12.080358, lon: -77.034572 },
+    { id: 22, lat: -12.053564, lon: -77.024319 },
+    { id: 23, lat: -12.111244, lon: -77.011461 },
+    { id: 24, lat: -12.049308, lon: -77.064236 },
+    { id: 25, lat: -12.022639, lon: -76.929647 },
+    { id: 26, lat: -12.047147, lon: -76.993522 },
+    { id: 27, lat: -12.081928, lon: -77.049708 },
+    { id: 28, lat: -12.106689, lon: -76.963203 },
+    { id: 29, lat: -12.089758, lon: -77.004261 },
+    { id: 30, lat: -12.089350, lon: -77.052597 },
+    { id: 31, lat: -12.094017, lon: -77.022878 },
+    { id: 32, lat: -12.075214, lon: -77.092950 },
+    { id: 33, lat: -12.076850, lon: -77.081267 },
+    { id: 34, lat: -12.051822, lon: -77.078917 },
+    { id: 35, lat: -12.008072, lon: -77.004097 },
+    { id: 36, lat: -12.067236, lon: -77.035519 },
+    { id: 37, lat: -12.056603, lon: -77.037444 },
+    { id: 38, lat: -12.111264, lon: -76.989678 },
+    { id: 39, lat: -12.096808, lon: -77.025614 },
+    { id: 40, lat: -12.094808, lon: -77.019936 },
+    { id: 41, lat: -12.129258, lon: -76.999931 },
+    { id: 42, lat: -12.131919, lon: -76.982297 },
+    { id: 43, lat: -12.163631, lon: -76.970886 },
+    { id: 44, lat: -12.142422, lon: -77.021869 },
+    { id: 45, lat: -12.054250, lon: -77.125161 },
+    { id: 46, lat: -12.147644, lon: -77.014981 },
+    { id: 47, lat: -11.988567, lon: -77.074931 },
+    { id: 48, lat: -12.104547, lon: -76.960947 },
+    { id: 49, lat: -12.083786, lon: -77.037258 },
+    { id: 50, lat: -12.111258, lon: -77.011461 },
+    { id: 51, lat: -12.094272, lon: -76.993928 },
+    { id: 52, lat: -12.126067, lon: -77.033822 },
+    { id: 53, lat: -12.053564, lon: -77.024319 },
+    { id: 54, lat: -12.080358, lon: -77.034572 },
+    { id: 55, lat: -12.094017, lon: -77.022878 },
+    { id: 56, lat: -12.089350, lon: -77.052597 },
+    { id: 57, lat: -12.089758, lon: -77.004261 },
+    { id: 58, lat: -12.075214, lon: -77.092950 },
+    { id: 59, lat: -12.076850, lon: -77.081267 },
+    { id: 60, lat: -12.051822, lon: -77.078917 },
+    { id: 61, lat: -12.111264, lon: -76.989678 },
+    { id: 62, lat: -12.096808, lon: -77.025614 },
+    { id: 63, lat: -12.129258, lon: -76.999931 },
+    { id: 64, lat: -12.131919, lon: -76.982297 },
+    { id: 65, lat: -12.142422, lon: -77.021869 },
+    { id: 66, lat: -12.147644, lon: -77.014981 },
+    { id: 67, lat: -11.988567, lon: -77.074931 },
+    { id: 68, lat: -12.060242, lon: -77.041992 },
+    { id: 69, lat: -11.991242, lon: -77.061636 },
+    { id: 70, lat: -12.125725, lon: -76.983017 },
+    { id: 71, lat: -11.981036, lon: -77.058758 },
+    { id: 72, lat: -12.092483, lon: -77.027389 },
+    { id: 73, lat: -12.065008, lon: -77.047219 },
+    { id: 74, lat: -12.079439, lon: -77.064236 },
+    { id: 75, lat: -12.109556, lon: -77.039814 },
+    { id: 76, lat: -12.121319, lon: -77.029464 },
+    { id: 77, lat: -12.064331, lon: -77.036675 },
+    { id: 78, lat: -12.070636, lon: -77.037258 }
+  ];
+
+  let coverageMap = null;
+  let fixedMarkersLayer = null;
+  let coverageRingsLayer = null;
+  let gpsRefLayer = null;
+  let fixedMarkerById = {};
+
+  function initOrRefreshCoverageMap() {
+    if (!isAuthenticated) return;
+    if (typeof L === "undefined") {
+      showToast("⚠️ No se pudo cargar la librería de mapas. Verifica tu conexión.");
+      return;
+    }
+
+    if (!coverageMap) {
+      coverageMap = L.map("coverageMapContainer", { zoomControl: true }).setView([-12.075, -77.025], 12);
+
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap &copy; CARTO",
+        subdomains: "abcd",
+        maxZoom: 19
+      }).addTo(coverageMap);
+
+      coverageRingsLayer = L.layerGroup().addTo(coverageMap);
+      fixedMarkersLayer = L.layerGroup().addTo(coverageMap);
+      gpsRefLayer = L.layerGroup().addTo(coverageMap);
+
+      FIXED_78_POINTS.forEach(pt => {
+        // Anillos de referencia de potencia (1 km fuerte, 3 km media)
+        L.circle([pt.lat, pt.lon], {
+          radius: 1000,
+          color: "#10b981",
+          weight: 0.8,
+          opacity: 0.35,
+          fillColor: "#10b981",
+          fillOpacity: 0.06
+        }).addTo(coverageRingsLayer);
+
+        L.circle([pt.lat, pt.lon], {
+          radius: 3000,
+          color: "#38bdf8",
+          weight: 0.6,
+          opacity: 0.22,
+          dashArray: "4 4",
+          fillOpacity: 0
+        }).addTo(coverageRingsLayer);
+
+        const marker = L.circleMarker([pt.lat, pt.lon], {
+          radius: 6,
+          fillColor: "#10b981",
+          color: "#ecfdf5",
+          weight: 1.5,
+          opacity: 1,
+          fillOpacity: 0.9
+        });
+
+        marker.bindPopup(`
+          <div style="font-size:0.82rem; line-height:1.45;">
+            <strong style="color:#34d399;">Punto Fijo #${pt.id}</strong><br/>
+            <span style="font-family:monospace;">Lat: ${pt.lat.toFixed(6)}</span><br/>
+            <span style="font-family:monospace;">Lon: ${pt.lon.toFixed(6)}</span><br/>
+            <button type="button" onclick="copyText('${pt.lat}, ${pt.lon}', 'Coordenada #${pt.id}')" style="margin-top:6px; padding:3px 8px; font-size:0.74rem; background:#10b981; color:#032219; border-radius:6px; font-weight:700;">📋 Copiar Lat/Lon</button>
+          </div>
+        `);
+
+        marker.addTo(fixedMarkersLayer);
+        fixedMarkerById[pt.id] = marker;
+      });
+
+      populateFixedPointSelector("");
+
+      // Permitir clic directo en el mapa para evaluar GPS vs Puntos Fijos
+      coverageMap.on("click", e => {
+        const lat = Number(e.latlng.lat.toFixed(6));
+        const lon = Number(e.latlng.lng.toFixed(6));
+        document.getElementById("gpsLatInput").value = lat;
+        document.getElementById("gpsLonInput").value = lon;
+        document.getElementById("gpsQuickPaste").value = `${lat}, ${lon}`;
+        evaluateGpsAgainstFixed(lat, lon, false);
+      });
+    }
+
+    setTimeout(() => {
+      coverageMap.invalidateSize();
+    }, 120);
+  }
+
+  function toggleCoverageRings() {
+    if (!coverageMap || !coverageRingsLayer) return;
+    const checked = document.getElementById("toggleRadiusCircles").checked;
+    if (checked) {
+      coverageRingsLayer.addTo(coverageMap);
+    } else {
+      coverageMap.removeLayer(coverageRingsLayer);
+    }
+  }
+
+  function fitAllFixedPoints() {
+    if (!coverageMap) return;
+    const bounds = L.latLngBounds(FIXED_78_POINTS.map(p => [p.lat, p.lon]));
+    coverageMap.fitBounds(bounds, { padding: [28, 28] });
+  }
+
+  function populateFixedPointSelector(filterQuery) {
+    const sel = document.getElementById("fixedPointSelector");
+    if (!sel) return;
+    const q = normalizeText(filterQuery);
+    const matches = FIXED_78_POINTS.filter(p =>
+      !q || normalizeText(`punto ${p.id} ${p.lat} ${p.lon}`).includes(q)
+    );
+    sel.innerHTML = `<option value="">— Seleccionar punto fijo (${matches.length} disponibles) —</option>` +
+      matches.map(p => `<option value="${p.id}">Punto #${p.id} (${p.lat.toFixed(5)}, ${p.lon.toFixed(5)})</option>`).join("");
+  }
+
+  function filterFixedPointSelect(val) {
+    populateFixedPointSelector(val);
+  }
+
+  function focusSelectedFixedPoint(idStr) {
+    const id = parseInt(idStr, 10);
+    const pt = FIXED_78_POINTS.find(p => p.id === id);
+    if (!pt || !coverageMap) return;
+    coverageMap.setView([pt.lat, pt.lon], 16);
+    if (fixedMarkerById[id]) fixedMarkerById[id].openPopup();
+  }
+
+  function parseQuickLatLon(raw) {
+    const parts = String(raw || "").split(/[,;\s]+/).map(s => s.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      const lat = parseFloat(parts[0]);
+      const lon = parseFloat(parts[1]);
+      if (!isNaN(lat) && !isNaN(lon)) {
+        document.getElementById("gpsLatInput").value = lat;
+        document.getElementById("gpsLonInput").value = lon;
+      }
+    }
+  }
+
+  function plotGpsReferencePoint(e) {
+    e.preventDefault();
+    const lat = parseFloat(document.getElementById("gpsLatInput").value);
+    const lon = parseFloat(document.getElementById("gpsLonInput").value);
+    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      showToast("⛔ Coordenadas inválidas. Verifica Latitud (-90 a 90) y Longitud (-180 a 180).");
+      return;
+    }
+    evaluateGpsAgainstFixed(lat, lon, true);
+  }
+
+  function clearGpsReference() {
+    if (gpsRefLayer) gpsRefLayer.clearLayers();
+    document.getElementById("gpsQuickPaste").value = "";
+    document.getElementById("gpsLatInput").value = "";
+    document.getElementById("gpsLonInput").value = "";
+    document.getElementById("nearestPointsList").innerHTML = `
+      <p style="font-size:0.78rem; color:var(--text-muted);">
+        Ingresa una coordenada GPS o haz clic en el mapa para calcular los nodos más cercanos y el nivel de señal estimado.
+      </p>`;
+  }
+
+  function haversineMeters(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const toRad = d => (d * Math.PI) / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function estimatePowerRating(distMeters) {
+    if (distMeters <= 800) return { label: "POTENCIA ALTA (Óptima)", cls: "sig-high", color: "#10b981" };
+    if (distMeters <= 2500) return { label: "POTENCIA MEDIA (Estable)", cls: "sig-med", color: "#f59e0b" };
+    return { label: "POTENCIA BAJA (Lejana)", cls: "sig-low", color: "#ef4444" };
+  }
+
+  function evaluateGpsAgainstFixed(lat, lon, centerMap) {
+    if (!coverageMap || !gpsRefLayer) return;
+    gpsRefLayer.clearLayers();
+
+    // Calcular distancia contra los 78 puntos fijos
+    const ranked = FIXED_78_POINTS.map(pt => ({
+      ...pt,
+      dist: haversineMeters(lat, lon, pt.lat, pt.lon)
+    })).sort((a, b) => a.dist - b.dist);
+
+    const top5 = ranked.slice(0, 5);
+    const closest = top5[0];
+    const powerInfo = estimatePowerRating(closest.dist);
+
+    // Marcador GPS ingresado (Ámbar / Dorado brillante)
+    const gpsMarker = L.circleMarker([lat, lon], {
+      radius: 9,
+      fillColor: "#f59e0b",
+      color: "#ffffff",
+      weight: 2.2,
+      opacity: 1,
+      fillOpacity: 0.95
+    }).addTo(gpsRefLayer);
+
+    gpsMarker.bindPopup(`
+      <div style="font-size:0.82rem; line-height:1.45;">
+        <strong style="color:#fbbf24;">📡 Posición GPS Evaluada</strong><br/>
+        <span style="font-family:monospace;">${lat.toFixed(6)}, ${lon.toFixed(6)}</span><br/>
+        <span>Más cercano: <strong>Punto #${closest.id}</strong> (${closest.dist >= 1000 ? (closest.dist / 1000).toFixed(2) + " km" : Math.round(closest.dist) + " m"})</span><br/>
+        <span style="color:${powerInfo.color}; font-weight:700;">${powerInfo.label}</span>
+      </div>
+    `).openPopup();
+
+    // Línea de enlace visual hacia el punto fijo más cercano
+    L.polyline([[lat, lon], [closest.lat, closest.lon]], {
+      color: powerInfo.color,
+      weight: 2.5,
+      dashArray: "6 6"
+    }).addTo(gpsRefLayer);
+
+    if (centerMap) {
+      const pairBounds = L.latLngBounds([[lat, lon], [closest.lat, closest.lon]]);
+      coverageMap.fitBounds(pairBounds, { padding: [60, 60], maxZoom: 15 });
+    }
+
+    // Renderizar lista de los 5 puntos más cercanos en el panel lateral
+    const listEl = document.getElementById("nearestPointsList");
+    listEl.innerHTML = top5.map((item, idx) => {
+      const pwr = estimatePowerRating(item.dist);
+      const distText = item.dist >= 1000 ? `${(item.dist / 1000).toFixed(2)} km` : `${Math.round(item.dist)} m`;
+      return `
+        <div class="nearest-card" onclick="focusSelectedFixedPoint(${item.id})">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+            <strong style="color:#34d399;">${idx === 0 ? "★ " : ""}Punto #${item.id}</strong>
+            <span class="signal-pill ${pwr.cls}">${distText}</span>
+          </div>
+          <div style="font-size:0.74rem; color:var(--text-muted); font-family:monospace; margin-top:3px;">
+            ${item.lat.toFixed(6)}, ${item.lon.toFixed(6)}
+          </div>
+          <div style="font-size:0.73rem; color:${pwr.color}; font-weight:600; margin-top:2px;">
+            ${pwr.label}
+          </div>
+        </div>
+      `;
+    }).join("");
   }
 
   // =========================================================================
