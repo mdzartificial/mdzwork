@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
   <style>
     :root {
       --bg-dark: #050a08;
@@ -82,7 +83,7 @@
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 22px;
+      padding: 14px 22px;
       gap: 14px;
     }
 
@@ -169,121 +170,62 @@
       50% { transform: rotate(16deg); }
     }
 
-    /* Widget decorativo animado del Cocodrilo (Disfraz de Sanctuary) */
+    /* Cocodrilo Lottie + Agua LED libre (Sin recuadro) */
     .croc-habitat-btn {
       position: relative;
-      width: 148px;
-      height: 46px;
+      width: 144px;
+      height: 54px;
       padding: 0;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(5, 14, 11, 0.92) 0%, rgba(7, 30, 22, 0.95) 68%, rgba(16, 185, 129, 0.22) 100%);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      box-shadow: inset 0 0 14px rgba(16, 185, 129, 0.14), 0 0 14px rgba(16, 185, 129, 0.16);
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
       overflow: hidden;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    .croc-habitat-btn::before {
-      content: "";
-      position: absolute;
-      top: 0; left: -100%;
-      width: 200%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), #6ee7b7, var(--accent), transparent);
-      animation: ledScan 3.2s linear infinite;
-      pointer-events: none;
-      z-index: 4;
+      transition: transform 0.2s ease, filter 0.25s ease;
     }
     .croc-habitat-btn:hover {
-      border-color: #34d399;
-      box-shadow: inset 0 0 18px rgba(16, 185, 129, 0.25), 0 0 22px rgba(16, 185, 129, 0.4);
+      transform: translateY(-1px);
+      filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.45));
     }
     .croc-habitat-btn.btn-sanctuary-open {
-      border-color: rgba(239, 68, 68, 0.55);
-      box-shadow: inset 0 0 16px rgba(239, 68, 68, 0.2), 0 0 18px rgba(239, 68, 68, 0.3);
-    }
-    .croc-habitat-btn.btn-sanctuary-open::before {
-      background: linear-gradient(90deg, transparent, #ef4444, #fca5a5, #ef4444, transparent);
+      filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.45));
     }
 
-    .croc-actor {
-      animation: crocPatrolDive 8.5s ease-in-out infinite;
+    .croc-lottie-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      pointer-events: none;
+      transform: translateY(-4px);
     }
-    .croc-leg-a {
-      transform-origin: 48px 28px;
-      animation: crocLegWalkA 0.7s ease-in-out infinite;
-    }
-    .croc-leg-b {
-      transform-origin: 68px 28px;
-      animation: crocLegWalkB 0.7s ease-in-out infinite;
-    }
-    .croc-tail {
-      transform-origin: 36px 24px;
-      animation: crocTailWag 1.4s ease-in-out infinite;
-    }
-    .croc-jaw-top {
-      transform-origin: 78px 20px;
-      animation: crocPatrolBiteTop 8.5s ease-in-out infinite;
-    }
-    .croc-jaw-bot {
-      transform-origin: 78px 24px;
-      animation: crocPatrolBiteBot 8.5s ease-in-out infinite;
-    }
-    .croc-habitat-btn:hover .croc-jaw-top {
-      animation: crocUpperSnap 0.38s ease-in-out infinite;
-    }
-    .croc-habitat-btn:hover .croc-jaw-bot {
-      animation: crocLowerSnap 0.38s ease-in-out infinite;
+    .croc-water-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
     }
     .water-wave-1 {
       animation: waveShift 3.6s linear infinite;
     }
     .water-ripple {
-      animation: rippleGlow 8.5s ease-in-out infinite;
-    }
-
-    @keyframes crocPatrolDive {
-      0%   { transform: translate(-22px, 0px); }
-      22%  { transform: translate(12px, 0px); }
-      34%  { transform: translate(20px, 11px); }
-      50%  { transform: translate(4px, 12px); }
-      62%  { transform: translate(-4px, -1px); }
-      76%  { transform: translate(14px, -1px); }
-      100% { transform: translate(-22px, 0px); }
-    }
-    @keyframes crocLegWalkA {
-      0%, 100% { transform: rotate(-18deg); }
-      50%      { transform: rotate(18deg); }
-    }
-    @keyframes crocLegWalkB {
-      0%, 100% { transform: rotate(18deg); }
-      50%      { transform: rotate(-18deg); }
-    }
-    @keyframes crocTailWag {
-      0%, 100% { transform: rotate(-4deg); }
-      50%      { transform: rotate(5deg); }
-    }
-    @keyframes crocPatrolBiteTop {
-      0%, 60%, 84%, 100% { transform: rotate(0deg); }
-      68% { transform: rotate(-22deg); }
-      73% { transform: rotate(2deg); }
-      78% { transform: rotate(-16deg); }
-    }
-    @keyframes crocPatrolBiteBot {
-      0%, 60%, 84%, 100% { transform: rotate(0deg); }
-      68% { transform: rotate(15deg); }
-      73% { transform: rotate(-2deg); }
-      78% { transform: rotate(11deg); }
+      animation: rippleGlow 4.2s ease-in-out infinite;
     }
     @keyframes waveShift {
       0%   { transform: translateX(0); }
       100% { transform: translateX(-28px); }
     }
     @keyframes rippleGlow {
-      0%, 28%, 64%, 100% { opacity: 0.25; }
-      40%, 54%           { opacity: 0.9; }
+      0%, 100% { opacity: 0.28; }
+      50%      { opacity: 0.88; }
     }
 
     .header-actions {
@@ -325,11 +267,19 @@
       background: rgba(16, 185, 129, 0.18);
     }
 
-    /* Interruptor Modo Edición */
+    /* Botón Candado Minimalista (Sin texto) */
+    .btn-lock-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      justify-content: center;
+      font-size: 1.08rem;
+      border-radius: 11px;
+    }
     .btn-edit-locked {
       background: rgba(148, 163, 184, 0.12);
       color: #cbd5e1;
-      border: 1px solid rgba(148, 163, 184, 0.3);
+      border: 1px solid rgba(148, 163, 184, 0.28);
     }
     .btn-edit-locked:hover {
       border-color: var(--accent);
@@ -339,10 +289,10 @@
       background: rgba(16, 185, 129, 0.2);
       color: #6ee7b7;
       border: 1px solid var(--accent);
-      box-shadow: 0 0 14px rgba(16, 185, 129, 0.28);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.3);
     }
     .btn-edit-paused {
-      background: rgba(245, 158, 11, 0.15);
+      background: rgba(245, 158, 11, 0.16);
       color: #fcd34d;
       border: 1px solid rgba(245, 158, 11, 0.45);
     }
@@ -996,7 +946,7 @@
 <body>
 
 <div class="container">
-  <!-- Header con Logo Grande y Animación Discreta del Cocodrilo -->
+  <!-- Header con Logo Grande, Candado Minimalista y Cocodrilo Lottie + Agua sin recuadro -->
   <header class="glass-panel led-border">
     <div class="brand">
       <div class="brand-icon" title="MDZ™ WORK">
@@ -1021,49 +971,45 @@
 
     <div class="header-actions">
       <button class="btn-glass" onclick="exportToExcelCSV()">📊 Exportar Excel</button>
-      <button id="btnEditToggle" class="btn-edit-locked" onclick="handleEditToggle()">
+
+      <!-- Candado minimalista: cerrado si no estás autenticado, abierto si estás desbloqueado -->
+      <button id="btnEditToggle" class="btn-lock-icon btn-edit-locked" onclick="handleEditToggle()" title="Bloqueado">
         🔒
       </button>
 
-      <!-- Animación discreta del Cocodrilo (Activa Sanctuary al hacer clic o Ctrl+K) -->
+      <!-- Cocodrilo Lottie + Agua LED sin recuadro (Activa Sanctuary al hacer clic o Ctrl+K) -->
       <button id="btnSanctuaryTrigger" class="croc-habitat-btn btn-sanctuary-closed" onclick="handleSanctuaryAction()" title="MDZ™">
         <span id="sanctuaryBtnText" style="display:none;">Sanctuary</span>
-        <svg width="148" height="46" viewBox="0 0 148 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Capa 1: Animación LottieFiles -->
+        <div class="croc-lottie-layer">
+          <dotlottie-player
+            src="https://lottie.host/8e19a892-defe-46c0-b9fb-8c7e8ebdb826/ynLlvbfDXI.lottie"
+            background="transparent"
+            speed="1"
+            style="width: 118px; height: 60px;"
+            loop
+            autoplay>
+          </dotlottie-player>
+        </div>
+
+        <!-- Capa 2: Agua LED transparente sin recuadro -->
+        <svg class="croc-water-overlay" width="144" height="54" viewBox="0 0 144 54" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="waterGrad" x1="0" y1="28" x2="0" y2="46" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#10B981" stop-opacity="0.34"/>
-              <stop offset="100%" stop-color="#041510" stop-opacity="0.92"/>
+            <linearGradient id="waterGrad" x1="0" y1="35" x2="0" y2="54" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#10B981" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="#050a08" stop-opacity="0"/>
             </linearGradient>
-            <clipPath id="habitatClip">
-              <rect x="0" y="0" width="148" height="36" />
-            </clipPath>
+            <linearGradient id="waveFade" x1="0" y1="0" x2="144" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#34D399" stop-opacity="0"/>
+              <stop offset="18%" stop-color="#34D399" stop-opacity="0.85"/>
+              <stop offset="82%" stop-color="#34D399" stop-opacity="0.85"/>
+              <stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
+            </linearGradient>
           </defs>
-
-          <!-- Cocodrilo completo caminando, sumergiéndose y mordiendo -->
-          <g clip-path="url(#habitatClip)">
-            <g class="croc-actor">
-              <path class="croc-tail" d="M12 24L36 18L36 27L12 24Z" fill="#059669" stroke="#6EE7B7" stroke-width="1.1" stroke-linejoin="round"/>
-              <path class="croc-leg-a" d="M46 27L42 34H48L50 27Z" fill="#047857" stroke="#6EE7B7" stroke-width="1"/>
-              <path class="croc-leg-b" d="M66 27L63 34H69L70 27Z" fill="#047857" stroke="#6EE7B7" stroke-width="1"/>
-              <rect x="35" y="17" width="44" height="11" rx="5" fill="#10B981" stroke="#A7F3D0" stroke-width="1.2"/>
-              <path d="M41 17L44 13.5L47 17M51 17L54 13.5L57 17M61 17L64 13.5L67 17" stroke="#6EE7B7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <g class="croc-jaw-top">
-                <path d="M74 20C74 15.5 78.5 13 84 13H101C103 13 104.5 14.5 104.5 16.5V20.5H74Z" fill="#10B981" stroke="#A7F3D0" stroke-width="1.2"/>
-                <circle cx="82" cy="16.2" r="2.2" fill="#041510" stroke="#6EE7B7" stroke-width="1"/>
-                <circle cx="82.6" cy="15.8" r="0.8" fill="#ECFDF5"/>
-                <path d="M87 20.5L89 23.8L91 20.5M93 20.5L95 23.8L97 20.5M99 20.5L101 23.8L103 20.5" stroke="#ECFDF5" stroke-width="1.2" stroke-linecap="round"/>
-              </g>
-              <g class="croc-jaw-bot">
-                <path d="M75 23H103C103 26 100.5 28 97.5 28H79C76.5 28 75 25.8 75 23Z" fill="#059669" stroke="#6EE7B7" stroke-width="1.2"/>
-                <path d="M89 23L91 20.2L93 23M95 23L97 20.2L99 23" stroke="#ECFDF5" stroke-width="1.1" stroke-linecap="round"/>
-              </g>
-            </g>
-          </g>
-
-          <!-- Superficie de agua LED donde se sumerge -->
-          <rect x="0" y="31" width="148" height="15" fill="url(#waterGrad)" />
-          <path class="water-wave-1" d="M0 32 Q 7 29, 14 32 T 28 32 T 42 32 T 56 32 T 70 32 T 84 32 T 98 32 T 112 32 T 126 32 T 140 32 T 154 32 T 168 32 T 182 32" stroke="#34D399" stroke-width="1.3" stroke-opacity="0.75" fill="none"/>
-          <ellipse class="water-ripple" cx="76" cy="34" rx="22" ry="2.2" stroke="#6EE7B7" stroke-width="1" fill="none"/>
+          <rect x="0" y="38" width="144" height="16" fill="url(#waterGrad)" />
+          <path class="water-wave-1" d="M0 39 Q 7 36, 14 39 T 28 39 T 42 39 T 56 39 T 70 39 T 84 39 T 98 39 T 112 39 T 126 39 T 140 39 T 154 39 T 168 39 T 182 39" stroke="url(#waveFade)" stroke-width="1.5" fill="none"/>
+          <ellipse class="water-ripple" cx="72" cy="41.5" rx="26" ry="2.2" stroke="#6EE7B7" stroke-width="1" fill="none"/>
         </svg>
       </button>
     </div>
@@ -1888,7 +1834,7 @@
     renderDirectoryTable();
     renderCommandsTable();
     if (isAuthenticated) renderSanctuaryTable();
-    showToast(isEditMode ? "🟢 Modo Edición activado." : "⏸️ Modo Edición pausado.");
+    showToast(isEditMode ? "🔓 Modo Edición activado." : "⏸️ Modo Edición pausado.");
   }
 
   function openTotpModal() {
@@ -2010,23 +1956,26 @@
     tabsWrap.classList.toggle("visible", isAuthenticated);
 
     if (!isAuthenticated) {
-      btnEdit.className = "btn-edit-locked";
-      btnEdit.innerHTML = "🔒 Modo Edición: Bloqueado";
+      btnEdit.className = "btn-lock-icon btn-edit-locked";
+      btnEdit.innerHTML = "🔒";
+      btnEdit.title = "Bloqueado (Clic para autenticar)";
       btnSanc.className = "croc-habitat-btn btn-sanctuary-closed";
       sancText.textContent = "Sanctuary";
       subtitle.textContent = "Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.";
     } else if (isEditMode) {
-      btnEdit.className = "btn-edit-active";
-      btnEdit.innerHTML = "🟢 Modo Edición: Activo";
+      btnEdit.className = "btn-lock-icon btn-edit-active";
+      btnEdit.innerHTML = "🔓";
+      btnEdit.title = "Desbloqueado (Edición activa)";
       btnSanc.className = "croc-habitat-btn btn-sanctuary-open";
       sancText.textContent = "Cerrar Sanctuary";
       subtitle.textContent = "Modo edición activo: haz clic en cualquier celda para editar, arrastra filas para reordenar o añade columnas.";
     } else {
-      btnEdit.className = "btn-edit-paused";
-      btnEdit.innerHTML = "⏸️ Modo Edición: Pausado";
+      btnEdit.className = "btn-lock-icon btn-edit-paused";
+      btnEdit.innerHTML = "🔓";
+      btnEdit.title = "Desbloqueado (Edición pausada)";
       btnSanc.className = "croc-habitat-btn btn-sanctuary-open";
       sancText.textContent = "Cerrar Sanctuary";
-      subtitle.textContent = "Edición pausada (modo lectura). Pulsa Modo Edición para volver a modificar.";
+      subtitle.textContent = "Edición pausada (modo lectura). Pulsa el candado para volver a modificar.";
     }
 
     document.getElementById("formTrackers").classList.toggle("editable-open", isEditMode);
