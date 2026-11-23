@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MDZ™ WORK | Panel de Control & Sanctuary</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Ccircle cx='68' cy='64' r='52' fill='%23FBBF24' stroke='%230A0A0A' stroke-width='7'/%3E%3Cpath d='M52 34c9-5 19-2 23 5 6-2 15 0 21 6l12 8-5 7 6 7-5 7 5 8-9 6c-2 10-7 19-14 25H44l5-16c-12 1-24-2-33-8-7-4-9-11-5-18l8-11c4-5 11-7 18-6l15-10z' fill='%233BB516' stroke='%230A0A0A' stroke-width='6.5' stroke-linejoin='round'/%3E%3Cpath d='M16 68c11 4 21 4 30-1l11 4 14-6c10 0 16 6 16 14l-13 6-18-2-14 5-17-3-11-7z' fill='%23BEF264' stroke='%230A0A0A' stroke-width='5.5' stroke-linejoin='round'/%3E%3Cpath d='M25 81c9 4 19 4 28 0l13 3 13-4' fill='none' stroke='%23FFFFFF' stroke-width='3.5' stroke-linecap='round'/%3E%3Cellipse cx='67' cy='54' rx='10.5' ry='14.5' transform='rotate(8 67 54)' fill='%23F97316' stroke='%230A0A0A' stroke-width='5.5'/%3E%3Cellipse cx='66' cy='53' rx='7.5' ry='11' transform='rotate(8 66 53)' fill='%23FACC15'/%3E%3Cellipse cx='67' cy='54' rx='2' ry='9.5' transform='rotate(8 67 54)' fill='%230A0A0A'/%3E%3Ccircle cx='18' cy='58' r='2.8' fill='%230A0A0A'/%3E%3Ccircle cx='28' cy='60' r='2.5' fill='%230A0A0A'/%3E%3Ccircle cx='39' cy='66' r='1.8' fill='%230A0A0A'/%3E%3Ccircle cx='49' cy='62' r='1.8' fill='%230A0A0A'/%3E%3Ccircle cx='89' cy='96' r='2.2' fill='%230A0A0A'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Ccircle cx='68' cy='64' r='52' fill='%23FBBF24' stroke='%230A0A0A' stroke-width='7'/%3E%3Cpath d='M52 34c9-5 19-2 23 5 6-2 15 0 21 6l12 8-5 7 6 7-5 7 5 8-9 6c-2 10-7 19-14 25H44l5-16c-12 1-24-2-33-8-7-4-9-11-5-18l8-11c4-5 11-7 18-6l15-10z' fill='%233BB516' stroke='%230A0A0A' stroke-width='6.5' stroke-linejoin='round'/%3E%3Cpath d='M16 68c11 4 21 4 30-1l11 4 14-6c10 0 16 6 16 14l-13 6-18-2-14 5-17-3-11-7z' fill='%23BEF264' stroke='%230A0A0A' stroke-width='5.5' stroke-linejoin='round'/%3E%3Cellipse cx='67' cy='54' rx='10.5' ry='14.5' transform='rotate(8 67 54)' fill='%23F97316' stroke='%230A0A0A' stroke-width='5.5'/%3E%3Cellipse cx='67' cy='54' rx='2' ry='9.5' transform='rotate(8 67 54)' fill='%230A0A0A'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -834,7 +836,62 @@
     </div>
 
     <!-- ===================================================================
-         SUB-CUADRO EN VISTA GENERAL: DIRECTORIO
+         SUB-CUADRO EN VISTA GENERAL: COMANDOS (CONTRAÍDO POR DEFECTO)
+         =================================================================== -->
+    <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border-glass);">
+      <div class="section-header" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+        <div class="section-title">
+          <h2>⚡ Comandos</h2>
+          <span class="autosave-pill"><span class="dot-pulse"></span> <span id="commandsCountText">0 comandos</span></span>
+          <button type="button" id="btnToggleCommands" class="btn-glass btn-sm" onclick="toggleCommandsPanel()">
+            ▼ Desplegar Comandos
+          </button>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="btnAddCmdColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('commands')">➕ Añadir Columna</button>
+          <button class="btn-glass btn-sm" onclick="exportCommandsExcelCSV()">📊 Exportar Comandos</button>
+          <button class="btn-glass btn-sm" onclick="exportCommandsBackupJSON()">💾 Respaldo JSON</button>
+          <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+            📂 Restaurar JSON
+            <input type="file" accept=".json" style="display:none;" onchange="importCommandsBackupJSON(event)" />
+          </label>
+        </div>
+      </div>
+
+      <div id="commandsCollapsibleBody" style="display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.07);">
+        <!-- Formulario dinámico de Comandos (Visible con Modo Edición Activo) -->
+        <form id="formCommands" class="form-grid" onsubmit="addCommandItem(event)"></form>
+
+        <!-- Buscador y Filtros por Modelo -->
+        <div class="search-input-wrap" style="margin-bottom: 10px;">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="commandsSearch" placeholder="Buscar comando AT, modelo (GV58CG, GV300W, GV55W, GV350, GV57CG), acción, cable o evento..." oninput="renderCommandsTable()" />
+          <button type="button" class="search-clear" onclick="clearCommandsSearch()">Limpiar</button>
+        </div>
+
+        <div class="filter-chips" id="commandModelChips" style="margin-bottom: 14px;">
+          <span class="chip active" data-model="ALL" onclick="setCommandModelFilter('ALL', this)">Todos</span>
+          <span class="chip" data-model="GV58CG" onclick="setCommandModelFilter('GV58CG', this)">GV58CG</span>
+          <span class="chip" data-model="GV58LAU (5816)" onclick="setCommandModelFilter('GV58LAU (5816)', this)">GV58LAU (5816)</span>
+          <span class="chip" data-model="GV300W (3001)" onclick="setCommandModelFilter('GV300W (3001)', this)">GV300W (3001)</span>
+          <span class="chip" data-model="GV55W" onclick="setCommandModelFilter('GV55W', this)">GV55W</span>
+          <span class="chip" data-model="GV350" onclick="setCommandModelFilter('GV350', this)">GV350</span>
+          <span class="chip" data-model="GV57CG" onclick="setCommandModelFilter('GV57CG', this)">GV57CG</span>
+          <span class="chip" data-model="GENERALES" onclick="setCommandModelFilter('GENERALES', this)">Generales</span>
+        </div>
+
+        <!-- Tabla Comandos -->
+        <div class="table-wrap">
+          <table>
+            <thead id="commandsTableHead"></thead>
+            <tbody id="commandsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================
+         SUB-CUADRO EN VISTA GENERAL: DIRECTORIO (AL FINAL)
          =================================================================== -->
     <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border-glass);">
       <div class="section-header">
@@ -868,56 +925,6 @@
         <table>
           <thead id="directoryTableHead"></thead>
           <tbody id="directoryTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ===================================================================
-         SUB-CUADRO EN VISTA GENERAL: COMANDOS
-         =================================================================== -->
-    <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border-glass);">
-      <div class="section-header">
-        <div class="section-title">
-          <h2>⚡ Comandos</h2>
-          <span class="autosave-pill"><span class="dot-pulse"></span> <span id="commandsCountText">0 comandos</span></span>
-        </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button id="btnAddCmdColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('commands')">➕ Añadir Columna</button>
-          <button class="btn-glass btn-sm" onclick="exportCommandsExcelCSV()">📊 Exportar Comandos</button>
-          <button class="btn-glass btn-sm" onclick="exportCommandsBackupJSON()">💾 Respaldo JSON</button>
-          <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
-            📂 Restaurar JSON
-            <input type="file" accept=".json" style="display:none;" onchange="importCommandsBackupJSON(event)" />
-          </label>
-        </div>
-      </div>
-
-      <!-- Formulario dinámico de Comandos (Visible con Modo Edición Activo) -->
-      <form id="formCommands" class="form-grid" onsubmit="addCommandItem(event)"></form>
-
-      <!-- Buscador y Filtros por Modelo -->
-      <div class="search-input-wrap" style="margin-bottom: 10px;">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="commandsSearch" placeholder="Buscar comando AT, modelo (GV58CG, GV300W, GV55W, GV350, GV57CG), acción, cable o evento..." oninput="renderCommandsTable()" />
-        <button type="button" class="search-clear" onclick="clearCommandsSearch()">Limpiar</button>
-      </div>
-
-      <div class="filter-chips" id="commandModelChips" style="margin-bottom: 14px;">
-        <span class="chip active" data-model="ALL" onclick="setCommandModelFilter('ALL', this)">Todos</span>
-        <span class="chip" data-model="GV58CG" onclick="setCommandModelFilter('GV58CG', this)">GV58CG</span>
-        <span class="chip" data-model="GV58LAU (5816)" onclick="setCommandModelFilter('GV58LAU (5816)', this)">GV58LAU (5816)</span>
-        <span class="chip" data-model="GV300W (3001)" onclick="setCommandModelFilter('GV300W (3001)', this)">GV300W (3001)</span>
-        <span class="chip" data-model="GV55W" onclick="setCommandModelFilter('GV55W', this)">GV55W</span>
-        <span class="chip" data-model="GV350" onclick="setCommandModelFilter('GV350', this)">GV350</span>
-        <span class="chip" data-model="GV57CG" onclick="setCommandModelFilter('GV57CG', this)">GV57CG</span>
-        <span class="chip" data-model="GENERALES" onclick="setCommandModelFilter('GENERALES', this)">Generales</span>
-      </div>
-
-      <!-- Tabla Comandos -->
-      <div class="table-wrap">
-        <table>
-          <thead id="commandsTableHead"></thead>
-          <tbody id="commandsTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -2295,6 +2302,15 @@
   // =========================================================================
   // COMANDOS AT EN VISTA GENERAL (FILTRO POR MODELO, COPIADO Y EDICIÓN)
   // =========================================================================
+  function toggleCommandsPanel() {
+    const body = document.getElementById("commandsCollapsibleBody");
+    const btn = document.getElementById("btnToggleCommands");
+    if (!body || !btn) return;
+    const isHidden = body.style.display === "none";
+    body.style.display = isHidden ? "block" : "none";
+    btn.innerHTML = isHidden ? "▲ Ocultar Comandos" : "▼ Desplegar Comandos";
+  }
+
   function setCommandModelFilter(model, el) {
     selectedCommandModel = model;
     document.querySelectorAll("#commandModelChips .chip").forEach(c => c.classList.remove("active"));
