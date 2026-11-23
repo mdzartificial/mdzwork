@@ -1133,9 +1133,14 @@
         <div>
           <strong style="font-size:0.9rem; color:var(--accent-secondary);">📡 Evaluar Posición GPS vs Puntos Fijos</strong>
           <p style="font-size:0.77rem; color:var(--text-muted); margin-top:3px;">
-            Ingresa Latitud y Longitud o haz clic directamente en el mapa para medir distancia, potencia y crear geocercas.
+            Ingresa Latitud y Longitud o activa el checklist inferior para marcar haciendo clic en el mapa.
           </p>
         </div>
+
+        <label style="display:flex; align-items:center; gap:8px; padding:9px 11px; border-radius:10px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); font-size:0.78rem; color:#fcd34d; cursor:pointer; font-weight:600;">
+          <input type="checkbox" id="enableMapClickPlacement" style="accent-color:#10b981; width:15px; height:15px;" />
+          <span>☑️ Habilitar clic en mapa para posicionar GPS</span>
+        </label>
 
         <form onsubmit="plotGpsReferencePoint(event)" style="display:flex; flex-direction:column; gap:10px;">
           <div class="field">
@@ -1307,53 +1312,87 @@
 
 <script>
   // =========================================================================
-  // MAPA DE COBERTURA Y POTENCIA (PUNTOS OFICIALES: PUNTO, LATITUD, LONGITUD, TECNOLOGÍA)
+  // MAPA DE COBERTURA Y POTENCIA (78 PUNTOS OFICIALES: ID, PUNTO, LATITUD, LONGITUD, TECNOLOGIA)
   // =========================================================================
   let FIXED_78_POINTS = [
-    { id: 1, nombre: "LIMA-BASE", tecnologia: "DETEKTOR EVAL", lat: -12.1109345, lon: -77.0105818 },
-    { id: 2, nombre: "LIMA-LA MILLA", tecnologia: "REPOTENCIADO EVAL", lat: -12.0191580, lon: -77.0687180 },
-    { id: 3, nombre: "LIMA-50 COMAS", tecnologia: "REPOTENCIADO EVAL", lat: -11.9787660, lon: -77.0551450 },
-    { id: 4, nombre: "LIMA-CARABAYLLO", tecnologia: "REPOTENCIADO EVAL", lat: -11.8881730, lon: -77.0201800 },
-    { id: 5, nombre: "LIMA-VERDE", tecnologia: "REPOTENCIADO EVAL", lat: -12.1849140, lon: -76.9529800 },
-    { id: 6, nombre: "LIMA-SATELITE", tecnologia: "REPOTENCIADO EVAL", lat: -11.8651640, lon: -77.1311190 },
-    { id: 7, nombre: "LIMA-EL SOL", tecnologia: "DETEKTOR EVAL", lat: -12.1045470, lon: -76.9609470 },
-    { id: 8, nombre: "LIMA-LINCE", tecnologia: "DETEKTOR EVAL", lat: -12.0837860, lon: -77.0372580 },
-    { id: 9, nombre: "LIMA-SAN BORJA", tecnologia: "DETEKTOR EVAL", lat: -12.1112580, lon: -77.0114610 },
-    { id: 10, nombre: "LIMA-GUARDIA CIVIL", tecnologia: "DETEKTOR EVAL", lat: -12.0942720, lon: -76.9939280 },
-    { id: 11, nombre: "LIMA-MIRAFLORES", tecnologia: "DETEKTOR EVAL", lat: -12.1260670, lon: -77.0338220 },
-    { id: 12, nombre: "LIMA-DOS DE MAYO", tecnologia: "DETEKTOR EVAL", lat: -12.0493080, lon: -77.0642360 },
-    { id: 13, nombre: "LIMA-SANTA ANITA", tecnologia: "DETEKTOR EVAL", lat: -12.0226390, lon: -76.9296470 },
-    { id: 14, nombre: "LIMA-PUENTE NUEVO", tecnologia: "DETEKTOR EVAL", lat: -12.0471470, lon: -76.9935220 },
-    { id: 15, nombre: "LIMA-SALAVERRY", tecnologia: "DETEKTOR EVAL", lat: -12.0819280, lon: -77.0497080 },
-    { id: 16, nombre: "LIMA-EL POLO", tecnologia: "DETEKTOR EVAL", lat: -12.1066890, lon: -76.9632030 },
-    { id: 17, nombre: "LIMA-MEGAPLAZA", tecnologia: "REPOTENCIADO EVAL", lat: -11.9912420, lon: -77.0616360 },
-    { id: 18, nombre: "LIMA-CAMINOS DEL INCA", tecnologia: "DETEKTOR EVAL", lat: -12.1257250, lon: -76.9830170 },
-    { id: 19, nombre: "LIMA-SJL PROCERES", tecnologia: "REPOTENCIADO EVAL", lat: -12.0080720, lon: -77.0040970 },
-    { id: 20, nombre: "LIMA-SANTA BEATRIZ", tecnologia: "DETEKTOR EVAL", lat: -12.0672360, lon: -77.0355190 },
-    { id: 21, nombre: "LIMA-CENTRO CIVICO", tecnologia: "DETEKTOR EVAL", lat: -12.0566030, lon: -77.0374440 },
-    { id: 22, nombre: "LIMA-ALFONSO UGARTE", tecnologia: "DETEKTOR EVAL", lat: -12.0602420, lon: -77.0419920 },
-    { id: 23, nombre: "LIMA-JAVIER PRADO", tecnologia: "DETEKTOR EVAL", lat: -12.0948080, lon: -77.0199360 },
-    { id: 24, nombre: "LIMA-CHORRILLOS", tecnologia: "REPOTENCIADO EVAL", lat: -12.1636310, lon: -76.9708860 },
-    { id: 25, nombre: "LIMA-CALLAO COLONIAL", tecnologia: "REPOTENCIADO EVAL", lat: -12.0542500, lon: -77.1251610 },
-    { id: 26, nombre: "LIMA-CANEVARO", tecnologia: "DETEKTOR EVAL", lat: -12.0803580, lon: -77.0345720 },
-    { id: 27, nombre: "LIMA-GRAU", tecnologia: "DETEKTOR EVAL", lat: -12.0535640, lon: -77.0243190 },
-    { id: 28, nombre: "LIMA-CORPAC", tecnologia: "DETEKTOR EVAL", lat: -12.0897580, lon: -77.0042610 },
-    { id: 29, nombre: "LIMA-BRASIL", tecnologia: "DETEKTOR EVAL", lat: -12.0893500, lon: -77.0525970 },
-    { id: 30, nombre: "LIMA-CANAVAL", tecnologia: "DETEKTOR EVAL", lat: -12.0940170, lon: -77.0228780 },
-    { id: 31, nombre: "LIMA-SAN MIGUEL", tecnologia: "DETEKTOR EVAL", lat: -12.0752140, lon: -77.0929500 },
-    { id: 32, nombre: "LIMA-BOLIVAR", tecnologia: "DETEKTOR EVAL", lat: -12.0768500, lon: -77.0812670 },
-    { id: 33, nombre: "LIMA-VENEZUELA", tecnologia: "DETEKTOR EVAL", lat: -12.0518220, lon: -77.0789170 },
-    { id: 34, nombre: "LIMA-CHACARILLA", tecnologia: "DETEKTOR EVAL", lat: -12.1112640, lon: -76.9896780 },
-    { id: 35, nombre: "LIMA-CAMINO REAL", tecnologia: "DETEKTOR EVAL", lat: -12.0968080, lon: -77.0256140 },
-    { id: 36, nombre: "LIMA-ANGAMOS", tecnologia: "DETEKTOR EVAL", lat: -12.1292580, lon: -76.9999310 },
-    { id: 37, nombre: "LIMA-HIGUERETA", tecnologia: "DETEKTOR EVAL", lat: -12.1319190, lon: -76.9822970 },
-    { id: 38, nombre: "LIMA-BARRANCO", tecnologia: "DETEKTOR EVAL", lat: -12.1424220, lon: -77.0218690 },
-    { id: 39, nombre: "LIMA-LOS OLIVOS", tecnologia: "REPOTENCIADO EVAL", lat: -11.9885670, lon: -77.0749310 },
-    { id: 40, nombre: "LIMA-BASADRE", tecnologia: "DETEKTOR EVAL", lat: -12.0924830, lon: -77.0273890 },
-    { id: 41, nombre: "LIMA-ARENALES", tecnologia: "DETEKTOR EVAL", lat: -12.0650080, lon: -77.0472190 },
-    { id: 42, nombre: "LIMA-SAN FELIPE", tecnologia: "DETEKTOR EVAL", lat: -12.0794390, lon: -77.0642360 },
-    { id: 43, nombre: "LIMA-LARCO", tecnologia: "DETEKTOR EVAL", lat: -12.1213190, lon: -77.0294640 },
-    { id: 44, nombre: "LIMA-CESAR VALLEJO", tecnologia: "DETEKTOR EVAL", lat: -12.0706360, lon: -77.0372580 }
+    { id: 1, punto: "LIMA-BASE", lat: -12.1109345, lon: -77.0105818, tecnologia: "DETEKTOR EVAL" },
+    { id: 2, punto: "LIMA-LA MILLA", lat: -12.0191580, lon: -77.0687180, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 3, punto: "LIMA-50 COMAS", lat: -11.9787660, lon: -77.0551450, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 4, punto: "LIMA-CARABAYLLO", lat: -11.8881730, lon: -77.0201800, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 5, punto: "LIMA-VERDE", lat: -12.1849140, lon: -76.9529800, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 6, punto: "LIMA-SATELITE", lat: -11.8651640, lon: -77.1311190, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 7, punto: "LIMA-SAN BARTOLO", lat: -12.3905100, lon: -76.7801500, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 8, punto: "LIMA-LURIN", lat: -12.2752800, lon: -76.8719400, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 9, punto: "LIMA-PACHACAMAC", lat: -12.2286100, lon: -76.8594400, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 10, punto: "LIMA-VILLA EL SALVADOR", lat: -12.2127800, lon: -76.9388900, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 11, punto: "LIMA-SAN JUAN DE MIRAFLORES", lat: -12.1563900, lon: -76.9686100, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 12, punto: "LIMA-CHORRILLOS", lat: -12.1636310, lon: -76.9708860, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 13, punto: "LIMA-BARRANCO", lat: -12.1424220, lon: -77.0218690, tecnologia: "DETEKTOR EVAL" },
+    { id: 14, punto: "LIMA-MIRAFLORES", lat: -12.1260670, lon: -77.0338220, tecnologia: "DETEKTOR EVAL" },
+    { id: 15, punto: "LIMA-LARCO", lat: -12.1213190, lon: -77.0294640, tecnologia: "DETEKTOR EVAL" },
+    { id: 16, punto: "LIMA-ANGAMOS", lat: -12.1292580, lon: -76.9999310, tecnologia: "DETEKTOR EVAL" },
+    { id: 17, punto: "LIMA-HIGUERETA", lat: -12.1319190, lon: -76.9822970, tecnologia: "DETEKTOR EVAL" },
+    { id: 18, punto: "LIMA-CAMINOS DEL INCA", lat: -12.1257250, lon: -76.9830170, tecnologia: "DETEKTOR EVAL" },
+    { id: 19, punto: "LIMA-CHACARILLA", lat: -12.1112640, lon: -76.9896780, tecnologia: "DETEKTOR EVAL" },
+    { id: 20, punto: "LIMA-SAN BORJA", lat: -12.1112580, lon: -77.0114610, tecnologia: "DETEKTOR EVAL" },
+    { id: 21, punto: "LIMA-EL POLO", lat: -12.1066890, lon: -76.9632030, tecnologia: "DETEKTOR EVAL" },
+    { id: 22, punto: "LIMA-EL SOL", lat: -12.1045470, lon: -76.9609470, tecnologia: "DETEKTOR EVAL" },
+    { id: 23, punto: "LIMA-LA MOLINA", lat: -12.0786100, lon: -76.9425000, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 24, punto: "LIMA-CIENEGUILLA", lat: -12.1125000, lon: -76.8166700, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 25, punto: "LIMA-GUARDIA CIVIL", lat: -12.0942720, lon: -76.9939280, tecnologia: "DETEKTOR EVAL" },
+    { id: 26, punto: "LIMA-CORPAC", lat: -12.0897580, lon: -77.0042610, tecnologia: "DETEKTOR EVAL" },
+    { id: 27, punto: "LIMA-JAVIER PRADO", lat: -12.0948080, lon: -77.0199360, tecnologia: "DETEKTOR EVAL" },
+    { id: 28, punto: "LIMA-CANAVAL", lat: -12.0940170, lon: -77.0228780, tecnologia: "DETEKTOR EVAL" },
+    { id: 29, punto: "LIMA-CAMINO REAL", lat: -12.0968080, lon: -77.0256140, tecnologia: "DETEKTOR EVAL" },
+    { id: 30, punto: "LIMA-BASADRE", lat: -12.0924830, lon: -77.0273890, tecnologia: "DETEKTOR EVAL" },
+    { id: 31, punto: "LIMA-LINCE", lat: -12.0837860, lon: -77.0372580, tecnologia: "DETEKTOR EVAL" },
+    { id: 32, punto: "LIMA-CANEVARO", lat: -12.0803580, lon: -77.0345720, tecnologia: "DETEKTOR EVAL" },
+    { id: 33, punto: "LIMA-SALAVERRY", lat: -12.0819280, lon: -77.0497080, tecnologia: "DETEKTOR EVAL" },
+    { id: 34, punto: "LIMA-SAN FELIPE", lat: -12.0794390, lon: -77.0642360, tecnologia: "DETEKTOR EVAL" },
+    { id: 35, punto: "LIMA-BRASIL", lat: -12.0893500, lon: -77.0525970, tecnologia: "DETEKTOR EVAL" },
+    { id: 36, punto: "LIMA-MAGDALENA", lat: -12.0919400, lon: -77.0702800, tecnologia: "DETEKTOR EVAL" },
+    { id: 37, punto: "LIMA-BOLIVAR", lat: -12.0768500, lon: -77.0812670, tecnologia: "DETEKTOR EVAL" },
+    { id: 38, punto: "LIMA-SAN MIGUEL", lat: -12.0752140, lon: -77.0929500, tecnologia: "DETEKTOR EVAL" },
+    { id: 39, punto: "LIMA-LA PERLA", lat: -12.0672200, lon: -77.1155600, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 40, punto: "LIMA-CALLAO COLONIAL", lat: -12.0542500, lon: -77.1251610, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 41, punto: "LIMA-CALLAO PUERTO", lat: -12.0502800, lon: -77.1419400, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 42, punto: "LIMA-AEROPUERTO", lat: -12.0219400, lon: -77.1144400, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 43, punto: "LIMA-VENTANILLA", lat: -11.8780600, lon: -77.1277800, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 44, punto: "LIMA-ANCON", lat: -11.7741700, lon: -77.1763900, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 45, punto: "LIMA-VENEZUELA", lat: -12.0518220, lon: -77.0789170, tecnologia: "DETEKTOR EVAL" },
+    { id: 46, punto: "LIMA-DOS DE MAYO", lat: -12.0493080, lon: -77.0642360, tecnologia: "DETEKTOR EVAL" },
+    { id: 47, punto: "LIMA-ARENALES", lat: -12.0650080, lon: -77.0472190, tecnologia: "DETEKTOR EVAL" },
+    { id: 48, punto: "LIMA-SANTA BEATRIZ", lat: -12.0672360, lon: -77.0355190, tecnologia: "DETEKTOR EVAL" },
+    { id: 49, punto: "LIMA-CESAR VALLEJO", lat: -12.0706360, lon: -77.0372580, tecnologia: "DETEKTOR EVAL" },
+    { id: 50, punto: "LIMA-ALFONSO UGARTE", lat: -12.0602420, lon: -77.0419920, tecnologia: "DETEKTOR EVAL" },
+    { id: 51, punto: "LIMA-CENTRO CIVICO", lat: -12.0566030, lon: -77.0374440, tecnologia: "DETEKTOR EVAL" },
+    { id: 52, punto: "LIMA-GRAU", lat: -12.0535640, lon: -77.0243190, tecnologia: "DETEKTOR EVAL" },
+    { id: 53, punto: "LIMA-LA VICTORIA", lat: -12.0652800, lon: -77.0169400, tecnologia: "DETEKTOR EVAL" },
+    { id: 54, punto: "LIMA-GAMARRA", lat: -12.0663900, lon: -77.0119400, tecnologia: "DETEKTOR EVAL" },
+    { id: 55, punto: "LIMA-EL AGUSTINO", lat: -12.0488900, lon: -77.0019400, tecnologia: "DETEKTOR EVAL" },
+    { id: 56, punto: "LIMA-PUENTE NUEVO", lat: -12.0471470, lon: -76.9935220, tecnologia: "DETEKTOR EVAL" },
+    { id: 57, punto: "LIMA-SANTA ANITA", lat: -12.0226390, lon: -76.9296470, tecnologia: "DETEKTOR EVAL" },
+    { id: 58, punto: "LIMA-ATE VITARTE", lat: -12.0269400, lon: -76.9175000, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 59, punto: "LIMA-HUAYCAN", lat: -12.0127800, lon: -76.8236100, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 60, punto: "LIMA-CHACLACAYO", lat: -11.9763900, lon: -76.7686100, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 61, punto: "LIMA-CHOSICA", lat: -11.9430600, lon: -76.7094400, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 62, punto: "LIMA-SJL ZARATE", lat: -12.0277800, lon: -77.0013900, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 63, punto: "LIMA-SJL PROCERES", lat: -12.0080720, lon: -77.0040970, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 64, punto: "LIMA-SJL CANTO GRANDE", lat: -11.9819400, lon: -77.0063900, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 65, punto: "LIMA-SJL BAYOVAR", lat: -11.9588900, lon: -76.9958300, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 66, punto: "LIMA-RIMAC", lat: -12.0352800, lon: -77.0358300, tecnologia: "DETEKTOR EVAL" },
+    { id: 67, punto: "LIMA-SAN MARTIN DE PORRES", lat: -12.0119400, lon: -77.0541700, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 68, punto: "LIMA-MEGAPLAZA", lat: -11.9912420, lon: -77.0616360, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 69, punto: "LIMA-LOS OLIVOS", lat: -11.9885670, lon: -77.0749310, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 70, punto: "LIMA-NARANJAL", lat: -11.9772200, lon: -77.0611100, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 71, punto: "LIMA-INDEPENDENCIA", lat: -11.9905600, lon: -77.0513900, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 72, punto: "LIMA-COMAS BELAUNDE", lat: -11.9469400, lon: -77.0491700, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 73, punto: "LIMA-COLLIQUE", lat: -11.9194400, lon: -77.0369400, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 74, punto: "LIMA-PUENTE PIEDRA", lat: -11.8669400, lon: -77.0769400, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 75, punto: "LIMA-ZAPALLAL", lat: -11.8258300, lon: -77.1186100, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 76, punto: "LIMA-SANTA ROSA", lat: -11.7972200, lon: -77.1536100, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 77, punto: "LIMA-MANCHAY", lat: -12.1388900, lon: -76.8763900, tecnologia: "REPOTENCIADO EVAL" },
+    { id: 78, punto: "LIMA-PUNTA HERMOSA", lat: -12.3333300, lon: -76.8236100, tecnologia: "REPOTENCIADO EVAL" }
   ];
 
   let coverageMap = null;
@@ -1833,7 +1872,7 @@
       lon,
       radio: radius,
       notas: notes,
-      puntosDentro: insidePoints.map(p => `#${p.id} ${p.nombre}`)
+      puntosDentro: insidePoints.map(p => `#${p.id} ${p.punto}`)
     };
 
     savedGeofences.unshift(newGeo);
@@ -2014,19 +2053,19 @@
           fillOpacity: 0.92
         });
 
-        marker.bindTooltip(`<strong>#${pt.id} ${escapeHtml(pt.nombre)}</strong> · ${escapeHtml(pt.tecnologia)}`, {
+        marker.bindTooltip(`<strong>ID ${pt.id} | ${escapeHtml(pt.punto)}</strong> · ${escapeHtml(pt.tecnologia)}`, {
           direction: "top",
           offset: [0, -6],
           className: "point-label-tooltip"
         });
 
         marker.bindPopup(`
-          <div style="font-size:0.82rem; line-height:1.5; min-width:210px;">
-            <strong style="color:#34d399; font-size:0.88rem;">#${pt.id} — ${escapeHtml(pt.nombre)}</strong><br/>
+          <div style="font-size:0.82rem; line-height:1.5; min-width:225px;">
+            <strong style="color:#34d399; font-size:0.88rem;">ID: ${pt.id} — ${escapeHtml(pt.punto)}</strong><br/>
             <span class="tech-pill" style="margin:3px 0;">${escapeHtml(pt.tecnologia)}</span><br/>
-            <span style="font-family:monospace; color:#cbd5e1;">Lat: ${pt.lat.toFixed(6)}</span><br/>
-            <span style="font-family:monospace; color:#cbd5e1;">Lon: ${pt.lon.toFixed(6)}</span><br/>
-            <button type="button" onclick="copyText('${pt.lat}, ${pt.lon}', '${escapeAttr(pt.nombre)}')" style="margin-top:7px; padding:4px 9px; font-size:0.74rem; background:#10b981; color:#032219; border-radius:6px; font-weight:700;">📋 Copiar Lat/Lon</button>
+            <span style="font-family:monospace; color:#cbd5e1;">LATITUD: ${pt.lat.toFixed(7)}</span><br/>
+            <span style="font-family:monospace; color:#cbd5e1;">LONGITUD: ${pt.lon.toFixed(7)}</span><br/>
+            <button type="button" onclick="copyText('${pt.lat}, ${pt.lon}', '${escapeAttr(pt.punto)}')" style="margin-top:7px; padding:4px 9px; font-size:0.74rem; background:#10b981; color:#032219; border-radius:6px; font-weight:700;">📋 Copiar Lat/Lon</button>
           </div>
         `);
 
@@ -2036,10 +2075,13 @@
 
       populateFixedPointSelector("");
 
-      // Permitir clic directo en el mapa para evaluar GPS vs Puntos Fijos
+      // Solo posiciona punto GPS al hacer clic si el checklist está marcado
       coverageMap.on("click", e => {
-        const lat = Number(e.latlng.lat.toFixed(6));
-        const lon = Number(e.latlng.lng.toFixed(6));
+        const allowClick = document.getElementById("enableMapClickPlacement");
+        if (!allowClick || !allowClick.checked) return;
+
+        const lat = Number(e.latlng.lat.toFixed(7));
+        const lon = Number(e.latlng.lng.toFixed(7));
         document.getElementById("gpsLatInput").value = lat;
         document.getElementById("gpsLonInput").value = lon;
         document.getElementById("gpsQuickPaste").value = `${lat}, ${lon}`;
@@ -2073,10 +2115,10 @@
     if (!sel) return;
     const q = normalizeText(filterQuery);
     const matches = FIXED_78_POINTS.filter(p =>
-      !q || normalizeText(`punto ${p.id} ${p.nombre} ${p.tecnologia} ${p.lat} ${p.lon}`).includes(q)
+      !q || normalizeText(`${p.id} ${p.punto} ${p.tecnologia} ${p.lat} ${p.lon}`).includes(q)
     );
-    sel.innerHTML = `<option value="">— Seleccionar punto fijo (${matches.length} disponibles) —</option>` +
-      matches.map(p => `<option value="${p.id}">#${p.id} ${escapeHtml(p.nombre)} [${escapeHtml(p.tecnologia)}]</option>`).join("");
+    sel.innerHTML = `<option value="">— Seleccionar punto fijo (${matches.length} de 78) —</option>` +
+      matches.map(p => `<option value="${p.id}">ID ${p.id} | ${escapeHtml(p.punto)} [${escapeHtml(p.tecnologia)}]</option>`).join("");
   }
 
   function filterFixedPointSelect(val) {
@@ -2168,8 +2210,8 @@
     gpsMarker.bindPopup(`
       <div style="font-size:0.82rem; line-height:1.5;">
         <strong style="color:#fbbf24;">📡 Posición GPS Evaluada</strong><br/>
-        <span style="font-family:monospace;">${lat.toFixed(6)}, ${lon.toFixed(6)}</span><br/>
-        <span>Más cercano: <strong>#${closest.id} ${escapeHtml(closest.nombre)}</strong> (${closest.dist >= 1000 ? (closest.dist / 1000).toFixed(2) + " km" : Math.round(closest.dist) + " m"})</span><br/>
+        <span style="font-family:monospace;">${lat.toFixed(7)}, ${lon.toFixed(7)}</span><br/>
+        <span>Más cercano: <strong>ID ${closest.id} | ${escapeHtml(closest.punto)}</strong> (${closest.dist >= 1000 ? (closest.dist / 1000).toFixed(2) + " km" : Math.round(closest.dist) + " m"})</span><br/>
         <span class="tech-pill">${escapeHtml(closest.tecnologia)}</span><br/>
         <span style="color:${powerInfo.color}; font-weight:700;">${powerInfo.label}</span>
       </div>
@@ -2196,13 +2238,13 @@
         <div class="nearest-card" onclick="focusSelectedFixedPoint(${item.id})">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
             <div>
-              <strong style="color:#34d399; display:block;">${idx === 0 ? "★ " : ""}#${item.id} ${escapeHtml(item.nombre)}</strong>
+              <strong style="color:#34d399; display:block;">${idx === 0 ? "★ " : ""}ID ${item.id} | ${escapeHtml(item.punto)}</strong>
               <span class="tech-pill" style="margin-top:3px;">${escapeHtml(item.tecnologia)}</span>
             </div>
             <span class="signal-pill ${pwr.cls}">${distText}</span>
           </div>
           <div style="font-size:0.74rem; color:var(--text-muted); font-family:monospace; margin-top:4px;">
-            ${item.lat.toFixed(6)}, ${item.lon.toFixed(6)}
+            ${item.lat.toFixed(7)}, ${item.lon.toFixed(7)}
           </div>
           <div style="font-size:0.73rem; color:${pwr.color}; font-weight:600; margin-top:2px;">
             ${pwr.label}
