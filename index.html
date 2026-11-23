@@ -589,6 +589,17 @@
       white-space: nowrap;
     }
 
+    .ext-link {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
+      transition: color 0.15s;
+    }
+    .ext-link:hover {
+      color: #7dd3fc;
+    }
+
     mark {
       background: rgba(16, 185, 129, 0.38);
       color: #ffffff;
@@ -821,6 +832,45 @@
         <tbody id="trackersTableBody"></tbody>
       </table>
     </div>
+
+    <!-- ===================================================================
+         SUB-CUADRO EN VISTA GENERAL: DIRECTORIO
+         =================================================================== -->
+    <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border-glass);">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>📒 Directorio</h2>
+          <span class="autosave-pill"><span class="dot-pulse"></span> <span id="directoryCountText">0 registros</span></span>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="btnAddDirColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('directory')">➕ Añadir Columna</button>
+          <button class="btn-glass btn-sm" onclick="exportDirectoryExcelCSV()">📊 Exportar Directorio</button>
+          <button class="btn-glass btn-sm" onclick="exportDirectoryBackupJSON()">💾 Respaldo JSON</button>
+          <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+            📂 Restaurar JSON
+            <input type="file" accept=".json" style="display:none;" onchange="importDirectoryBackupJSON(event)" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Formulario dinámico del Directorio (Visible con Modo Edición Activo) -->
+      <form id="formDirectory" class="form-grid" onsubmit="addDirectoryItem(event)"></form>
+
+      <!-- Buscador del Directorio -->
+      <div class="search-input-wrap" style="margin-bottom: 14px;">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="directorySearch" placeholder="Buscar en Directorio por nombre, área, teléfono, correo, enlace o notas..." oninput="renderDirectoryTable()" />
+        <button type="button" class="search-clear" onclick="document.getElementById('directorySearch').value=''; renderDirectoryTable();">Limpiar</button>
+      </div>
+
+      <!-- Tabla Directorio -->
+      <div class="table-wrap">
+        <table>
+          <thead id="directoryTableHead"></thead>
+          <tbody id="directoryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
   <!-- =====================================================================
@@ -833,6 +883,7 @@
         <span class="autosave-pill"><span class="dot-pulse"></span> Sesión 2FA Verificada</span>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="btnAddSanctuaryColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('sanctuary')">➕ Añadir Columna</button>
         <button class="btn-glass btn-sm" onclick="toggleInternalQrPanel()">📱 Ver / Rotar QR 2FA</button>
         <button class="btn-glass btn-sm" onclick="exportSanctuaryBackupJSON()">💾 Respaldo JSON</button>
         <button class="btn-danger" onclick="lockSanctuary()">🔒 Cerrar Sanctuary</button>
@@ -885,59 +936,12 @@
     </div>
 
     <!-- Formulario de Alta en Sanctuary (Solo visible si Modo Edición está Activo) -->
-    <form id="formSanctuary" class="form-grid" onsubmit="addSanctuaryItem(event)">
-      <div class="field">
-        <label>Servicio / Sistema *</label>
-        <input type="text" id="sServicio" placeholder="Ej. Portal Principal" required />
-      </div>
-      <div class="field">
-        <label>Categoría</label>
-        <select id="sCategoria">
-          <option value="Sistemas">Sistemas</option>
-          <option value="Accesos Web">Accesos Web</option>
-          <option value="Redes">Redes</option>
-          <option value="Plataformas">Plataformas</option>
-          <option value="Otros">Otros</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Usuario / ID *</label>
-        <input type="text" id="sUsuario" placeholder="Ej. admin_ops" required />
-      </div>
-      <div class="field">
-        <label>Contraseña / Clave *</label>
-        <div style="display:flex; gap:6px;">
-          <input type="text" id="sPass" placeholder="Clave de acceso" required style="width:100%;" />
-          <button type="button" class="btn-glass btn-sm" onclick="generateStrongPass()" title="Generar clave aleatoria">🎲</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>URL / Dirección</label>
-        <input type="text" id="sHost" placeholder="Ej. https://portal.ejemplo.com" />
-      </div>
-      <div class="field">
-        <label>Notas / Etiquetas</label>
-        <input type="text" id="sNotas" placeholder="Ej. Cuenta principal, PIN 1234" />
-      </div>
-      <div class="field" style="justify-content: flex-end;">
-        <button type="submit" class="btn-primary">+ Guardar</button>
-      </div>
-    </form>
+    <form id="formSanctuary" class="form-grid" onsubmit="addSanctuaryItem(event)"></form>
 
     <!-- Tabla Sanctuary -->
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Servicio / Sistema</th>
-            <th>Categoría</th>
-            <th>Usuario</th>
-            <th>Contraseña</th>
-            <th>URL / Dirección</th>
-            <th>Notas / Etiquetas</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
+        <thead id="sanctuaryTableHead"></thead>
         <tbody id="sanctuaryTableBody"></tbody>
       </table>
     </div>
@@ -969,69 +973,54 @@
     <form onsubmit="verifyTotpSubmission(event)">
       <div class="field">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label>Código de 6 Dígitos</label>
-          <span id="modalCountdown" class="mono" style="font-size:0.76rem; color:var(--accent-secondary);">30s</span>
+          <label>Código TOTP (6 Dígitos)</label>
+          <span id="modalCountdown" class="mono" style="font-size:0.75rem; color:var(--accent-secondary);">30s</span>
         </div>
-        <input
-          type="text"
-          id="totpCodeInput"
-          class="totp-input"
-          inputmode="numeric"
-          maxlength="7"
-          placeholder="000000"
-          autocomplete="one-time-code"
-          required
-        />
-        <div class="totp-timer-bar">
-          <div id="modalTimerFill" class="totp-timer-fill"></div>
-        </div>
-      </div>
-
-      <!-- Opción protegida por clave maestra para recuperar/vincular nuevo dispositivo -->
-      <div style="margin-top:12px;">
-        <button type="button" class="link-subtle" onclick="toggleRecoveryPrompt()">
-          ¿Perdiste tu dispositivo? Re-vincular QR con clave maestra
-        </button>
-
-        <div id="recoveryBox" style="display:none; margin-top:10px; padding:12px; border-radius:10px; background:rgba(4,10,8,0.9); border:1px solid rgba(16,185,129,0.3);">
-          <label style="font-size:0.72rem; color:var(--text-muted); display:block; margin-bottom:5px;">CLAVE MAESTRA DE RECUPERACIÓN</label>
-          <div style="display:flex; gap:6px;">
-            <input type="password" id="recoveryKeyInput" placeholder="Ingresa clave maestra..." style="width:100%;" />
-            <button type="button" class="btn-glass btn-sm" onclick="unlockRecoveryQr()">Validar</button>
-          </div>
-          <div id="modalQrRevealArea" style="display:none; margin-top:12px;">
-            <div class="qr-flex">
-              <div id="modalQrBox" class="qr-box"></div>
-              <div style="flex:1; min-width:160px;">
-                <p style="font-size:0.76rem; color:var(--text-muted); margin-bottom:6px;">Escanea el QR en tu app:</p>
-                <div id="modalSecretText" class="secret-code-pill" style="font-size:0.74rem;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <input type="text" id="totpCodeInput" class="totp-input" maxlength="6" inputmode="numeric" placeholder="000000" autocomplete="off" required />
+        <div class="totp-timer-bar"><div id="modalTimerFill" class="totp-timer-fill"></div></div>
       </div>
 
       <div id="totpErrorMsg" class="error-msg"></div>
 
-      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
-        <button type="button" class="btn-glass" onclick="closeTotpModal()">Cancelar</button>
-        <button type="submit" class="btn-primary">Desbloquear</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+        <button type="button" class="link-subtle" onclick="toggleRecoveryPrompt()">¿Perdiste tu app? Re-vincular</button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn-glass" onclick="closeTotpModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">Verificar</button>
+        </div>
       </div>
     </form>
+
+    <!-- Recuperación protegida con clave maestra para mostrar QR -->
+    <div id="recoveryBox" style="display:none; margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
+      <div style="display:flex; gap:8px;">
+        <input type="password" id="recoveryKeyInput" placeholder="Clave maestra de recuperación..." style="flex:1;" />
+        <button type="button" class="btn-glass btn-sm" onclick="unlockRecoveryQr()">Mostrar QR</button>
+      </div>
+      <div id="modalQrRevealArea" style="display:none; margin-top:12px;">
+        <div class="qr-flex">
+          <div id="modalQrBox" class="qr-box"></div>
+          <div style="flex:1; min-width:160px;">
+            <p style="font-size:0.76rem; color:var(--text-muted); margin-bottom:6px;">Escanea o copia la clave Base32:</p>
+            <div id="modalSecretText" class="secret-code-pill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Modal para Añadir Nueva Columna en Trackers -->
+<!-- Modal para Añadir Nueva Columna (Trackers / Directorio / Sanctuary) -->
 <div id="addColumnModal" class="modal-backdrop" onclick="if(event.target===this) closeAddColumnModal()">
   <div class="modal-card glass-panel led-border" style="max-width:380px;">
-    <h3 style="font-size:1.08rem; margin-bottom:6px;">➕ Nueva Columna en Trackers</h3>
+    <h3 id="addColumnModalTitle" style="font-size:1.08rem; margin-bottom:6px;">➕ Nueva Columna</h3>
     <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
       Se añadirá a la tabla, al formulario de registro y a las exportaciones Excel/JSON.
     </p>
     <form onsubmit="confirmAddColumn(event)">
       <div class="field">
         <label>Nombre de la Columna *</label>
-        <input type="text" id="newColumnNameInput" placeholder="Ej. OPERADOR / SIM / ZONA" required />
+        <input type="text" id="newColumnNameInput" placeholder="Ej. OPERADOR / ANEXO / ENLACE" required />
       </div>
       <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
         <button type="button" class="btn-glass" onclick="closeAddColumnModal()">Cancelar</button>
@@ -1050,16 +1039,22 @@
   const RECOVERY_MASTER_KEY = "SKYNET2026";
   const STORAGE_TRACKERS = "mdz_trackers_v1";
   const STORAGE_TRACKER_COLS = "mdz_tracker_cols_v1";
+  const STORAGE_DIRECTORY = "mdz_directory_v1";
+  const STORAGE_DIRECTORY_COLS = "mdz_directory_cols_v1";
   const STORAGE_SANCTUARY = "mdz_vault_data_v1";
+  const STORAGE_SANCTUARY_COLS = "mdz_sanctuary_cols_v1";
   const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
   const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
 
   let isAuthenticated = false;
   let isEditMode = false;
   let pendingIntent = "sanctuary"; // 'sanctuary' | 'edit'
+  let addColumnTarget = "trackers"; // 'trackers' | 'directory' | 'sanctuary'
   let selectedCategory = "ALL";
   let revealedIds = new Set();
   let editingCellKey = null;
+  let editingDirCellKey = null;
+  let editingSancCellKey = null;
   let draggedTrackerId = null;
 
   const defaultTrackerColumns = [
@@ -1072,6 +1067,23 @@
     { key: "detalles", label: "DETALLES", required: false, mono: false, custom: false }
   ];
 
+  const defaultDirectoryColumns = [
+    { key: "nombre", label: "NOMBRE / CONTACTO", required: true, mono: false, custom: false },
+    { key: "area", label: "ÁREA / EMPRESA", required: false, mono: false, custom: false },
+    { key: "telefono", label: "TELÉFONO / ANEXO", required: false, mono: true, custom: false },
+    { key: "correo", label: "CORREO / ENLACE", required: false, mono: true, custom: false },
+    { key: "notas", label: "DETALLES / NOTAS", required: false, mono: false, custom: false }
+  ];
+
+  const defaultSanctuaryColumns = [
+    { key: "servicio", label: "SERVICIO / SISTEMA", required: true, mono: false, custom: false },
+    { key: "categoria", label: "CATEGORÍA", required: false, mono: false, custom: false },
+    { key: "usuario", label: "USUARIO", required: true, mono: true, custom: false },
+    { key: "pass", label: "CONTRASEÑA", required: true, mono: true, custom: false },
+    { key: "host", label: "URL / DIRECCIÓN", required: false, mono: true, custom: false },
+    { key: "notas", label: "NOTAS / ETIQUETAS", required: false, mono: false, custom: false }
+  ];
+
   // =========================================================================
   // DATOS INICIALES (PRESERVANDO LO GUARDADO EN LOCALSTORAGE)
   // =========================================================================
@@ -1082,14 +1094,21 @@
     { id: 4, unidad: "J1", placa: "CKP-306", gps: "", detektor: "1DB476", activacion: "", respuesta: "HTC42", detalles: "PL054" }
   ];
 
+  const initialDirectorySeed = [
+    { id: 501, nombre: "Central de Operaciones", area: "Monitoreo 24/7", telefono: "+51 999 000 111", correo: "ops@empresa.com", notas: "Coordinación de unidades y soporte" }
+  ];
+
   const initialSanctuarySeed = [
-    { id: 101, servicio: "Portal Administrativo", categoria: "Portales", usuario: "admin_principal", pass: "Adm#2026!Secure", host: "https://portal.ejemplo.com", notas: "Acceso general de gestión" },
+    { id: 101, servicio: "Portal Administrativo", categoria: "Accesos Web", usuario: "admin_principal", pass: "Adm#2026!Secure", host: "https://portal.ejemplo.com", notas: "Acceso general de gestión" },
     { id: 102, servicio: "Servidor Core Principal", categoria: "Sistemas", usuario: "root_ops", pass: "Srv@Core$9921", host: "192.168.1.10", notas: "Nodo central" },
     { id: 103, servicio: "Plataforma Monitoreo", categoria: "Plataformas", usuario: "operador_01", pass: "Mon!Track2026*", host: "https://monitor.ejemplo.com", notas: "Consola de seguimiento" }
   ];
 
   let trackerColumns = JSON.parse(localStorage.getItem(STORAGE_TRACKER_COLS)) || [...defaultTrackerColumns];
   let trackersList = JSON.parse(localStorage.getItem(STORAGE_TRACKERS)) || initialTrackersSeed;
+  let directoryColumns = JSON.parse(localStorage.getItem(STORAGE_DIRECTORY_COLS)) || [...defaultDirectoryColumns];
+  let directoryList = JSON.parse(localStorage.getItem(STORAGE_DIRECTORY)) || initialDirectorySeed;
+  let sanctuaryColumns = JSON.parse(localStorage.getItem(STORAGE_SANCTUARY_COLS)) || [...defaultSanctuaryColumns];
   let sanctuaryList = loadSanctuaryFromStorage();
 
   function loadSanctuaryFromStorage() {
@@ -1112,9 +1131,22 @@
     localStorage.setItem(STORAGE_TRACKER_COLS, JSON.stringify(trackerColumns));
   }
 
+  function persistDirectory() {
+    localStorage.setItem(STORAGE_DIRECTORY, JSON.stringify(directoryList));
+    updateCounters();
+  }
+
+  function persistDirectoryColumns() {
+    localStorage.setItem(STORAGE_DIRECTORY_COLS, JSON.stringify(directoryColumns));
+  }
+
   function persistSanctuary() {
     localStorage.setItem(STORAGE_SANCTUARY, JSON.stringify(sanctuaryList));
     updateCounters();
+  }
+
+  function persistSanctuaryColumns() {
+    localStorage.setItem(STORAGE_SANCTUARY_COLS, JSON.stringify(sanctuaryColumns));
   }
 
   function getTotpSecret() {
@@ -1285,8 +1317,11 @@
     }
     isEditMode = !isEditMode;
     editingCellKey = null;
+    editingDirCellKey = null;
+    editingSancCellKey = null;
     updateSecurityUI();
     renderTrackersTable();
+    renderDirectoryTable();
     renderSanctuaryTable();
     showToast(isEditMode ? "✏️ Modo Edición ACTIVADO." : "🛡️ Modo Edición PAUSADO (Solo lectura).");
   }
@@ -1345,6 +1380,7 @@
       switchTab("sanctuary");
     }
     renderTrackersTable();
+    renderDirectoryTable();
     renderSanctuaryTable();
     showToast("✅ Código verificado. Pestañas y Modo Edición habilitados.");
   }
@@ -1353,11 +1389,14 @@
     isAuthenticated = false;
     isEditMode = false;
     editingCellKey = null;
+    editingDirCellKey = null;
+    editingSancCellKey = null;
     revealedIds.clear();
     document.getElementById("internalQrDrawer").classList.remove("open");
     updateSecurityUI();
     switchTab("trackers");
     renderTrackersTable();
+    renderDirectoryTable();
     showToast("🔒 Sanctuary cerrado y Modo Edición bloqueado.");
   }
 
@@ -1366,8 +1405,11 @@
     const btnEdit = document.getElementById("btnEditToggle");
     const btnSanc = document.getElementById("btnSanctuaryTrigger");
     const btnAddCol = document.getElementById("btnAddColumn");
+    const btnAddDirCol = document.getElementById("btnAddDirColumn");
+    const btnAddSancCol = document.getElementById("btnAddSanctuaryColumn");
     const sancText = document.getElementById("sanctuaryBtnText");
     const formT = document.getElementById("formTrackers");
+    const formD = document.getElementById("formDirectory");
     const formS = document.getElementById("formSanctuary");
     const subtitleT = document.getElementById("trackersSubtitle");
 
@@ -1380,15 +1422,23 @@
         btnEdit.className = "btn-edit-active";
         btnEdit.innerHTML = "🟢 Modo Edición: Activo";
         btnAddCol.style.display = "inline-flex";
+        btnAddDirCol.style.display = "inline-flex";
+        btnAddSancCol.style.display = "inline-flex";
         renderTrackersForm();
+        renderDirectoryForm();
+        renderSanctuaryForm();
         formT.classList.add("editable-open");
+        formD.classList.add("editable-open");
         formS.classList.add("editable-open");
         subtitleT.textContent = "Modo Edición activo: haz clic en cualquier celda para editar, arrastra filas (⋮⋮) o usa ↑/↓ para mover vehículos, o añade columnas.";
       } else {
         btnEdit.className = "btn-edit-paused";
         btnEdit.innerHTML = "⏸️ Modo Edición: Pausado";
         btnAddCol.style.display = "none";
+        btnAddDirCol.style.display = "none";
+        btnAddSancCol.style.display = "none";
         formT.classList.remove("editable-open");
+        formD.classList.remove("editable-open");
         formS.classList.remove("editable-open");
         subtitleT.textContent = "Edición pausada (solo lectura). Pulsa 'Modo Edición: Pausado' para volver a editar.";
       }
@@ -1399,7 +1449,10 @@
       btnEdit.className = "btn-edit-locked";
       btnEdit.innerHTML = "🔒 Modo Edición: Bloqueado";
       btnAddCol.style.display = "none";
+      btnAddDirCol.style.display = "none";
+      btnAddSancCol.style.display = "none";
       formT.classList.remove("editable-open");
+      formD.classList.remove("editable-open");
       formS.classList.remove("editable-open");
       subtitleT.textContent = "Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.";
     }
@@ -1423,17 +1476,102 @@
       setTimeout(() => document.getElementById("smartSanctuarySearch").focus(), 60);
     } else {
       renderTrackersTable();
+      renderDirectoryTable();
     }
   }
 
   // =========================================================================
-  // GESTIÓN INTERNA DEL QR DENTRO DE SANCTUARY
+  // COLUMNAS DINÁMICAS (TRACKERS, DIRECTORIO Y SANCTUARY)
   // =========================================================================
+  function openAddColumnModal(target = "trackers") {
+    if (!isEditMode) return;
+    addColumnTarget = target;
+    const titles = {
+      trackers: "➕ Nueva Columna en Trackers",
+      directory: "➕ Nueva Columna en Directorio",
+      sanctuary: "➕ Nueva Columna en Sanctuary"
+    };
+    document.getElementById("addColumnModalTitle").textContent = titles[target] || "➕ Nueva Columna";
+    document.getElementById("newColumnNameInput").value = "";
+    document.getElementById("addColumnModal").classList.add("open");
+    setTimeout(() => document.getElementById("newColumnNameInput").focus(), 60);
+  }
+
+  function closeAddColumnModal() {
+    document.getElementById("addColumnModal").classList.remove("open");
+  }
+
+  function confirmAddColumn(e) {
+    e.preventDefault();
+    if (!isEditMode) return;
+    const rawLabel = document.getElementById("newColumnNameInput").value.trim().toUpperCase();
+    if (!rawLabel) return;
+
+    const slug = "col_" + rawLabel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_") + "_" + Date.now().toString().slice(-4);
+    const newColObj = {
+      key: slug,
+      label: rawLabel,
+      required: false,
+      mono: true,
+      custom: true
+    };
+
+    if (addColumnTarget === "directory") {
+      directoryColumns.push(newColObj);
+      persistDirectoryColumns();
+      renderDirectoryForm();
+      renderDirectoryTable();
+    } else if (addColumnTarget === "sanctuary") {
+      sanctuaryColumns.push(newColObj);
+      persistSanctuaryColumns();
+      renderSanctuaryForm();
+      renderSanctuaryTable();
+    } else {
+      trackerColumns.push(newColObj);
+      persistTrackerColumns();
+      renderTrackersForm();
+      renderTrackersTable();
+    }
+
+    closeAddColumnModal();
+    showToast(`➕ Columna "${rawLabel}" añadida.`);
+  }
+
+  function removeCustomColumn(colKey, target = "trackers") {
+    if (!isEditMode) return;
+    if (target === "directory") {
+      const col = directoryColumns.find(c => c.key === colKey);
+      if (!col || !col.custom) return;
+      directoryColumns = directoryColumns.filter(c => c.key !== colKey);
+      persistDirectoryColumns();
+      renderDirectoryForm();
+      renderDirectoryTable();
+      showToast(`🗑️ Columna "${col.label}" eliminada.`);
+    } else if (target === "sanctuary") {
+      const col = sanctuaryColumns.find(c => c.key === colKey);
+      if (!col || !col.custom) return;
+      sanctuaryColumns = sanctuaryColumns.filter(c => c.key !== colKey);
+      persistSanctuaryColumns();
+      renderSanctuaryForm();
+      renderSanctuaryTable();
+      showToast(`🗑️ Columna "${col.label}" eliminada.`);
+    } else {
+      const col = trackerColumns.find(c => c.key === colKey);
+      if (!col || !col.custom) return;
+      trackerColumns = trackerColumns.filter(c => c.key !== colKey);
+      persistTrackerColumns();
+      renderTrackersForm();
+      renderTrackersTable();
+      showToast(`🗑️ Columna "${col.label}" eliminada.`);
+    }
+  }
+
   function toggleInternalQrPanel() {
     if (!isAuthenticated) return;
     const drawer = document.getElementById("internalQrDrawer");
-    drawer.classList.toggle("open");
-    if (drawer.classList.contains("open")) {
+    const willOpen = !drawer.classList.contains("open");
+    drawer.classList.toggle("open", willOpen);
+    if (willOpen) {
       document.getElementById("internalSecretDisplay").textContent = getTotpSecret();
       renderSimpleMatrixQR(document.getElementById("internalQrBox"), buildOtpAuthUri());
     }
@@ -1456,51 +1594,8 @@
   }
 
   // =========================================================================
-  // COLUMNAS DINÁMICAS, REORDENAMIENTO Y RENDERIZADO DE TRACKERS
+  // REORDENAMIENTO Y RENDERIZADO DE TRACKERS
   // =========================================================================
-  function openAddColumnModal() {
-    if (!isEditMode) return;
-    document.getElementById("newColumnNameInput").value = "";
-    document.getElementById("addColumnModal").classList.add("open");
-    setTimeout(() => document.getElementById("newColumnNameInput").focus(), 60);
-  }
-
-  function closeAddColumnModal() {
-    document.getElementById("addColumnModal").classList.remove("open");
-  }
-
-  function confirmAddColumn(e) {
-    e.preventDefault();
-    if (!isEditMode) return;
-    const rawLabel = document.getElementById("newColumnNameInput").value.trim().toUpperCase();
-    if (!rawLabel) return;
-
-    const slug = "col_" + rawLabel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_") + "_" + Date.now().toString().slice(-4);
-    trackerColumns.push({
-      key: slug,
-      label: rawLabel,
-      required: false,
-      mono: true,
-      custom: true
-    });
-    persistTrackerColumns();
-    closeAddColumnModal();
-    renderTrackersForm();
-    renderTrackersTable();
-    showToast(`➕ Columna "${rawLabel}" añadida.`);
-  }
-
-  function removeCustomColumn(colKey) {
-    if (!isEditMode) return;
-    const col = trackerColumns.find(c => c.key === colKey);
-    if (!col || !col.custom) return;
-    trackerColumns = trackerColumns.filter(c => c.key !== colKey);
-    persistTrackerColumns();
-    renderTrackersForm();
-    renderTrackersTable();
-    showToast(`🗑️ Columna "${col.label}" eliminada.`);
-  }
-
   function renderTrackersForm() {
     const formEl = document.getElementById("formTrackers");
     const fieldsHtml = trackerColumns.map(col => `
@@ -1714,7 +1809,218 @@
   }
 
   // =========================================================================
-  // BUSCADOR INTELIGENTE Y CRUD DE SANCTUARY
+  // DETECCIÓN Y RENDERIZADO DE ENLACES DIRECTOS (URLs / IPs)
+  // =========================================================================
+  function normalizeHref(raw) {
+    const val = String(raw || "").trim();
+    if (!val) return null;
+    if (/^https?:\/\//i.test(val)) return val;
+    if (/^(localhost|(\d{1,3}\.){3}\d{1,3}|[a-z0-9-]+(\.[a-z0-9-]+)+)(:\d+)?(\/.*)?$/i.test(val)) {
+      return "https://" + val;
+    }
+    return null;
+  }
+
+  function renderSmartLinkHtml(rawVal, queryForHighlight = "") {
+    const text = String(rawVal || "").trim();
+    if (!text) return "-";
+    const href = normalizeHref(text);
+    const labelHtml = queryForHighlight ? highlightMatch(text, queryForHighlight) : escapeHtml(text);
+    if (!href) return labelHtml;
+
+    return `
+      <div style="display:inline-flex; align-items:center; gap:7px; flex-wrap:wrap;">
+        <a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="ext-link" title="Abrir enlace en nueva pestaña">${labelHtml}</a>
+        <a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="btn-glass btn-sm" style="text-decoration:none; padding:3px 8px; font-size:0.72rem;" title="Ir directo al enlace">↗ Ir</a>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // DIRECTORIO EN VISTA GENERAL (CRUD, COLUMNAS Y EDICIÓN EN LÍNEA)
+  // =========================================================================
+  function renderDirectoryForm() {
+    const formEl = document.getElementById("formDirectory");
+    const fieldsHtml = directoryColumns.map(col => `
+      <div class="field">
+        <label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label>
+        <input type="text" id="dField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} />
+      </div>
+    `).join("");
+
+    formEl.innerHTML = `
+      ${fieldsHtml}
+      <div class="field" style="justify-content: flex-end;">
+        <button type="submit" class="btn-primary">+ Agregar</button>
+      </div>
+    `;
+  }
+
+  function renderDirectoryTable() {
+    const thead = document.getElementById("directoryTableHead");
+    const tbody = document.getElementById("directoryTableBody");
+    const q = normalizeText(document.getElementById("directorySearch").value);
+
+    const colsTh = directoryColumns.map(col => {
+      const delColBtn = (isEditMode && col.custom)
+        ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'directory')" title="Eliminar columna">✕</button>`
+        : "";
+      return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
+    }).join("");
+    thead.innerHTML = `<tr>${colsTh}<th>ACCIONES</th></tr>`;
+
+    const filtered = directoryList.filter(item => {
+      const combined = directoryColumns.map(c => item[c.key] || "").join(" ");
+      return normalizeText(combined).includes(q);
+    });
+
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="${directoryColumns.length + 1}" style="text-align:center; color:var(--text-muted); padding:20px;">No se encontraron registros en Directorio.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(item => {
+      const cellsHtml = directoryColumns.map(col => {
+        const field = col.key;
+        const key = `${item.id}_${field}`;
+        const rawVal = item[field] || "";
+        const styleCls = col.mono ? "mono" : (field === "nombre" ? "col-unidad" : "");
+
+        if (isEditMode && editingDirCellKey === key) {
+          return `<td class="${styleCls}">
+            <input
+              type="text"
+              class="inline-input"
+              id="editDir_${key}"
+              value="${escapeAttr(rawVal)}"
+              onblur="saveDirectoryCell(${item.id}, '${escapeAttr(field)}', this.value)"
+              onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingDirCellKey=null; renderDirectoryTable();}"
+            />
+          </td>`;
+        }
+
+        const isLinkVal = normalizeHref(rawVal);
+        const displayContent = rawVal
+          ? (isLinkVal ? renderSmartLinkHtml(rawVal) : escapeHtml(rawVal))
+          : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
+
+        if (isEditMode) {
+          return `<td class="${styleCls}">
+            <div style="display:inline-flex; align-items:center; gap:6px;">
+              <span class="cell-editable" onclick="activateDirectoryCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${rawVal ? escapeHtml(rawVal) : '<span class="cell-empty">— AGREGAR —</span>'}</span>
+              ${isLinkVal ? `<a href="${escapeAttr(isLinkVal)}" target="_blank" rel="noopener noreferrer" class="btn-glass btn-sm" style="text-decoration:none; padding:3px 7px;" title="Abrir enlace">↗</a>` : ""}
+            </div>
+          </td>`;
+        }
+        return `<td class="${styleCls}"><span class="cell-readonly">${displayContent}</span></td>`;
+      }).join("");
+
+      const deleteBtn = isEditMode
+        ? `<button class="btn-danger" onclick="deleteDirectoryItem(${item.id})">Eliminar</button>`
+        : "";
+
+      return `
+        <tr>
+          ${cellsHtml}
+          <td style="white-space:nowrap;">
+            <button class="btn-glass btn-sm" onclick="copyDirectoryRow(${item.id})" title="Copiar fila">Copiar</button>
+            ${deleteBtn}
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  function activateDirectoryCell(id, field) {
+    if (!isEditMode) return;
+    editingDirCellKey = `${id}_${field}`;
+    renderDirectoryTable();
+    const inp = document.getElementById(`editDir_${editingDirCellKey}`);
+    if (inp) {
+      inp.focus();
+      inp.select();
+    }
+  }
+
+  function saveDirectoryCell(id, field, newValue) {
+    const idx = directoryList.findIndex(d => d.id === id);
+    if (idx !== -1) {
+      directoryList[idx][field] = newValue.trim();
+      persistDirectory();
+    }
+    editingDirCellKey = null;
+    renderDirectoryTable();
+  }
+
+  function addDirectoryItem(e) {
+    e.preventDefault();
+    if (!isEditMode) return;
+    const newRow = { id: Date.now() };
+    directoryColumns.forEach(col => {
+      const el = document.getElementById(`dField_${col.key}`);
+      newRow[col.key] = el ? el.value.trim() : "";
+    });
+    directoryList.push(newRow);
+    persistDirectory();
+    e.target.reset();
+    renderDirectoryTable();
+    showToast("✅ Registro guardado en Directorio.");
+  }
+
+  function deleteDirectoryItem(id) {
+    if (!isEditMode) return;
+    directoryList = directoryList.filter(d => d.id !== id);
+    persistDirectory();
+    renderDirectoryTable();
+    showToast("🗑️ Registro eliminado del Directorio.");
+  }
+
+  function copyDirectoryRow(id) {
+    const d = directoryList.find(x => x.id === id);
+    if (!d) return;
+    const text = directoryColumns.map(c => `${c.label}: ${d[c.key] || "-"}`).join(" | ");
+    navigator.clipboard.writeText(text);
+    showToast(`📋 Datos de ${d.nombre || "contacto"} copiados.`);
+  }
+
+  function exportDirectoryExcelCSV() {
+    const rows = [directoryColumns.map(c => c.label)];
+    directoryList.forEach(d => rows.push(directoryColumns.map(c => d[c.key] || "")));
+    const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "MDZ_Directorio.csv";
+    a.click();
+    showToast("📊 Descargado: MDZ_Directorio.csv");
+  }
+
+  function exportDirectoryBackupJSON() {
+    downloadJson(directoryList, "MDZ_Directorio_Respaldo.json");
+  }
+
+  function importDirectoryBackupJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) throw new Error();
+        directoryList = imported;
+        persistDirectory();
+        renderDirectoryTable();
+        showToast("✅ Directorio restaurado correctamente.");
+      } catch {
+        showToast("⛔ Archivo JSON inválido.");
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+  }
+
+  // =========================================================================
+  // BUSCADOR INTELIGENTE Y CRUD DE SANCTUARY (CON ENLACES DIRECTOS Y COLUMNAS)
   // =========================================================================
   function normalizeText(str) {
     return (str || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -1738,7 +2044,8 @@
   function smartMatch(item, query) {
     if (selectedCategory !== "ALL" && item.categoria !== selectedCategory) return false;
     if (!query) return true;
-    const blob = normalizeText(`${item.servicio} ${item.categoria} ${item.usuario} ${item.host} ${item.notas}`);
+    const allValues = sanctuaryColumns.map(c => c.key === "pass" ? "" : (item[c.key] || "")).join(" ");
+    const blob = normalizeText(allValues);
     const words = blob.split(/[\s\-_./:@]+/).filter(Boolean);
     const tokens = normalizeText(query).split(/\s+/).filter(Boolean);
 
@@ -1775,17 +2082,71 @@
     renderSanctuaryTable();
   }
 
+  function renderSanctuaryForm() {
+    const formEl = document.getElementById("formSanctuary");
+    const fieldsHtml = sanctuaryColumns.map(col => {
+      if (col.key === "categoria") {
+        return `
+          <div class="field">
+            <label>${escapeHtml(col.label)}</label>
+            <select id="sField_categoria">
+              <option value="Sistemas">Sistemas</option>
+              <option value="Accesos Web">Accesos Web</option>
+              <option value="Redes">Redes</option>
+              <option value="Plataformas">Plataformas</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+        `;
+      }
+      if (col.key === "pass") {
+        return `
+          <div class="field">
+            <label>${escapeHtml(col.label)} *</label>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="sField_pass" placeholder="Clave de acceso" required style="width:100%;" />
+              <button type="button" class="btn-glass btn-sm" onclick="generateStrongPass()" title="Generar clave aleatoria">🎲</button>
+            </div>
+          </div>
+        `;
+      }
+      return `
+        <div class="field">
+          <label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label>
+          <input type="text" id="sField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} />
+        </div>
+      `;
+    }).join("");
+
+    formEl.innerHTML = `
+      ${fieldsHtml}
+      <div class="field" style="justify-content: flex-end;">
+        <button type="submit" class="btn-primary">+ Guardar</button>
+      </div>
+    `;
+  }
+
   function renderSanctuaryTable() {
     if (!isAuthenticated) return;
     const query = document.getElementById("smartSanctuarySearch").value;
+    const thead = document.getElementById("sanctuaryTableHead");
     const tbody = document.getElementById("sanctuaryTableBody");
+
+    const colsTh = sanctuaryColumns.map(col => {
+      const delColBtn = (isEditMode && col.custom)
+        ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'sanctuary')" title="Eliminar columna">✕</button>`
+        : "";
+      return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
+    }).join("");
+    thead.innerHTML = `<tr>${colsTh}<th>ACCIONES</th></tr>`;
+
     const filtered = sanctuaryList.filter(item => smartMatch(item, query));
 
     document.getElementById("sanctuarySearchStats").textContent =
       `Mostrando ${filtered.length} de ${sanctuaryList.length} registros`;
 
     if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:22px;">
+      tbody.innerHTML = `<tr><td colspan="${sanctuaryColumns.length + 1}" style="text-align:center; color:var(--text-muted); padding:22px;">
         No se encontraron coincidencias para "${escapeHtml(query)}".
       </td></tr>`;
       return;
@@ -1793,46 +2154,116 @@
 
     tbody.innerHTML = filtered.map(item => {
       const isShown = revealedIds.has(item.id);
-      const passText = isShown ? escapeHtml(item.pass) : "••••••••••••";
+
+      const cellsHtml = sanctuaryColumns.map(col => {
+        const field = col.key;
+        const rawVal = item[field] || "";
+        const cellKey = `${item.id}_${field}`;
+
+        if (field === "categoria") {
+          return `<td><span class="badge-cat">${escapeHtml(rawVal || "Otros")}</span></td>`;
+        }
+
+        if (field === "usuario") {
+          return `<td class="mono">
+            ${highlightMatch(rawVal, query)}
+            <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(rawVal)}', 'Usuario')" title="Copiar usuario">📋</button>
+          </td>`;
+        }
+
+        if (field === "pass") {
+          const passText = isShown ? escapeHtml(rawVal) : "••••••••••••";
+          return `<td class="mono">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span>${passText}</span>
+              <button class="btn-glass btn-sm" onclick="toggleReveal(${item.id})" title="Ver/Ocultar">${isShown ? "🙈" : "👁️"}</button>
+              <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(rawVal)}', 'Contraseña')" title="Copiar clave">🔑</button>
+            </div>
+          </td>`;
+        }
+
+        if (isEditMode && editingSancCellKey === cellKey) {
+          return `<td class="${col.mono ? "mono" : ""}">
+            <input
+              type="text"
+              class="inline-input"
+              id="editSanc_${cellKey}"
+              value="${escapeAttr(rawVal)}"
+              onblur="saveSanctuaryCell(${item.id}, '${escapeAttr(field)}', this.value)"
+              onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingSancCellKey=null; renderSanctuaryTable();}"
+            />
+          </td>`;
+        }
+
+        if (field === "host" || normalizeHref(rawVal)) {
+          const linkRendered = renderSmartLinkHtml(rawVal, query);
+          if (isEditMode) {
+            return `<td class="mono">
+              <div style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                ${linkRendered}
+                <button type="button" class="btn-glass btn-sm" style="padding:2px 6px; font-size:0.7rem;" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')" title="Editar enlace">✏️</button>
+              </div>
+            </td>`;
+          }
+          return `<td class="mono">${linkRendered}</td>`;
+        }
+
+        const contentHtml = rawVal
+          ? (field === "servicio" ? `<strong>${highlightMatch(rawVal, query)}</strong>` : highlightMatch(rawVal, query))
+          : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : "-");
+
+        if (isEditMode) {
+          return `<td class="${col.mono ? "mono" : ""}">
+            <span class="cell-editable" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${contentHtml}</span>
+          </td>`;
+        }
+
+        return `<td class="${col.mono ? "mono" : ""}">${contentHtml}</td>`;
+      }).join("");
+
       const deleteBtn = isEditMode
         ? `<button class="btn-danger" onclick="deleteSanctuaryItem(${item.id})">Eliminar</button>`
         : `<span style="font-size:0.75rem; color:var(--text-muted);">Solo lectura</span>`;
 
       return `
         <tr>
-          <td><strong>${highlightMatch(item.servicio, query)}</strong></td>
-          <td><span class="badge-cat">${escapeHtml(item.categoria)}</span></td>
-          <td class="mono">
-            ${highlightMatch(item.usuario, query)}
-            <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.usuario)}', 'Usuario')" title="Copiar usuario">📋</button>
-          </td>
-          <td class="mono">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span>${passText}</span>
-              <button class="btn-glass btn-sm" onclick="toggleReveal(${item.id})" title="Ver/Ocultar">${isShown ? "🙈" : "👁️"}</button>
-              <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.pass)}', 'Contraseña')" title="Copiar clave">🔑</button>
-            </div>
-          </td>
-          <td class="mono">${highlightMatch(item.host || "-", query)}</td>
-          <td>${highlightMatch(item.notas || "-", query)}</td>
+          ${cellsHtml}
           <td>${deleteBtn}</td>
         </tr>
       `;
     }).join("");
   }
 
+  function activateSanctuaryCell(id, field) {
+    if (!isAuthenticated || !isEditMode) return;
+    editingSancCellKey = `${id}_${field}`;
+    renderSanctuaryTable();
+    const inp = document.getElementById(`editSanc_${editingSancCellKey}`);
+    if (inp) {
+      inp.focus();
+      inp.select();
+    }
+  }
+
+  function saveSanctuaryCell(id, field, newValue) {
+    const idx = sanctuaryList.findIndex(s => s.id === id);
+    if (idx !== -1) {
+      sanctuaryList[idx][field] = newValue.trim();
+      persistSanctuary();
+    }
+    editingSancCellKey = null;
+    renderSanctuaryTable();
+  }
+
   function addSanctuaryItem(e) {
     e.preventDefault();
     if (!isAuthenticated || !isEditMode) return;
-    sanctuaryList.unshift({
-      id: Date.now(),
-      servicio: document.getElementById("sServicio").value.trim(),
-      categoria: document.getElementById("sCategoria").value,
-      usuario: document.getElementById("sUsuario").value.trim(),
-      pass: document.getElementById("sPass").value.trim(),
-      host: document.getElementById("sHost").value.trim(),
-      notas: document.getElementById("sNotas").value.trim()
+    const newItem = { id: Date.now() };
+    sanctuaryColumns.forEach(col => {
+      const el = document.getElementById(`sField_${col.key}`);
+      newItem[col.key] = el ? el.value.trim() : "";
     });
+    sanctuaryList.unshift(newItem);
     persistSanctuary();
     e.target.reset();
     renderSanctuaryTable();
@@ -1863,7 +2294,8 @@
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
     const arr = new Uint32Array(14);
     crypto.getRandomValues(arr);
-    document.getElementById("sPass").value = Array.from(arr, x => chars[x % chars.length]).join("");
+    const passInput = document.getElementById("sField_pass");
+    if (passInput) passInput.value = Array.from(arr, x => chars[x % chars.length]).join("");
     showToast("🎲 Contraseña generada.");
   }
 
@@ -1876,8 +2308,8 @@
     let filename = "";
 
     if (inSanctuary) {
-      rows.push(["Servicio", "Categoria", "Usuario", "Contrasena", "URL", "Notas"]);
-      sanctuaryList.forEach(i => rows.push([i.servicio, i.categoria, i.usuario, i.pass, i.host, i.notas]));
+      rows.push(sanctuaryColumns.map(c => c.label));
+      sanctuaryList.forEach(i => rows.push(sanctuaryColumns.map(c => i[c.key] || "")));
       filename = "MDZ_Sanctuary.csv";
     } else {
       rows.push(trackerColumns.map(c => c.label));
@@ -1961,6 +2393,8 @@
   function updateCounters() {
     document.getElementById("trackersCountPill").textContent = trackersList.length;
     document.getElementById("sanctuaryCountPill").textContent = sanctuaryList.length;
+    const dirCounter = document.getElementById("directoryCountText");
+    if (dirCounter) dirCounter.textContent = `${directoryList.length} ${directoryList.length === 1 ? "registro" : "registros"}`;
   }
 
   function copyText(text, label) {
@@ -1988,8 +2422,10 @@
   getTotpSecret();
   updateCounters();
   renderTrackersForm();
+  renderDirectoryForm();
   updateSecurityUI();
   renderTrackersTable();
+  renderDirectoryTable();
 </script>
 </body>
 </html>
