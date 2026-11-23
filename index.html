@@ -1307,11 +1307,75 @@
 
 <script>
   // =========================================================================
-  // ESTADO GLOBAL, ALMACENAMIENTO Y DATOS INICIALES
+  // MAPA DE COBERTURA Y POTENCIA (PUNTOS OFICIALES: PUNTO, LATITUD, LONGITUD, TECNOLOGÍA)
   // =========================================================================
-  const RECOVERY_MASTER_KEY = "SKYNET2026";
-  const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
+  let FIXED_78_POINTS = [
+    { id: 1, nombre: "LIMA-BASE", tecnologia: "DETEKTOR EVAL", lat: -12.1109345, lon: -77.0105818 },
+    { id: 2, nombre: "LIMA-LA MILLA", tecnologia: "REPOTENCIADO EVAL", lat: -12.0191580, lon: -77.0687180 },
+    { id: 3, nombre: "LIMA-50 COMAS", tecnologia: "REPOTENCIADO EVAL", lat: -11.9787660, lon: -77.0551450 },
+    { id: 4, nombre: "LIMA-CARABAYLLO", tecnologia: "REPOTENCIADO EVAL", lat: -11.8881730, lon: -77.0201800 },
+    { id: 5, nombre: "LIMA-VERDE", tecnologia: "REPOTENCIADO EVAL", lat: -12.1849140, lon: -76.9529800 },
+    { id: 6, nombre: "LIMA-SATELITE", tecnologia: "REPOTENCIADO EVAL", lat: -11.8651640, lon: -77.1311190 },
+    { id: 7, nombre: "LIMA-EL SOL", tecnologia: "DETEKTOR EVAL", lat: -12.1045470, lon: -76.9609470 },
+    { id: 8, nombre: "LIMA-LINCE", tecnologia: "DETEKTOR EVAL", lat: -12.0837860, lon: -77.0372580 },
+    { id: 9, nombre: "LIMA-SAN BORJA", tecnologia: "DETEKTOR EVAL", lat: -12.1112580, lon: -77.0114610 },
+    { id: 10, nombre: "LIMA-GUARDIA CIVIL", tecnologia: "DETEKTOR EVAL", lat: -12.0942720, lon: -76.9939280 },
+    { id: 11, nombre: "LIMA-MIRAFLORES", tecnologia: "DETEKTOR EVAL", lat: -12.1260670, lon: -77.0338220 },
+    { id: 12, nombre: "LIMA-DOS DE MAYO", tecnologia: "DETEKTOR EVAL", lat: -12.0493080, lon: -77.0642360 },
+    { id: 13, nombre: "LIMA-SANTA ANITA", tecnologia: "DETEKTOR EVAL", lat: -12.0226390, lon: -76.9296470 },
+    { id: 14, nombre: "LIMA-PUENTE NUEVO", tecnologia: "DETEKTOR EVAL", lat: -12.0471470, lon: -76.9935220 },
+    { id: 15, nombre: "LIMA-SALAVERRY", tecnologia: "DETEKTOR EVAL", lat: -12.0819280, lon: -77.0497080 },
+    { id: 16, nombre: "LIMA-EL POLO", tecnologia: "DETEKTOR EVAL", lat: -12.1066890, lon: -76.9632030 },
+    { id: 17, nombre: "LIMA-MEGAPLAZA", tecnologia: "REPOTENCIADO EVAL", lat: -11.9912420, lon: -77.0616360 },
+    { id: 18, nombre: "LIMA-CAMINOS DEL INCA", tecnologia: "DETEKTOR EVAL", lat: -12.1257250, lon: -76.9830170 },
+    { id: 19, nombre: "LIMA-SJL PROCERES", tecnologia: "REPOTENCIADO EVAL", lat: -12.0080720, lon: -77.0040970 },
+    { id: 20, nombre: "LIMA-SANTA BEATRIZ", tecnologia: "DETEKTOR EVAL", lat: -12.0672360, lon: -77.0355190 },
+    { id: 21, nombre: "LIMA-CENTRO CIVICO", tecnologia: "DETEKTOR EVAL", lat: -12.0566030, lon: -77.0374440 },
+    { id: 22, nombre: "LIMA-ALFONSO UGARTE", tecnologia: "DETEKTOR EVAL", lat: -12.0602420, lon: -77.0419920 },
+    { id: 23, nombre: "LIMA-JAVIER PRADO", tecnologia: "DETEKTOR EVAL", lat: -12.0948080, lon: -77.0199360 },
+    { id: 24, nombre: "LIMA-CHORRILLOS", tecnologia: "REPOTENCIADO EVAL", lat: -12.1636310, lon: -76.9708860 },
+    { id: 25, nombre: "LIMA-CALLAO COLONIAL", tecnologia: "REPOTENCIADO EVAL", lat: -12.0542500, lon: -77.1251610 },
+    { id: 26, nombre: "LIMA-CANEVARO", tecnologia: "DETEKTOR EVAL", lat: -12.0803580, lon: -77.0345720 },
+    { id: 27, nombre: "LIMA-GRAU", tecnologia: "DETEKTOR EVAL", lat: -12.0535640, lon: -77.0243190 },
+    { id: 28, nombre: "LIMA-CORPAC", tecnologia: "DETEKTOR EVAL", lat: -12.0897580, lon: -77.0042610 },
+    { id: 29, nombre: "LIMA-BRASIL", tecnologia: "DETEKTOR EVAL", lat: -12.0893500, lon: -77.0525970 },
+    { id: 30, nombre: "LIMA-CANAVAL", tecnologia: "DETEKTOR EVAL", lat: -12.0940170, lon: -77.0228780 },
+    { id: 31, nombre: "LIMA-SAN MIGUEL", tecnologia: "DETEKTOR EVAL", lat: -12.0752140, lon: -77.0929500 },
+    { id: 32, nombre: "LIMA-BOLIVAR", tecnologia: "DETEKTOR EVAL", lat: -12.0768500, lon: -77.0812670 },
+    { id: 33, nombre: "LIMA-VENEZUELA", tecnologia: "DETEKTOR EVAL", lat: -12.0518220, lon: -77.0789170 },
+    { id: 34, nombre: "LIMA-CHACARILLA", tecnologia: "DETEKTOR EVAL", lat: -12.1112640, lon: -76.9896780 },
+    { id: 35, nombre: "LIMA-CAMINO REAL", tecnologia: "DETEKTOR EVAL", lat: -12.0968080, lon: -77.0256140 },
+    { id: 36, nombre: "LIMA-ANGAMOS", tecnologia: "DETEKTOR EVAL", lat: -12.1292580, lon: -76.9999310 },
+    { id: 37, nombre: "LIMA-HIGUERETA", tecnologia: "DETEKTOR EVAL", lat: -12.1319190, lon: -76.9822970 },
+    { id: 38, nombre: "LIMA-BARRANCO", tecnologia: "DETEKTOR EVAL", lat: -12.1424220, lon: -77.0218690 },
+    { id: 39, nombre: "LIMA-LOS OLIVOS", tecnologia: "REPOTENCIADO EVAL", lat: -11.9885670, lon: -77.0749310 },
+    { id: 40, nombre: "LIMA-BASADRE", tecnologia: "DETEKTOR EVAL", lat: -12.0924830, lon: -77.0273890 },
+    { id: 41, nombre: "LIMA-ARENALES", tecnologia: "DETEKTOR EVAL", lat: -12.0650080, lon: -77.0472190 },
+    { id: 42, nombre: "LIMA-SAN FELIPE", tecnologia: "DETEKTOR EVAL", lat: -12.0794390, lon: -77.0642360 },
+    { id: 43, nombre: "LIMA-LARCO", tecnologia: "DETEKTOR EVAL", lat: -12.1213190, lon: -77.0294640 },
+    { id: 44, nombre: "LIMA-CESAR VALLEJO", tecnologia: "DETEKTOR EVAL", lat: -12.0706360, lon: -77.0372580 }
+  ];
+
+  let coverageMap = null;
+  let fixedMarkersLayer = null;
+  let coverageRingsLayer = null;
+  let gpsRefLayer = null;
+  let fixedMarkerById = {};
+
+  function getTechColor(tech) {
+    const t = String(tech || "").toUpperCase();
+    if (t.includes("REPOTENCIADO")) return "#fbbf24";
+    if (t.includes("DETEKTOR")) return "#10b981";
+    return "#38bdf8";
+  }
+
+  // =========================================================================
+  // ESTADO GLOBAL, CLAVES DE ALMACENAMIENTO Y DATOS SEMILLA
+  // =========================================================================
   const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
+  const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
+  const RECOVERY_MASTER_KEY = "SKYNET2026";
+
   const STORAGE_TRACKERS = "mdz_trackers_v1";
   const STORAGE_TRACKER_COLS = "mdz_tracker_cols_v1";
   const STORAGE_DIRECTORY = "mdz_directory_v1";
@@ -1328,21 +1392,33 @@
   let addColumnTarget = "trackers";
   let selectedCategory = "ALL";
   let selectedCommandModel = "ALL";
+  let draggedTrackerId = null;
+
   let editingCellKey = null;
   let editingDirCellKey = null;
   let editingCmdCellKey = null;
   let editingSancCellKey = null;
-  let draggedTrackerId = null;
   let revealedIds = new Set();
 
+  function safeParseStorage(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
   const defaultTrackerColumns = [
-    { key: "unidad", label: "UNIDAD", required: true, mono: true, custom: false },
-    { key: "placa", label: "PLACA", required: true, mono: true, custom: false },
-    { key: "gps", label: "GPS", required: false, mono: true, custom: false },
-    { key: "detektor", label: "DETEKTOR", required: false, mono: true, custom: false },
-    { key: "activacion", label: "L ACTIVACION", required: false, mono: true, custom: false },
-    { key: "respuesta", label: "L RESPUESTA", required: false, mono: true, custom: false },
-    { key: "detalles", label: "DETALLES", required: false, mono: false, custom: false }
+    { key: "unidad", label: "UNIDAD", required: true, mono: true },
+    { key: "placa", label: "PLACA", required: true, mono: true },
+    { key: "gps", label: "GPS", required: false, mono: true },
+    { key: "detektor", label: "DETEKTOR", required: false, mono: true },
+    { key: "activacion", label: "L ACTIVACION", required: false, mono: true },
+    { key: "respuesta", label: "L RESPUESTA", required: false, mono: true },
+    { key: "detalles", label: "DETALLES", required: false, mono: false }
   ];
 
   const defaultTrackersSeed = [
@@ -1358,76 +1434,65 @@
   ];
 
   const defaultDirectoryColumns = [
-    { key: "nombre", label: "NOMBRE / CONTACTO", required: true, mono: false, custom: false },
-    { key: "area", label: "ÁREA / ROL", required: false, mono: false, custom: false },
-    { key: "telefono", label: "TELÉFONO / ANEXO", required: false, mono: true, custom: false },
-    { key: "enlace", label: "ENLACE / CORREO", required: false, mono: true, custom: false },
-    { key: "notas", label: "NOTAS", required: false, mono: false, custom: false }
+    { key: "nombre", label: "NOMBRE / CONTACTO", required: true, mono: false },
+    { key: "area", label: "ÁREA / CARGO", required: false, mono: false },
+    { key: "telefono", label: "TELÉFONO / ANEXO", required: false, mono: true },
+    { key: "enlace", label: "CORREO / ENLACE", required: false, mono: true },
+    { key: "notas", label: "OBSERVACIONES", required: false, mono: false }
   ];
 
   const defaultDirectorySeed = [
-    { id: 201, nombre: "Central de Monitoreo 24/7", area: "Operaciones", telefono: "+51 999 000 111", enlace: "https://monitoreo.ejemplo.com", notas: "Atención continua de alertas y despacho" },
-    { id: 202, nombre: "Soporte Técnico Campo", area: "Instalaciones", telefono: "+51 999 222 333", enlace: "soporte@ejemplo.com", notas: "Coordinación de revisiones y cambios de switch" }
+    { id: 201, nombre: "Central de Monitoreo", area: "Operaciones 24/7", telefono: "999-000-111", enlace: "https://monitoreo.ejemplo.com", notas: "Soporte de activaciones y eventos" },
+    { id: 202, nombre: "Soporte Técnico Campo", area: "Instalaciones", telefono: "999-000-222", enlace: "soporte@mdzwork.pe", notas: "Coordinación de revisiones y cambios de switch" }
   ];
 
   const defaultCommandColumns = [
-    { key: "modelo", label: "MODELO", required: true, mono: true, custom: false },
-    { key: "accion", label: "ACCIÓN / FUNCIÓN", required: true, mono: false, custom: false },
-    { key: "comando", label: "COMANDO AT", required: true, mono: true, custom: false },
-    { key: "cableado", label: "CABLEADO / LECTOR", required: false, mono: false, custom: false },
-    { key: "evento", label: "EVENTO / NOTA", required: false, mono: false, custom: false }
+    { key: "modelo", label: "MODELO", required: true, mono: true },
+    { key: "tipo", label: "TIPO / CONFIGURACIÓN", required: false, mono: false },
+    { key: "accion", label: "ACCIÓN", required: true, mono: false },
+    { key: "comando", label: "COMANDO AT", required: true, mono: true },
+    { key: "detalle", label: "CABLEADO / EVENTO", required: false, mono: false }
   ];
 
   const defaultCommandsSeed = [
-    { id: 301, modelo: "GV58CG", accion: "BLOQUEAR (Repotenciado-Lojack)", comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,1,,,,,3,,,,,,FFFF$", cableado: "CORTE: CABLE AMARILLO OUT 2 | LECTOR DE V: AZUL IN 1", evento: "SEGURO ABIERTO (105021) — Detektor con frecuencia de Lojack" },
-    { id: 302, modelo: "GV58CG", accion: "DESBLOQUEAR (Repotenciado-Lojack)", comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,0,,,,,3,,,,,,FFFF$", cableado: "CORTE: CABLE AMARILLO OUT 2 | LECTOR DE V: AZUL IN 1", evento: "SEGURO CERRADO (105020) — Detektor con frecuencia de Lojack" },
-    { id: 303, modelo: "GV58CG", accion: "BLOQUEAR (Detektor)", comando: "AT+GTDOS=PEEC14,0,2,1,1,,,,,2,,,,,,3,,,,,,FFFF$", cableado: "CORTE: CABLE VERDE OUT 1 | LECTOR DE V: BLANCO IN 0", evento: "BLOQUEO DE VEHICULO (105011) — Detektor con frecuencia de Detektor" },
-    { id: 304, modelo: "GV58CG", accion: "DESBLOQUEAR (Detektor)", comando: "AT+GTDOS=PEEC14,0,2,1,0,,,,,2,,,,,,3,,,,,,FFFF$", cableado: "CORTE: CABLE VERDE OUT 1 | LECTOR DE V: BLANCO IN 0", evento: "DESBLOQUEO VEHICULO (105010) — Detektor con frecuencia de Detektor" },
-    { id: 305, modelo: "GV58LAU (5816)", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,,,1,1,,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "Salida digital 1", evento: "Bloqueo estándar GV58LAU" },
-    { id: 306, modelo: "GV58LAU (5816)", accion: "DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,,,1,0,,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "Salida digital 1", evento: "Desbloqueo estándar GV58LAU" },
-    { id: 307, modelo: "GV300W (3001)", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Activación de bloqueo GV300W" },
-    { id: 308, modelo: "GV300W (3001)", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Desactivación de bloqueo GV300W" },
-    { id: 309, modelo: "GV300W (3001)", accion: "RESET", comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF", cableado: "—", evento: "Reinicio remoto GV300W" },
-    { id: 310, modelo: "GV55W", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Activación de bloqueo GV55W" },
-    { id: 311, modelo: "GV55W", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Desactivación de bloqueo GV55W" },
-    { id: 312, modelo: "GV350", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Activación de bloqueo GV350" },
-    { id: 313, modelo: "GV350", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", cableado: "OUT 1", evento: "Desactivación de bloqueo GV350" },
-    { id: 314, modelo: "GV57CG", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,,1,1,1,,,,,,,,,,,FFFF$", cableado: "Salida digital", evento: "Activación de bloqueo GV57CG" },
-    { id: 315, modelo: "GV57CG", accion: "DESBLOQUEAR (DEZSB)", comando: "AT+GTDOS=PEEC14,,1,1,0,,,,,,,,,,,FFFF$", cableado: "Salida digital", evento: "Desactivación de bloqueo GV57CG" },
-    { id: 316, modelo: "GENERALES", accion: "Reiniciar dispositivo", comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF$", cableado: "—", evento: "Reinicio general del equipo" },
-    { id: 317, modelo: "GENERALES", accion: "Reconectar a plataforma de mantenimiento (QMS)", comando: "AT+GTRTO=queclinkDM,F3,,,,,,FFFF$", cableado: "—", evento: "Conexión QMS / QueclinkDM" },
-    { id: 318, modelo: "GENERALES", accion: "Solicitar Ubicación", comando: "AT+GTRTO=PEEC14,1,,0,,,,FFFF$", cableado: "—", evento: "Reporte inmediato de posición GPS" },
-    { id: 319, modelo: "GENERALES", accion: "Solicitar información de la ICCID de la SIM", comando: "AT+GTRTO=PEEC14,6,,0,,,,FFFF$", cableado: "—", evento: "Consulta de serie ICCID" },
-    { id: 320, modelo: "GENERALES", accion: "CAMBIAR TIEMPO A 10 MINUTOS (600s)", comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,600,1000,1000,,30,600,00000000,0,,0,FFFF$", cableado: "—", evento: "Intervalo de reporte fijo cada 600 segundos" },
-    { id: 321, modelo: "GENERALES", accion: "CAMBIAR TIEMPO A 10 MINUTOS (10)", comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,10,1000,1000,,30,10,00000000,0,,0,FFFF$", cableado: "—", evento: "Variante intervalo 10" }
+    { id: 301, modelo: "GV58CG", tipo: "BLOQUEO REPOTENCIADO-LOJACK (Frec. Lojack)", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,1,,,,,3,,,,,,FFFF$", detalle: "CORTE: CABLE AMARILLO OUT 2 | LECTOR V: AZUL IN 1 | EVENTO: SEGURO ABIERTO (105021)" },
+    { id: 302, modelo: "GV58CG", tipo: "BLOQUEO REPOTENCIADO-LOJACK (Frec. Lojack)", accion: "DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,0,,,,,3,,,,,,FFFF$", detalle: "CORTE: CABLE AMARILLO OUT 2 | LECTOR V: AZUL IN 1 | EVENTO: SEGURO CERRADO (105020)" },
+    { id: 303, modelo: "GV58CG", tipo: "BLOQUEO DETEKTOR (Frec. Detektor)", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,0,2,1,1,,,,,2,,,,,,3,,,,,,FFFF$", detalle: "CORTE: CABLE VERDE OUT 1 | LECTOR V: BLANCO IN 0 | EVENTO: BLOQUEO DE VEHICULO (105011)" },
+    { id: 304, modelo: "GV58CG", tipo: "BLOQUEO DETEKTOR (Frec. Detektor)", accion: "DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,0,2,1,0,,,,,2,,,,,,3,,,,,,FFFF$", detalle: "CORTE: CABLE VERDE OUT 1 | LECTOR V: BLANCO IN 0 | EVENTO: DESBLOQUEO VEHICULO (105010)" },
+    { id: 305, modelo: "GV58LAU (5816)", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,,,1,1,,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Activación de bloqueo GV58LAU" },
+    { id: 306, modelo: "GV58LAU (5816)", tipo: "Salida Digital", accion: "DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,,,1,0,,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Desactivación de bloqueo GV58LAU" },
+    { id: 307, modelo: "GV300W (3001)", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Corte de motor GV300W" },
+    { id: 308, modelo: "GV300W (3001)", tipo: "Salida Digital", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Restauración GV300W" },
+    { id: 309, modelo: "GV300W (3001)", tipo: "Mantenimiento", accion: "RESET", comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF", detalle: "Reinicio de equipo GV300W" },
+    { id: 310, modelo: "GV55W", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Bloqueo GV55W" },
+    { id: 311, modelo: "GV55W", tipo: "Salida Digital", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Desbloqueo GV55W" },
+    { id: 312, modelo: "GV350", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Bloqueo GV350" },
+    { id: 313, modelo: "GV350", tipo: "Salida Digital", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Desbloqueo GV350" },
+    { id: 314, modelo: "GV57CG", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,,1,1,1,,,,,,,,,,,FFFF$", detalle: "Bloqueo GV57CG" },
+    { id: 315, modelo: "GV57CG", tipo: "Salida Digital", accion: "DEZSB / DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,,1,1,0,,,,,,,,,,,FFFF$", detalle: "Desbloqueo GV57CG" },
+    { id: 316, modelo: "GENERALES", tipo: "Diagnóstico / Control", accion: "Reiniciar dispositivo", comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF$", detalle: "Reinicio remoto estándar" },
+    { id: 317, modelo: "GENERALES", tipo: "Mantenimiento QMS", accion: "Reconectar a plataforma de mantenimiento", comando: "QMS AT+GTRTO=queclinkDM,F3,,,,,,FFFF$", detalle: "Conexión a Queclink Device Management" },
+    { id: 318, modelo: "GENERALES", tipo: "Posición", accion: "Solicitar Ubicación", comando: "AT+GTRTO=PEEC14,1,,0,,,,FFFF$", detalle: "Reporte inmediato de coordenadas GPS" },
+    { id: 319, modelo: "GENERALES", tipo: "SIM Card", accion: "Solicitar información de la ICCID de la SIM", comando: "AT+GTRTO=PEEC14,6,,0,,,,FFFF$", detalle: "Consulta de número de serie ICCID" },
+    { id: 320, modelo: "GENERALES", tipo: "Intervalo de Reporte (Segundos)", accion: "CAMBIAR TIEMPO A 10 MINUTOS", comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,600,1000,1000,,30,600,00000000,0,,0,FFFF$", detalle: "Reporte cada 600s (10 min)" },
+    { id: 321, modelo: "GENERALES", tipo: "Intervalo de Reporte (Minutos)", accion: "CAMBIAR TIEMPO A 10 MINUTOS", comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,10,1000,1000,,30,10,00000000,0,,0,FFFF$", detalle: "Reporte cada 10 min" }
   ];
 
   const defaultSanctuaryColumns = [
-    { key: "servicio", label: "SERVICIO / SISTEMA", required: true, mono: false, custom: false },
-    { key: "categoria", label: "CATEGORÍA", required: false, mono: false, custom: false },
-    { key: "usuario", label: "USUARIO", required: true, mono: true, custom: false },
-    { key: "pass", label: "CONTRASEÑA", required: true, mono: true, custom: false },
-    { key: "host", label: "URL / DIRECCIÓN", required: false, mono: true, custom: false },
-    { key: "notas", label: "NOTAS / ETIQUETAS", required: false, mono: false, custom: false }
+    { key: "servicio", label: "SERVICIO / SISTEMA", required: true, mono: false },
+    { key: "categoria", label: "CATEGORÍA", required: false, mono: false },
+    { key: "usuario", label: "USUARIO", required: true, mono: true },
+    { key: "pass", label: "CONTRASEÑA", required: true, mono: true },
+    { key: "host", label: "URL / DIRECCIÓN", required: false, mono: true },
+    { key: "notas", label: "NOTAS / ETIQUETAS", required: false, mono: false }
   ];
 
   const defaultSanctuarySeed = [
-    { id: 401, servicio: "Portal Administrativo Principal", categoria: "Accesos Web", usuario: "admin_general", pass: "Adm#2026!Secure", host: "https://portal.ejemplo.com", notas: "Acceso principal de gestión" },
-    { id: 402, servicio: "Servidor Central de Operaciones", categoria: "Sistemas", usuario: "ops_root", pass: "Ops$Server9921", host: "10.0.14.1:8080", notas: "Panel de administración interna" },
-    { id: 403, servicio: "Enlace de Red Principal", categoria: "Redes", usuario: "net_admin", pass: "Net#Gateway2026", host: "192.168.1.1", notas: "Configuración de puerta de enlace" },
-    { id: 404, servicio: "Plataforma de Monitoreo GPS", categoria: "Plataformas", usuario: "monitoreo_01", pass: "Track!Mon2026*", host: "https://plataforma.ejemplo.com", notas: "Consulta de unidades y reportes" }
+    { id: 101, servicio: "Portal Administrativo Principal", categoria: "Accesos Web", usuario: "admin_general", pass: "Acceso#2026!", host: "https://portal.ejemplo.com", notas: "Acceso principal de gestión" },
+    { id: 102, servicio: "Servidor Central de Operaciones", categoria: "Sistemas", usuario: "ops_root", pass: "Sist@Ops9921", host: "10.0.14.1:8080", notas: "Panel de administración interna" },
+    { id: 103, servicio: "Enlace de Red Principal", categoria: "Redes", usuario: "net_admin", pass: "Red$Core440", host: "192.168.1.1", notas: "Configuración de puerta de enlace" },
+    { id: 104, servicio: "Plataforma de Monitoreo GPS", categoria: "Plataformas", usuario: "monitoreo_01", pass: "Track!2026*", host: "https://plataforma.ejemplo.com", notas: "Consulta de unidades y reportes" }
   ];
-
-  function safeParseStorage(key, fallback) {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return fallback;
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) && parsed.length ? parsed : fallback;
-    } catch {
-      return fallback;
-    }
-  }
 
   let trackerColumns = safeParseStorage(STORAGE_TRACKER_COLS, [...defaultTrackerColumns]);
   let trackersList = safeParseStorage(STORAGE_TRACKERS, [...defaultTrackersSeed]);
@@ -1895,103 +1960,6 @@
       }))
     };
     downloadJson(geojson, "MDZ_Geocercas.geojson");
-  }
-
-  // =========================================================================
-  // MAPA DE COBERTURA Y POTENCIA (78 PUNTOS DEPURADOS CON NOMBRE Y TECNOLOGÍA)
-  // =========================================================================
-  const FIXED_78_POINTS = [
-    { id: 1, nombre: "Jockey Plaza / Monterrico", tecnologia: "VLU / RF-900", lat: -12.104547, lon: -76.960947 },
-    { id: 2, nombre: "Lince / Av. Arequipa", tecnologia: "VLU / RF-900", lat: -12.083786, lon: -77.037258 },
-    { id: 3, nombre: "San Borja Sur / Aviación", tecnologia: "VLU / RF-900", lat: -12.111258, lon: -77.011461 },
-    { id: 4, nombre: "San Borja Norte / Guardia Civil", tecnologia: "VLU / RF-900", lat: -12.094272, lon: -76.993928 },
-    { id: 5, nombre: "Miraflores / Óvalo Gutiérrez", tecnologia: "VLU / RF-900", lat: -12.126067, lon: -77.033822 },
-    { id: 6, nombre: "Cercado / Plaza Dos de Mayo", tecnologia: "VLU / RF-900", lat: -12.049308, lon: -77.064236 },
-    { id: 7, nombre: "Santa Anita / Carretera Central", tecnologia: "VLU / RF-900", lat: -12.022639, lon: -76.929647 },
-    { id: 8, nombre: "El Agustino / Puente Nuevo", tecnologia: "VLU / RF-900", lat: -12.047147, lon: -76.993522 },
-    { id: 9, nombre: "Jesús María / Salaverry", tecnologia: "VLU / RF-900", lat: -12.081928, lon: -77.049708 },
-    { id: 10, nombre: "Surco / El Polo", tecnologia: "VLU / RF-900", lat: -12.106689, lon: -76.963203 },
-    { id: 11, nombre: "Independencia / MegaPlaza", tecnologia: "VLU / RF-900", lat: -11.991242, lon: -77.061636 },
-    { id: 12, nombre: "Surco / Caminos del Inca", tecnologia: "VLU / RF-900", lat: -12.125725, lon: -76.983017 },
-    { id: 13, nombre: "San Juan de Lurigancho / Próceres", tecnologia: "VLU / RF-900", lat: -12.008072, lon: -77.004097 },
-    { id: 14, nombre: "Santa Beatriz / Paseo de la República", tecnologia: "VLU / RF-900", lat: -12.067236, lon: -77.035519 },
-    { id: 15, nombre: "Centro Cívico / Garcilaso", tecnologia: "VLU / RF-900", lat: -12.056603, lon: -77.037444 },
-    { id: 16, nombre: "Breña / Av. Alfonso Ugarte", tecnologia: "VLU / RF-900", lat: -12.060242, lon: -77.041992 },
-    { id: 17, nombre: "San Isidro / Javier Prado Este", tecnologia: "VLU / RF-900", lat: -12.094808, lon: -77.019936 },
-    { id: 18, nombre: "Chorrillos / Guardia Civil", tecnologia: "VLU / RF-900", lat: -12.163631, lon: -76.970886 },
-    { id: 19, nombre: "Comas / Túpac Amaru", tecnologia: "VLU / RF-900", lat: -11.981036, lon: -77.058758 },
-    { id: 20, nombre: "Callao / Av. Colonial", tecnologia: "VLU / RF-900", lat: -12.054250, lon: -77.125161 },
-    { id: 21, nombre: "Lince / Canevaro", tecnologia: "VLU / RF-900", lat: -12.080358, lon: -77.034572 },
-    { id: 22, nombre: "La Victoria / Av. Grau", tecnologia: "VLU / RF-900", lat: -12.053564, lon: -77.024319 },
-    { id: 23, nombre: "San Borja / Parque de la Felicidad", tecnologia: "VLU / LoRa-MESH", lat: -12.111244, lon: -77.011461 },
-    { id: 24, nombre: "Cercado / Av. Argentina", tecnologia: "VLU / LoRa-MESH", lat: -12.049308, lon: -77.064236 },
-    { id: 25, nombre: "Ate / Óvalo Santa Anita", tecnologia: "VLU / LoRa-MESH", lat: -12.022639, lon: -76.929647 },
-    { id: 26, nombre: "El Agustino / Riva Agüero", tecnologia: "VLU / LoRa-MESH", lat: -12.047147, lon: -76.993522 },
-    { id: 27, nombre: "Jesús María / Campo de Marte", tecnologia: "VLU / LoRa-MESH", lat: -12.081928, lon: -77.049708 },
-    { id: 28, nombre: "Surco / Primavera", tecnologia: "VLU / LoRa-MESH", lat: -12.106689, lon: -76.963203 },
-    { id: 29, nombre: "San Isidro / Corpac", tecnologia: "VLU / LoRa-MESH", lat: -12.089758, lon: -77.004261 },
-    { id: 30, nombre: "Magdalena / Av. Brasil", tecnologia: "VLU / LoRa-MESH", lat: -12.089350, lon: -77.052597 },
-    { id: 31, nombre: "San Isidro / Canaval y Moreyra", tecnologia: "VLU / LoRa-MESH", lat: -12.094017, lon: -77.022878 },
-    { id: 32, nombre: "San Miguel / Plaza San Miguel", tecnologia: "VLU / LoRa-MESH", lat: -12.075214, lon: -77.092950 },
-    { id: 33, nombre: "Pueblo Libre / Bolívar", tecnologia: "VLU / LoRa-MESH", lat: -12.076850, lon: -77.081267 },
-    { id: 34, nombre: "Cercado / Av. Venezuela", tecnologia: "VLU / LoRa-MESH", lat: -12.051822, lon: -77.078917 },
-    { id: 35, nombre: "SJL / Estación Los Jardines", tecnologia: "VLU / LoRa-MESH", lat: -12.008072, lon: -77.004097 },
-    { id: 36, nombre: "Santa Beatriz / Estadio Nacional", tecnologia: "VLU / LoRa-MESH", lat: -12.067236, lon: -77.035519 },
-    { id: 37, nombre: "Centro Histórico / Paseo Colón", tecnologia: "VLU / LoRa-MESH", lat: -12.056603, lon: -77.037444 },
-    { id: 38, nombre: "Surco / Chacarilla", tecnologia: "VLU / LoRa-MESH", lat: -12.111264, lon: -76.989678 },
-    { id: 39, nombre: "San Isidro / Camino Real", tecnologia: "VLU / LoRa-MESH", lat: -12.096808, lon: -77.025614 },
-    { id: 40, nombre: "San Isidro / República de Panamá", tecnologia: "VLU / LoRa-MESH", lat: -12.094808, lon: -77.019936 },
-    { id: 41, nombre: "Surquillo / Angamos Este", tecnologia: "VLU / LoRa-MESH", lat: -12.129258, lon: -76.999931 },
-    { id: 42, nombre: "Surco / Higuereta", tecnologia: "VLU / LoRa-MESH", lat: -12.131919, lon: -76.982297 },
-    { id: 43, nombre: "Chorrillos / Matellini", tecnologia: "VLU / LoRa-MESH", lat: -12.163631, lon: -76.970886 },
-    { id: 44, nombre: "Barranco / Óvalo Balta", tecnologia: "VLU / LoRa-MESH", lat: -12.142422, lon: -77.021869 },
-    { id: 45, nombre: "Bellavista / Óvalo La Perla", tecnologia: "VLU / LoRa-MESH", lat: -12.054250, lon: -77.125161 },
-    { id: 46, nombre: "Barranco / Av. Grau", tecnologia: "VLU / LoRa-MESH", lat: -12.147644, lon: -77.014981 },
-    { id: 47, nombre: "Los Olivos / Palmeras", tecnologia: "VLU / LoRa-MESH", lat: -11.988567, lon: -77.074931 },
-    { id: 48, nombre: "Monterrico / Encalada", tecnologia: "VLU / LTE-HYBRID", lat: -12.104547, lon: -76.960947 },
-    { id: 49, nombre: "Lince / Petit Thouars", tecnologia: "VLU / LTE-HYBRID", lat: -12.083786, lon: -77.037258 },
-    { id: 50, nombre: "San Borja / Museo de la Nación", tecnologia: "VLU / LTE-HYBRID", lat: -12.111258, lon: -77.011461 },
-    { id: 51, nombre: "San Borja / San Luis", tecnologia: "VLU / LTE-HYBRID", lat: -12.094272, lon: -76.993928 },
-    { id: 52, nombre: "Miraflores / Pardo", tecnologia: "VLU / LTE-HYBRID", lat: -12.126067, lon: -77.033822 },
-    { id: 53, nombre: "La Victoria / Gamarra", tecnologia: "VLU / LTE-HYBRID", lat: -12.053564, lon: -77.024319 },
-    { id: 54, nombre: "Lince / Risso", tecnologia: "VLU / LTE-HYBRID", lat: -12.080358, lon: -77.034572 },
-    { id: 55, nombre: "San Isidro / Begonias", tecnologia: "VLU / LTE-HYBRID", lat: -12.094017, lon: -77.022878 },
-    { id: 56, nombre: "Magdalena / Javier Prado Oeste", tecnologia: "VLU / LTE-HYBRID", lat: -12.089350, lon: -77.052597 },
-    { id: 57, nombre: "San Isidro / Guardia Civil", tecnologia: "VLU / LTE-HYBRID", lat: -12.089758, lon: -77.004261 },
-    { id: 58, nombre: "San Miguel / La Marina", tecnologia: "VLU / LTE-HYBRID", lat: -12.075214, lon: -77.092950 },
-    { id: 59, nombre: "Pueblo Libre / Sucre", tecnologia: "VLU / LTE-HYBRID", lat: -12.076850, lon: -77.081267 },
-    { id: 60, nombre: "Cercado / Universitaria", tecnologia: "VLU / LTE-HYBRID", lat: -12.051822, lon: -77.078917 },
-    { id: 61, nombre: "Surco / Monte Bello", tecnologia: "VLU / LTE-HYBRID", lat: -12.111264, lon: -76.989678 },
-    { id: 62, nombre: "San Isidro / Conquistadores", tecnologia: "VLU / LTE-HYBRID", lat: -12.096808, lon: -77.025614 },
-    { id: 63, nombre: "Surquillo / Tomás Marsano", tecnologia: "VLU / LTE-HYBRID", lat: -12.129258, lon: -76.999931 },
-    { id: 64, nombre: "Surco / Benavides", tecnologia: "VLU / LTE-HYBRID", lat: -12.131919, lon: -76.982297 },
-    { id: 65, nombre: "Barranco / Bolognesi", tecnologia: "VLU / LTE-HYBRID", lat: -12.142422, lon: -77.021869 },
-    { id: 66, nombre: "Barranco / Plaza Butters", tecnologia: "VLU / LTE-HYBRID", lat: -12.147644, lon: -77.014981 },
-    { id: 67, nombre: "Los Olivos / Izaguirre", tecnologia: "VLU / LTE-HYBRID", lat: -11.988567, lon: -77.074931 },
-    { id: 68, nombre: "Breña / Plaza Bolognesi", tecnologia: "VLU / LTE-HYBRID", lat: -12.060242, lon: -77.041992 },
-    { id: 69, nombre: "Independencia / Plaza Norte", tecnologia: "VLU / LTE-HYBRID", lat: -11.991242, lon: -77.061636 },
-    { id: 70, nombre: "Surco / Velasco Astete", tecnologia: "VLU / LTE-HYBRID", lat: -12.125725, lon: -76.983017 },
-    { id: 71, nombre: "Comas / Belaunde", tecnologia: "VLU / LTE-HYBRID", lat: -11.981036, lon: -77.058758 },
-    { id: 72, nombre: "San Isidro / Basadre", tecnologia: "VLU / LTE-HYBRID", lat: -12.092483, lon: -77.027389 },
-    { id: 73, nombre: "Jesús María / Arenales", tecnologia: "VLU / LTE-HYBRID", lat: -12.065008, lon: -77.047219 },
-    { id: 74, nombre: "Jesús María / San Felipe", tecnologia: "VLU / LTE-HYBRID", lat: -12.079439, lon: -77.064236 },
-    { id: 75, nombre: "Miraflores / Angamos Oeste", tecnologia: "VLU / LTE-HYBRID", lat: -12.109556, lon: -77.039814 },
-    { id: 76, nombre: "Miraflores / Larco", tecnologia: "VLU / LTE-HYBRID", lat: -12.121319, lon: -77.029464 },
-    { id: 77, nombre: "Santa Beatriz / Cuba", tecnologia: "VLU / LTE-HYBRID", lat: -12.064331, lon: -77.036675 },
-    { id: 78, nombre: "Lince / César Vallejo", tecnologia: "VLU / LTE-HYBRID", lat: -12.070636, lon: -77.037258 }
-  ];
-
-  let coverageMap = null;
-  let fixedMarkersLayer = null;
-  let coverageRingsLayer = null;
-  let gpsRefLayer = null;
-  let fixedMarkerById = {};
-
-  function getTechColor(tech) {
-    const t = String(tech || "").toUpperCase();
-    if (t.includes("LORA")) return "#38bdf8";
-    if (t.includes("LTE")) return "#a78bfa";
-    return "#10b981";
   }
 
   function initOrRefreshCoverageMap() {
