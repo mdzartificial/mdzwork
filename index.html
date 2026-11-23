@@ -871,6 +871,56 @@
         </table>
       </div>
     </div>
+
+    <!-- ===================================================================
+         SUB-CUADRO EN VISTA GENERAL: COMANDOS
+         =================================================================== -->
+    <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border-glass);">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>⚡ Comandos</h2>
+          <span class="autosave-pill"><span class="dot-pulse"></span> <span id="commandsCountText">0 comandos</span></span>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="btnAddCmdColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('commands')">➕ Añadir Columna</button>
+          <button class="btn-glass btn-sm" onclick="exportCommandsExcelCSV()">📊 Exportar Comandos</button>
+          <button class="btn-glass btn-sm" onclick="exportCommandsBackupJSON()">💾 Respaldo JSON</button>
+          <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+            📂 Restaurar JSON
+            <input type="file" accept=".json" style="display:none;" onchange="importCommandsBackupJSON(event)" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Formulario dinámico de Comandos (Visible con Modo Edición Activo) -->
+      <form id="formCommands" class="form-grid" onsubmit="addCommandItem(event)"></form>
+
+      <!-- Buscador y Filtros por Modelo -->
+      <div class="search-input-wrap" style="margin-bottom: 10px;">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="commandsSearch" placeholder="Buscar comando AT, modelo (GV58CG, GV300W, GV55W, GV350, GV57CG), acción, cable o evento..." oninput="renderCommandsTable()" />
+        <button type="button" class="search-clear" onclick="clearCommandsSearch()">Limpiar</button>
+      </div>
+
+      <div class="filter-chips" id="commandModelChips" style="margin-bottom: 14px;">
+        <span class="chip active" data-model="ALL" onclick="setCommandModelFilter('ALL', this)">Todos</span>
+        <span class="chip" data-model="GV58CG" onclick="setCommandModelFilter('GV58CG', this)">GV58CG</span>
+        <span class="chip" data-model="GV58LAU (5816)" onclick="setCommandModelFilter('GV58LAU (5816)', this)">GV58LAU (5816)</span>
+        <span class="chip" data-model="GV300W (3001)" onclick="setCommandModelFilter('GV300W (3001)', this)">GV300W (3001)</span>
+        <span class="chip" data-model="GV55W" onclick="setCommandModelFilter('GV55W', this)">GV55W</span>
+        <span class="chip" data-model="GV350" onclick="setCommandModelFilter('GV350', this)">GV350</span>
+        <span class="chip" data-model="GV57CG" onclick="setCommandModelFilter('GV57CG', this)">GV57CG</span>
+        <span class="chip" data-model="GENERALES" onclick="setCommandModelFilter('GENERALES', this)">Generales</span>
+      </div>
+
+      <!-- Tabla Comandos -->
+      <div class="table-wrap">
+        <table>
+          <thead id="commandsTableHead"></thead>
+          <tbody id="commandsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
   <!-- =====================================================================
@@ -1041,6 +1091,8 @@
   const STORAGE_TRACKER_COLS = "mdz_tracker_cols_v1";
   const STORAGE_DIRECTORY = "mdz_directory_v1";
   const STORAGE_DIRECTORY_COLS = "mdz_directory_cols_v1";
+  const STORAGE_COMMANDS = "mdz_commands_v1";
+  const STORAGE_COMMANDS_COLS = "mdz_commands_cols_v1";
   const STORAGE_SANCTUARY = "mdz_vault_data_v1";
   const STORAGE_SANCTUARY_COLS = "mdz_sanctuary_cols_v1";
   const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
@@ -1049,11 +1101,13 @@
   let isAuthenticated = false;
   let isEditMode = false;
   let pendingIntent = "sanctuary"; // 'sanctuary' | 'edit'
-  let addColumnTarget = "trackers"; // 'trackers' | 'directory' | 'sanctuary'
+  let addColumnTarget = "trackers"; // 'trackers' | 'directory' | 'commands' | 'sanctuary'
   let selectedCategory = "ALL";
+  let selectedCommandModel = "ALL";
   let revealedIds = new Set();
   let editingCellKey = null;
   let editingDirCellKey = null;
+  let editingCmdCellKey = null;
   let editingSancCellKey = null;
   let draggedTrackerId = null;
 
@@ -1073,6 +1127,14 @@
     { key: "telefono", label: "TELÉFONO / ANEXO", required: false, mono: true, custom: false },
     { key: "correo", label: "CORREO / ENLACE", required: false, mono: true, custom: false },
     { key: "notas", label: "DETALLES / NOTAS", required: false, mono: false, custom: false }
+  ];
+
+  const defaultCommandColumns = [
+    { key: "modelo", label: "MODELO", required: true, mono: true, custom: false },
+    { key: "configuracion", label: "TIPO / CABLEADO", required: false, mono: false, custom: false },
+    { key: "accion", label: "ACCIÓN", required: true, mono: false, custom: false },
+    { key: "comando", label: "COMANDO AT", required: true, mono: true, custom: false },
+    { key: "evento", label: "EVENTO / DETALLE", required: false, mono: false, custom: false }
   ];
 
   const defaultSanctuaryColumns = [
@@ -1098,6 +1160,177 @@
     { id: 501, nombre: "Central de Operaciones", area: "Monitoreo 24/7", telefono: "+51 999 000 111", correo: "ops@empresa.com", notas: "Coordinación de unidades y soporte" }
   ];
 
+  const initialCommandsSeed = [
+    {
+      id: 701,
+      modelo: "GV58CG",
+      configuracion: "BLOQUEO REPOTENCIADO-LOJACK (Frec. Lojack) | CORTE: CABLE AMARILLO OUT 2 | LECTOR DE V: AZUL IN 1",
+      accion: "BLOQUEAR",
+      comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,1,,,,,3,,,,,,FFFF$",
+      evento: "EVENTO GENERADO: SEGURO ABIERTO (105021)"
+    },
+    {
+      id: 702,
+      modelo: "GV58CG",
+      configuracion: "BLOQUEO REPOTENCIADO-LOJACK (Frec. Lojack) | CORTE: CABLE AMARILLO OUT 2 | LECTOR DE V: AZUL IN 1",
+      accion: "DESBLOQUEAR",
+      comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,0,,,,,3,,,,,,FFFF$",
+      evento: "EVENTO GENERADO: SEGURO CERRADO (105020)"
+    },
+    {
+      id: 703,
+      modelo: "GV58CG",
+      configuracion: "BLOQUEO DETEKTOR (Frec. Detektor) | CORTE: CABLE VERDE OUT 1 | LECTOR DE V: BLANCO IN 0",
+      accion: "BLOQUEAR",
+      comando: "AT+GTDOS=PEEC14,0,2,1,1,,,,,2,,,,,,3,,,,,,FFFF$",
+      evento: "EVENTO GENERADO: BLOQUEO DE VEHICULO (105011)"
+    },
+    {
+      id: 704,
+      modelo: "GV58CG",
+      configuracion: "BLOQUEO DETEKTOR (Frec. Detektor) | CORTE: CABLE VERDE OUT 1 | LECTOR DE V: BLANCO IN 0",
+      accion: "DESBLOQUEAR",
+      comando: "AT+GTDOS=PEEC14,0,2,1,0,,,,,2,,,,,,3,,,,,,FFFF$",
+      evento: "EVENTO GENERADO: DESBLOQUEO VEHICULO (105010)"
+    },
+    {
+      id: 705,
+      modelo: "GV58LAU (5816)",
+      configuracion: "Salida Digital",
+      accion: "BLOQUEAR",
+      comando: "AT+GTDOS=PEEC14,,,1,1,,,,,,,,,,,,,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 706,
+      modelo: "GV58LAU (5816)",
+      configuracion: "Salida Digital",
+      accion: "DESBLOQUEAR",
+      comando: "AT+GTDOS=PEEC14,,,1,0,,,,,,,,,,,,,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 707,
+      modelo: "GV300W (3001)",
+      configuracion: "Salida Control",
+      accion: "BLOQUEAR",
+      comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 708,
+      modelo: "GV300W (3001)",
+      configuracion: "Salida Control",
+      accion: "DESBLOQUEAR",
+      comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 709,
+      modelo: "GV300W (3001)",
+      configuracion: "Mantenimiento",
+      accion: "RESET",
+      comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF",
+      evento: "Reinicio de equipo"
+    },
+    {
+      id: 710,
+      modelo: "GV55W",
+      configuracion: "Salida Control",
+      accion: "BLOQUEAR",
+      comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 711,
+      modelo: "GV55W",
+      configuracion: "Salida Control",
+      accion: "DESBLOQUEAR",
+      comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 712,
+      modelo: "GV350",
+      configuracion: "Salida Control",
+      accion: "BLOQUEAR",
+      comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 713,
+      modelo: "GV350",
+      configuracion: "Salida Control",
+      accion: "DESBLOQUEAR",
+      comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 714,
+      modelo: "GV57CG",
+      configuracion: "Salida Digital",
+      accion: "BLOQUEAR",
+      comando: "AT+GTDOS=PEEC14,,1,1,1,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 715,
+      modelo: "GV57CG",
+      configuracion: "Salida Digital",
+      accion: "DESBLOQUEAR (DEZSB)",
+      comando: "AT+GTDOS=PEEC14,,1,1,0,,,,,,,,,,,FFFF$",
+      evento: "-"
+    },
+    {
+      id: 716,
+      modelo: "GENERALES",
+      configuracion: "Sistema",
+      accion: "Reiniciar dispositivo",
+      comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF$",
+      evento: "Reinicio remoto"
+    },
+    {
+      id: 717,
+      modelo: "GENERALES",
+      configuracion: "Plataforma Mantenimiento",
+      accion: "Reconectar a plataforma de mantenimiento (QMS)",
+      comando: "AT+GTRTO=queclinkDM,F3,,,,,,FFFF$",
+      evento: "Conexión QMS / QueclinkDM"
+    },
+    {
+      id: 718,
+      modelo: "GENERALES",
+      configuracion: "Telemetría / Posición",
+      accion: "Solicitar Ubicación",
+      comando: "AT+GTRTO=PEEC14,1,,0,,,,FFFF$",
+      evento: "Reporte de posición actual"
+    },
+    {
+      id: 719,
+      modelo: "GENERALES",
+      configuracion: "SIM Card",
+      accion: "Solicitar información de la ICCID de la SIM",
+      comando: "AT+GTRTO=PEEC14,6,,0,,,,FFFF$",
+      evento: "Lectura de ICCID"
+    },
+    {
+      id: 720,
+      modelo: "GENERALES",
+      configuracion: "Intervalo Reporte (600s)",
+      accion: "CAMBIAR TIEMPO A 10 MINUTOS",
+      comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,600,1000,1000,,30,600,00000000,0,,0,FFFF$",
+      evento: "Reporte cada 600 segundos"
+    },
+    {
+      id: 721,
+      modelo: "GENERALES",
+      configuracion: "Intervalo Reporte (10)",
+      accion: "CAMBIAR TIEMPO A 10 MINUTOS",
+      comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,10,1000,1000,,30,10,00000000,0,,0,FFFF$",
+      evento: "Variante intervalo 10"
+    }
+  ];
+
   const initialSanctuarySeed = [
     { id: 101, servicio: "Portal Administrativo", categoria: "Accesos Web", usuario: "admin_principal", pass: "Adm#2026!Secure", host: "https://portal.ejemplo.com", notas: "Acceso general de gestión" },
     { id: 102, servicio: "Servidor Core Principal", categoria: "Sistemas", usuario: "root_ops", pass: "Srv@Core$9921", host: "192.168.1.10", notas: "Nodo central" },
@@ -1108,6 +1341,8 @@
   let trackersList = JSON.parse(localStorage.getItem(STORAGE_TRACKERS)) || initialTrackersSeed;
   let directoryColumns = JSON.parse(localStorage.getItem(STORAGE_DIRECTORY_COLS)) || [...defaultDirectoryColumns];
   let directoryList = JSON.parse(localStorage.getItem(STORAGE_DIRECTORY)) || initialDirectorySeed;
+  let commandColumns = JSON.parse(localStorage.getItem(STORAGE_COMMANDS_COLS)) || [...defaultCommandColumns];
+  let commandsList = JSON.parse(localStorage.getItem(STORAGE_COMMANDS)) || initialCommandsSeed;
   let sanctuaryColumns = JSON.parse(localStorage.getItem(STORAGE_SANCTUARY_COLS)) || [...defaultSanctuaryColumns];
   let sanctuaryList = loadSanctuaryFromStorage();
 
@@ -1138,6 +1373,15 @@
 
   function persistDirectoryColumns() {
     localStorage.setItem(STORAGE_DIRECTORY_COLS, JSON.stringify(directoryColumns));
+  }
+
+  function persistCommands() {
+    localStorage.setItem(STORAGE_COMMANDS, JSON.stringify(commandsList));
+    updateCounters();
+  }
+
+  function persistCommandColumns() {
+    localStorage.setItem(STORAGE_COMMANDS_COLS, JSON.stringify(commandColumns));
   }
 
   function persistSanctuary() {
@@ -1318,10 +1562,12 @@
     isEditMode = !isEditMode;
     editingCellKey = null;
     editingDirCellKey = null;
+    editingCmdCellKey = null;
     editingSancCellKey = null;
     updateSecurityUI();
     renderTrackersTable();
     renderDirectoryTable();
+    renderCommandsTable();
     renderSanctuaryTable();
     showToast(isEditMode ? "✏️ Modo Edición ACTIVADO." : "🛡️ Modo Edición PAUSADO (Solo lectura).");
   }
@@ -1381,6 +1627,7 @@
     }
     renderTrackersTable();
     renderDirectoryTable();
+    renderCommandsTable();
     renderSanctuaryTable();
     showToast("✅ Código verificado. Pestañas y Modo Edición habilitados.");
   }
@@ -1390,6 +1637,7 @@
     isEditMode = false;
     editingCellKey = null;
     editingDirCellKey = null;
+    editingCmdCellKey = null;
     editingSancCellKey = null;
     revealedIds.clear();
     document.getElementById("internalQrDrawer").classList.remove("open");
@@ -1397,6 +1645,7 @@
     switchTab("trackers");
     renderTrackersTable();
     renderDirectoryTable();
+    renderCommandsTable();
     showToast("🔒 Sanctuary cerrado y Modo Edición bloqueado.");
   }
 
@@ -1406,10 +1655,12 @@
     const btnSanc = document.getElementById("btnSanctuaryTrigger");
     const btnAddCol = document.getElementById("btnAddColumn");
     const btnAddDirCol = document.getElementById("btnAddDirColumn");
+    const btnAddCmdCol = document.getElementById("btnAddCmdColumn");
     const btnAddSancCol = document.getElementById("btnAddSanctuaryColumn");
     const sancText = document.getElementById("sanctuaryBtnText");
     const formT = document.getElementById("formTrackers");
     const formD = document.getElementById("formDirectory");
+    const formC = document.getElementById("formCommands");
     const formS = document.getElementById("formSanctuary");
     const subtitleT = document.getElementById("trackersSubtitle");
 
@@ -1423,12 +1674,15 @@
         btnEdit.innerHTML = "🟢 Modo Edición: Activo";
         btnAddCol.style.display = "inline-flex";
         btnAddDirCol.style.display = "inline-flex";
+        btnAddCmdCol.style.display = "inline-flex";
         btnAddSancCol.style.display = "inline-flex";
         renderTrackersForm();
         renderDirectoryForm();
+        renderCommandsForm();
         renderSanctuaryForm();
         formT.classList.add("editable-open");
         formD.classList.add("editable-open");
+        formC.classList.add("editable-open");
         formS.classList.add("editable-open");
         subtitleT.textContent = "Modo Edición activo: haz clic en cualquier celda para editar, arrastra filas (⋮⋮) o usa ↑/↓ para mover vehículos, o añade columnas.";
       } else {
@@ -1436,9 +1690,11 @@
         btnEdit.innerHTML = "⏸️ Modo Edición: Pausado";
         btnAddCol.style.display = "none";
         btnAddDirCol.style.display = "none";
+        btnAddCmdCol.style.display = "none";
         btnAddSancCol.style.display = "none";
         formT.classList.remove("editable-open");
         formD.classList.remove("editable-open");
+        formC.classList.remove("editable-open");
         formS.classList.remove("editable-open");
         subtitleT.textContent = "Edición pausada (solo lectura). Pulsa 'Modo Edición: Pausado' para volver a editar.";
       }
@@ -1450,9 +1706,11 @@
       btnEdit.innerHTML = "🔒 Modo Edición: Bloqueado";
       btnAddCol.style.display = "none";
       btnAddDirCol.style.display = "none";
+      btnAddCmdCol.style.display = "none";
       btnAddSancCol.style.display = "none";
       formT.classList.remove("editable-open");
       formD.classList.remove("editable-open");
+      formC.classList.remove("editable-open");
       formS.classList.remove("editable-open");
       subtitleT.textContent = "Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.";
     }
@@ -1477,11 +1735,12 @@
     } else {
       renderTrackersTable();
       renderDirectoryTable();
+      renderCommandsTable();
     }
   }
 
   // =========================================================================
-  // COLUMNAS DINÁMICAS (TRACKERS, DIRECTORIO Y SANCTUARY)
+  // COLUMNAS DINÁMICAS (TRACKERS, DIRECTORIO, COMANDOS Y SANCTUARY)
   // =========================================================================
   function openAddColumnModal(target = "trackers") {
     if (!isEditMode) return;
@@ -1489,6 +1748,7 @@
     const titles = {
       trackers: "➕ Nueva Columna en Trackers",
       directory: "➕ Nueva Columna en Directorio",
+      commands: "➕ Nueva Columna en Comandos",
       sanctuary: "➕ Nueva Columna en Sanctuary"
     };
     document.getElementById("addColumnModalTitle").textContent = titles[target] || "➕ Nueva Columna";
@@ -1521,6 +1781,11 @@
       persistDirectoryColumns();
       renderDirectoryForm();
       renderDirectoryTable();
+    } else if (addColumnTarget === "commands") {
+      commandColumns.push(newColObj);
+      persistCommandColumns();
+      renderCommandsForm();
+      renderCommandsTable();
     } else if (addColumnTarget === "sanctuary") {
       sanctuaryColumns.push(newColObj);
       persistSanctuaryColumns();
@@ -1546,6 +1811,14 @@
       persistDirectoryColumns();
       renderDirectoryForm();
       renderDirectoryTable();
+      showToast(`🗑️ Columna "${col.label}" eliminada.`);
+    } else if (target === "commands") {
+      const col = commandColumns.find(c => c.key === colKey);
+      if (!col || !col.custom) return;
+      commandColumns = commandColumns.filter(c => c.key !== colKey);
+      persistCommandColumns();
+      renderCommandsForm();
+      renderCommandsTable();
       showToast(`🗑️ Columna "${col.label}" eliminada.`);
     } else if (target === "sanctuary") {
       const col = sanctuaryColumns.find(c => c.key === colKey);
@@ -2020,6 +2293,223 @@
   }
 
   // =========================================================================
+  // COMANDOS AT EN VISTA GENERAL (FILTRO POR MODELO, COPIADO Y EDICIÓN)
+  // =========================================================================
+  function setCommandModelFilter(model, el) {
+    selectedCommandModel = model;
+    document.querySelectorAll("#commandModelChips .chip").forEach(c => c.classList.remove("active"));
+    el.classList.add("active");
+    renderCommandsTable();
+  }
+
+  function clearCommandsSearch() {
+    document.getElementById("commandsSearch").value = "";
+    selectedCommandModel = "ALL";
+    document.querySelectorAll("#commandModelChips .chip").forEach((c, idx) => c.classList.toggle("active", idx === 0));
+    renderCommandsTable();
+  }
+
+  function renderCommandsForm() {
+    const formEl = document.getElementById("formCommands");
+    const fieldsHtml = commandColumns.map(col => `
+      <div class="field">
+        <label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label>
+        <input type="text" id="cField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} />
+      </div>
+    `).join("");
+
+    formEl.innerHTML = `
+      ${fieldsHtml}
+      <div class="field" style="justify-content: flex-end;">
+        <button type="submit" class="btn-primary">+ Agregar</button>
+      </div>
+    `;
+  }
+
+  function renderCommandsTable() {
+    const thead = document.getElementById("commandsTableHead");
+    const tbody = document.getElementById("commandsTableBody");
+    const q = normalizeText(document.getElementById("commandsSearch").value);
+
+    const colsTh = commandColumns.map(col => {
+      const delColBtn = (isEditMode && col.custom)
+        ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'commands')" title="Eliminar columna">✕</button>`
+        : "";
+      return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
+    }).join("");
+    thead.innerHTML = `<tr>${colsTh}<th>ACCIONES</th></tr>`;
+
+    const filtered = commandsList.filter(item => {
+      if (selectedCommandModel !== "ALL" && normalizeText(item.modelo) !== normalizeText(selectedCommandModel)) {
+        return false;
+      }
+      if (!q) return true;
+      const combined = commandColumns.map(c => item[c.key] || "").join(" ");
+      return normalizeText(combined).includes(q);
+    });
+
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="${commandColumns.length + 1}" style="text-align:center; color:var(--text-muted); padding:20px;">No se encontraron comandos para este filtro.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(item => {
+      const cellsHtml = commandColumns.map(col => {
+        const field = col.key;
+        const key = `${item.id}_${field}`;
+        const rawVal = item[field] || "";
+
+        if (isEditMode && editingCmdCellKey === key) {
+          return `<td class="${col.mono ? "mono" : ""}">
+            <input
+              type="text"
+              class="inline-input"
+              id="editCmd_${key}"
+              value="${escapeAttr(rawVal)}"
+              onblur="saveCommandCell(${item.id}, '${escapeAttr(field)}', this.value)"
+              onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCmdCellKey=null; renderCommandsTable();}"
+            />
+          </td>`;
+        }
+
+        if (field === "modelo") {
+          const badgeHtml = `<span class="badge-cat">${escapeHtml(rawVal || "GENERAL")}</span>`;
+          if (isEditMode) {
+            return `<td class="mono"><span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${badgeHtml}</span></td>`;
+          }
+          return `<td class="mono">${badgeHtml}</td>`;
+        }
+
+        if (field === "accion") {
+          const isLock = normalizeText(rawVal).includes("bloquear") && !normalizeText(rawVal).includes("desbloquear");
+          const isUnlock = normalizeText(rawVal).includes("desbloquear") || normalizeText(rawVal).includes("dezsb");
+          const colorCls = isLock ? "col-activacion" : (isUnlock ? "col-unidad" : "col-detektor");
+          const content = rawVal ? escapeHtml(rawVal) : `<span class="cell-empty">—</span>`;
+          if (isEditMode) {
+            return `<td class="${colorCls}"><span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${content}</span></td>`;
+          }
+          return `<td class="${colorCls}">${content}</td>`;
+        }
+
+        if (field === "comando") {
+          const cmdHtml = rawVal
+            ? `<code style="color:#f8fafc; background:rgba(16,185,129,0.1); padding:3px 7px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); user-select:all;">${escapeHtml(rawVal)}</code>`
+            : `<span class="cell-empty">—</span>`;
+          if (isEditMode) {
+            return `<td class="mono"><span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${cmdHtml}</span></td>`;
+          }
+          return `<td class="mono">${cmdHtml}</td>`;
+        }
+
+        const displayContent = rawVal
+          ? escapeHtml(rawVal)
+          : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
+
+        if (isEditMode) {
+          return `<td class="${col.mono ? "mono" : ""}">
+            <span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${displayContent}</span>
+          </td>`;
+        }
+        return `<td class="${col.mono ? "mono" : ""}">${displayContent}</td>`;
+      }).join("");
+
+      const deleteBtn = isEditMode
+        ? `<button class="btn-danger" onclick="deleteCommandItem(${item.id})">Eliminar</button>`
+        : "";
+
+      return `
+        <tr>
+          ${cellsHtml}
+          <td style="white-space:nowrap;">
+            <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.comando || "")}', 'Comando AT')" title="Copiar comando AT">📋 Copiar AT</button>
+            ${deleteBtn}
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  function activateCommandCell(id, field) {
+    if (!isEditMode) return;
+    editingCmdCellKey = `${id}_${field}`;
+    renderCommandsTable();
+    const inp = document.getElementById(`editCmd_${editingCmdCellKey}`);
+    if (inp) {
+      inp.focus();
+      inp.select();
+    }
+  }
+
+  function saveCommandCell(id, field, newValue) {
+    const idx = commandsList.findIndex(c => c.id === id);
+    if (idx !== -1) {
+      commandsList[idx][field] = newValue.trim();
+      persistCommands();
+    }
+    editingCmdCellKey = null;
+    renderCommandsTable();
+  }
+
+  function addCommandItem(e) {
+    e.preventDefault();
+    if (!isEditMode) return;
+    const newRow = { id: Date.now() };
+    commandColumns.forEach(col => {
+      const el = document.getElementById(`cField_${col.key}`);
+      newRow[col.key] = el ? el.value.trim() : "";
+    });
+    commandsList.unshift(newRow);
+    persistCommands();
+    e.target.reset();
+    renderCommandsTable();
+    showToast("✅ Comando añadido.");
+  }
+
+  function deleteCommandItem(id) {
+    if (!isEditMode) return;
+    commandsList = commandsList.filter(c => c.id !== id);
+    persistCommands();
+    renderCommandsTable();
+    showToast("🗑️ Comando eliminado.");
+  }
+
+  function exportCommandsExcelCSV() {
+    const rows = [commandColumns.map(c => c.label)];
+    commandsList.forEach(c => rows.push(commandColumns.map(col => c[col.key] || "")));
+    const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "MDZ_Comandos_AT.csv";
+    a.click();
+    showToast("📊 Descargado: MDZ_Comandos_AT.csv");
+  }
+
+  function exportCommandsBackupJSON() {
+    downloadJson(commandsList, "MDZ_Comandos_Respaldo.json");
+  }
+
+  function importCommandsBackupJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) throw new Error();
+        commandsList = imported;
+        persistCommands();
+        renderCommandsTable();
+        showToast("✅ Comandos restaurados correctamente.");
+      } catch {
+        showToast("⛔ Archivo JSON inválido.");
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+  }
+
+  // =========================================================================
   // BUSCADOR INTELIGENTE Y CRUD DE SANCTUARY (CON ENLACES DIRECTOS Y COLUMNAS)
   // =========================================================================
   function normalizeText(str) {
@@ -2395,6 +2885,8 @@
     document.getElementById("sanctuaryCountPill").textContent = sanctuaryList.length;
     const dirCounter = document.getElementById("directoryCountText");
     if (dirCounter) dirCounter.textContent = `${directoryList.length} ${directoryList.length === 1 ? "registro" : "registros"}`;
+    const cmdCounter = document.getElementById("commandsCountText");
+    if (cmdCounter) cmdCounter.textContent = `${commandsList.length} ${commandsList.length === 1 ? "comando" : "comandos"}`;
   }
 
   function copyText(text, label) {
@@ -2423,9 +2915,11 @@
   updateCounters();
   renderTrackersForm();
   renderDirectoryForm();
+  renderCommandsForm();
   updateSecurityUI();
   renderTrackersTable();
   renderDirectoryTable();
+  renderCommandsTable();
 </script>
 </body>
 </html>
