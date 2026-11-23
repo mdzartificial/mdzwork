@@ -1,4 +1,184 @@
-<!-- ... existing code ... -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MDZ™ WORK | Panel de Control & Sanctuary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.25s ease-out forwards',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(6px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #060a08;
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.09) 0%, transparent 42%),
+        radial-gradient(circle at 88% 82%, rgba(6, 78, 59, 0.14) 0%, transparent 48%),
+        linear-gradient(rgba(16, 185, 129, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 185, 129, 0.025) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    .glass-panel {
+      background: rgba(11, 18, 15, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(16, 185, 129, 0.18);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+    }
+
+    .led-active-border {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .led-active-border::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #10b981, #6ee7b7, #10b981, transparent);
+      animation: ledScan 4s linear infinite;
+    }
+
+    @keyframes ledScan {
+      0% { transform: translateX(-25%); }
+      100% { transform: translateX(25%); }
+    }
+
+    /* Animaciones de mandíbulas del cocodrilo */
+    .croc-upper-jaw {
+      transform-origin: 18px 26px;
+      transition: transform 0.2s ease;
+    }
+    .croc-lower-jaw {
+      transform-origin: 18px 33px;
+      transition: transform 0.2s ease;
+    }
+    .croc-trigger:hover .croc-upper-jaw,
+    .croc-chomp-active .croc-upper-jaw {
+      animation: crocUpperChomp 0.45s ease-in-out 2;
+    }
+    .croc-trigger:hover .croc-lower-jaw,
+    .croc-chomp-active .croc-lower-jaw {
+      animation: crocLowerChomp 0.45s ease-in-out 2;
+    }
+
+    @keyframes crocUpperChomp {
+      0%, 100% { transform: rotate(0deg); }
+      45% { transform: rotate(-16deg); }
+      70% { transform: rotate(3deg); }
+    }
+    @keyframes crocLowerChomp {
+      0%, 100% { transform: rotate(0deg); }
+      45% { transform: rotate(16deg); }
+      70% { transform: rotate(-3deg); }
+    }
+
+    .croc-glow-svg {
+      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.45));
+    }
+
+    mark {
+      background: rgba(16, 185, 129, 0.35);
+      color: #ffffff;
+      padding: 0 3px;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: rgba(8, 14, 11, 0.8); }
+    ::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.55); }
+  </style>
+</head>
+<body class="antialiased selection:bg-emerald-500/30 selection:text-emerald-200 p-3 sm:p-6">
+
+  <div class="max-w-7xl mx-auto">
+    <!-- ===================================================================== -->
+    <!-- CABECERA PRINCIPAL                                                    -->
+    <!-- ===================================================================== -->
+    <header class="glass-panel led-active-border rounded-2xl p-4 sm:p-5 mb-5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <div id="headerCrocBox" onclick="triggerCrocChomp()" class="croc-trigger cursor-pointer w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-400/45 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+          <svg class="w-9 h-9 croc-glow-svg" viewBox="0 0 64 56" fill="none">
+            <g class="croc-lower-jaw">
+              <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="1.8"/>
+              <polygon points="29,32 31,27 33,32" fill="#ecfdf5"/>
+              <polygon points="41,32 43,27 45,32" fill="#ecfdf5"/>
+            </g>
+            <g class="croc-upper-jaw">
+              <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
+              <circle cx="23" cy="20" r="3" fill="#022c22"/>
+              <ellipse cx="23" cy="20" rx="1" ry="2.2" fill="#6ee7b7"/>
+              <polygon points="25,29 27,34 29,29" fill="#ecfdf5"/>
+              <polygon points="36,29 38,35 40,29" fill="#ecfdf5"/>
+              <polygon points="47,29 49,34 51,29" fill="#ecfdf5"/>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            MDZ™ <span class="text-emerald-400 font-mono">WORK</span>
+          </h1>
+          <p class="text-xs text-slate-400">Gestión Operativa de Trackers & Sanctuary</p>
+        </div>
+      </div>
+
+      <!-- Controles Globales -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button type="button" onclick="exportToExcelCSV()" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs font-semibold transition-all cursor-pointer">
+          <span>📊</span>
+          <span>Exportar Excel</span>
+        </button>
+
+        <button id="btnEditModeToggle" type="button" onclick="toggleEditMode()" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-all cursor-pointer">
+          <span id="editModeDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span id="editModeLabel">Modo Edición: Bloqueado</span>
+        </button>
+
+        <button id="btnSanctuaryTrigger" type="button" onclick="handleSanctuaryAction()" class="croc-trigger flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/45 text-xs font-bold transition-all cursor-pointer shadow-[0_0_16px_rgba(16,185,129,0.18)]">
+          <svg class="w-5 h-5 shrink-0" viewBox="0 0 64 56" fill="none">
+            <g class="croc-lower-jaw">
+              <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+            </g>
+            <g class="croc-upper-jaw">
+              <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
+              <polygon points="30,29 32,34 34,29" fill="#ecfdf5"/>
+              <polygon points="44,29 46,34 48,29" fill="#ecfdf5"/>
+            </g>
+          </svg>
+          <span id="sanctuaryBtnLabel">Sanctuary</span>
+          <span class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono rounded bg-black/40 text-slate-400 border border-white/10">Ctrl+K</span>
+        </button>
+      </div>
+    </header>
+
     <!-- ===================================================================== -->
     <!-- BARRA DE PESTAÑAS (OCULTA HASTA VALIDAR DOBLE FACTOR)                 -->
     <!-- ===================================================================== -->
@@ -34,7 +214,9 @@
     <!-- ===================================================================== -->
     <!-- SECCIÓN 1: TRACKERS (UNIDAD / PLACA / GPS / DETEKTOR / L ACTIVACION...) -->
     <!-- ===================================================================== -->
-<!-- ... existing code ... -->
+    <section id="viewPublic" class="glass-panel rounded-2xl p-4 sm:p-6 animate-fade-in">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-800/80">
+        <div>
           <div class="flex items-center gap-2.5">
             <h2 class="text-lg font-bold text-white">Trackers</h2>
             <span id="autoSaveIndicator" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/25 transition-all">
@@ -56,7 +238,88 @@
           </label>
         </div>
       </div>
-<!-- ... existing code ... -->
+
+      <!-- Formulario de Alta Rápida (Visible solo en Modo Edición) -->
+      <form id="formPublic" onsubmit="addPublicItem(event)" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-2.5 p-4 mb-5 rounded-xl bg-slate-950/75 border border-emerald-500/25">
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">UNIDAD *</label>
+          <input type="text" id="pubUnidad" required placeholder="Ej. NOVEMBER 5" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">PLACA *</label>
+          <input type="text" id="pubPlaca" required placeholder="Ej. BYU-795" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono uppercase focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">GPS</label>
+          <input type="text" id="pubGps" placeholder="868574042607064" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">DETEKTOR</label>
+          <input type="text" id="pubDetektor" placeholder="Ej. 1DB199" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono uppercase focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">L ACTIVACION</label>
+          <input type="text" id="pubActivacion" placeholder="Ej. D7D21B3" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono uppercase focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">L RESPUESTA</label>
+          <input type="text" id="pubRespuesta" placeholder="Ej. 3VNAF" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono uppercase focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">DETALLES</label>
+          <input type="text" id="pubDetalles" placeholder="Ej. Cambiar Switch" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all cursor-pointer">
+            + Agregar
+          </button>
+        </div>
+      </form>
+
+      <!-- Barra de Búsqueda en Trackers -->
+      <div class="relative mb-4">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400 text-sm">🔍</span>
+        <input type="text" id="publicSearch" oninput="renderPublicTable()" placeholder="Buscar en Trackers por UNIDAD, PLACA, GPS, DETEKTOR, L ACTIVACION, L RESPUESTA o DETALLES..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-400" />
+      </div>
+
+      <!-- Tabla de Trackers -->
+      <div class="overflow-x-auto rounded-xl border border-slate-800/90">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-950/95 border-b border-emerald-500/20 text-[11px] font-mono uppercase tracking-wider text-emerald-300">
+              <th class="py-3 px-3.5">UNIDAD</th>
+              <th class="py-3 px-3.5">PLACA</th>
+              <th class="py-3 px-3.5">GPS</th>
+              <th class="py-3 px-3.5">DETEKTOR</th>
+              <th class="py-3 px-3.5">L ACTIVACION</th>
+              <th class="py-3 px-3.5">L RESPUESTA</th>
+              <th class="py-3 px-3.5">DETALLES</th>
+              <th class="py-3 px-3.5 text-right">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody id="publicTableBody" class="divide-y divide-slate-800/70 text-xs sm:text-sm"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- SECCIÓN 2: SANCTUARY (BÓVEDA PRIVADA + BUSCADOR INTELIGENTE)          -->
+    <!-- ===================================================================== -->
+    <section id="viewVault" class="hidden glass-panel led-active-border rounded-2xl p-4 sm:p-6 animate-fade-in">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-800/80">
+        <div class="flex items-center gap-3">
+          <div id="sanctuaryBannerCroc" class="croc-trigger p-2 rounded-xl bg-emerald-500/15 border border-emerald-400/40">
+            <svg class="w-8 h-8 croc-glow-svg" viewBox="0 0 64 56" fill="none">
+              <g class="croc-lower-jaw">
+                <path d="M16 33 L56 32 L53 38 L22 40 L14 36 Z" fill="#065f46" stroke="#34d399" stroke-width="1.8"/>
+              </g>
+              <g class="croc-upper-jaw">
+                <path d="M10 26 C12 16, 22 14, 28 19 L58 23 L56 29 L16 29 Z" fill="#10b981" stroke="#ecfdf5" stroke-width="1.8"/>
+                <polygon points="28,29 30,34 32,29" fill="#ecfdf5"/>
+                <polygon points="42,29 44,34 46,29" fill="#ecfdf5"/>
+              </g>
+            </svg>
+          </div>
           <div>
             <h2 class="text-lg font-bold text-white flex items-center gap-2">
               <span>Sanctuary</span>
@@ -103,7 +366,21 @@
       </div>
 
       <!-- BUSCADOR INTELIGENTE MULTICRITERIO -->
-<!-- ... existing code ... -->
+      <div class="p-4 mb-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-slate-950/90 border border-emerald-500/40 shadow-[0_0_24px_rgba(16,185,129,0.1)]">
+        <div class="relative flex items-center">
+          <span class="absolute left-3.5 text-emerald-400 text-base">⚡</span>
+          <input
+            type="text"
+            id="smartVaultSearch"
+            oninput="renderVaultTable()"
+            placeholder="Buscador inteligente: escribe servicio, usuario, IP/URL, categoría o nota (tolera errores y acentos)..."
+            class="w-full pl-10 pr-24 py-3 rounded-xl bg-black/75 border border-emerald-500/45 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-emerald-300"
+          />
+          <button type="button" onclick="clearVaultSearch()" class="absolute right-2.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium cursor-pointer">
+            Limpiar
+          </button>
+        </div>
+
         <!-- Filtros rápidos por categoría -->
         <div id="categoryChips" class="flex flex-wrap items-center gap-2 mt-3">
           <button type="button" data-cat="ALL" onclick="setVaultCategory('ALL', this)" class="chip-btn px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/25 text-emerald-200 border border-emerald-400 cursor-pointer">Todas</button>
@@ -116,7 +393,69 @@
           <span id="vaultSearchStats" class="ml-auto font-mono text-xs text-emerald-300">0 registros</span>
         </div>
       </div>
-<!-- ... existing code ... -->
+
+      <!-- Formulario de Alta en Sanctuary -->
+      <form id="formVault" onsubmit="addVaultItem(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-2.5 p-4 mb-5 rounded-xl bg-slate-950/75 border border-emerald-500/25">
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Servicio / Sistema *</label>
+          <input type="text" id="vServicio" required placeholder="Ej. Portal Principal" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Categoría</label>
+          <select id="vCategoria" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400">
+            <option value="Sistemas">Sistemas</option>
+            <option value="Accesos Web">Accesos Web</option>
+            <option value="Redes">Redes</option>
+            <option value="Plataformas">Plataformas</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Usuario *</label>
+          <input type="text" id="vUsuario" required placeholder="Ej. admin_01" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Contraseña / PIN *</label>
+          <div class="flex gap-1">
+            <input type="text" id="vPass" required placeholder="Clave" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
+            <button type="button" onclick="generateStrongPass()" class="px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 text-xs cursor-pointer" title="Generar contraseña">🎲</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">IP / URL</label>
+          <input type="text" id="vHost" placeholder="192.168.1.1" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div>
+          <label class="block text-[10px] font-mono uppercase text-slate-400 mb-1">Notas / Etiquetas</label>
+          <input type="text" id="vNotas" placeholder="Detalle adicional" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400" />
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all cursor-pointer">
+            + Guardar
+          </button>
+        </div>
+      </form>
+
+      <!-- Tabla de Sanctuary -->
+      <div class="overflow-x-auto rounded-xl border border-slate-800/90">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-950/95 border-b border-emerald-500/20 text-[11px] font-mono uppercase tracking-wider text-emerald-300">
+              <th class="py-3 px-3.5">Servicio / Sistema</th>
+              <th class="py-3 px-3.5">Categoría</th>
+              <th class="py-3 px-3.5">Usuario</th>
+              <th class="py-3 px-3.5">Contraseña</th>
+              <th class="py-3 px-3.5">IP / URL</th>
+              <th class="py-3 px-3.5">Notas</th>
+              <th class="py-3 px-3.5 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="vaultTableBody" class="divide-y divide-slate-800/70 text-xs sm:text-sm"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
   <!-- ===================================================================== -->
   <!-- MODAL DE DOBLE FACTOR (CLAVE + TOTP 6 DÍGITOS RFC 6238)               -->
   <!-- ===================================================================== -->
@@ -211,7 +550,7 @@
 
     let isUnlocked = false;
     let isEditMode = false;
-    let pendingAction = "sanctuary"; // "sanctuary" | "edit"
+    let pendingAction = "sanctuary";
     let selectedCategory = "ALL";
     let revealedIds = new Set();
     let totpTicker = null;
@@ -283,7 +622,6 @@
       const cleanCode = String(userCode || "").trim();
       if (!/^\d{6}$/.test(cleanCode)) return false;
       const currentStep = Math.floor(Date.now() / 1000 / 30);
-      // Ventana de tolerancia ±1 bloque de 30s para absorber ligeros desfases de reloj
       for (const offset of [-1, 0, 1]) {
         const expected = await generateTotpForCounter(secretBase32, currentStep + offset);
         if (expected === cleanCode) return true;
@@ -338,7 +676,6 @@
         return res.slice(data.length);
       }
 
-      // Capacidades Byte Mode Nivel L para versiones 1..10
       const VERSION_INFO = [
         null,
         { size: 21, total: 26, ec: 7, blocks: [19], align: [] },
@@ -370,7 +707,7 @@
           for (let i = len - 1; i >= 0; i--) bitBuf.push((val >>> i) & 1);
         };
 
-        pushBits(0b0100, 4); // Byte mode
+        pushBits(0b0100, 4);
         pushBits(bytes.length, ver <= 9 ? 8 : 16);
         for (const b of bytes) pushBits(b, 8);
         pushBits(0, Math.min(4, dataCap * 8 - bitBuf.length));
@@ -454,7 +791,6 @@
           }
         }
 
-        // Reservar áreas de formato
         for (let i = 0; i < 9; i++) {
           if (i !== 6) {
             reserved[8][i] = 1;
@@ -467,7 +803,6 @@
         }
         setModule(n - 8, 8, 1, true);
 
-        // Colocar bits con máscara 0 ((r + c) % 2 === 0)
         const streamBits = [];
         for (const byte of finalStream) {
           for (let b = 7; b >= 0; b--) streamBits.push((byte >>> b) & 1);
@@ -491,7 +826,6 @@
           upward = !upward;
         }
 
-        // Formato ECC Level L (01) + Mask 0 (000) => 111011111000100
         const fmtBits = [1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0];
         const coordsA = [[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,7],[8,8],[7,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]];
         const coordsB = [[n-1,8],[n-2,8],[n-3,8],[n-4,8],[n-5,8],[n-6,8],[n-7,8],[8,n-8],[8,n-7],[8,n-6],[8,n-5],[8,n-4],[8,n-3],[8,n-2],[8,n-1]];
@@ -847,7 +1181,416 @@
         btnTrigger.classList.remove("bg-emerald-500/35", "border-emerald-300");
       }
     }
-// ... existing code ...
+
+    function switchTab(tab) {
+      const isVault = tab === "vault" && isUnlocked;
+      document.getElementById("viewPublic").classList.toggle("hidden", isVault);
+      document.getElementById("viewVault").classList.toggle("hidden", !isVault);
+
+      const tabPub = document.getElementById("tabPublic");
+      const tabSanc = document.getElementById("tabSanctuary");
+
+      if (isVault) {
+        tabSanc.className = "croc-trigger inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer";
+        tabPub.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10 cursor-pointer";
+      } else {
+        tabPub.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer";
+        tabSanc.className = "croc-trigger inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-300 hover:text-emerald-300 hover:bg-emerald-500/10 cursor-pointer";
+      }
+    }
+
+    // =========================================================================
+    // TABLA DE TRACKERS (RENDERIZADO, EDICIÓN EN LÍNEA Y CRUD)
+    // =========================================================================
+    function renderPublicTable() {
+      const tbody = document.getElementById("publicTableBody");
+      const countPill = document.getElementById("publicCountPill");
+      if (!tbody) return;
+
+      const q = normalizeText(document.getElementById("publicSearch")?.value || "");
+      const filtered = publicItems.filter(item => {
+        if (!q) return true;
+        return normalizeText(
+          `${item.unidad} ${item.placa} ${item.gps} ${item.detektor} ${item.activacion} ${item.respuesta} ${item.detalles}`
+        ).includes(q);
+      });
+
+      if (countPill) countPill.textContent = publicItems.length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-8 text-center text-slate-400 text-xs">
+              No se encontraron registros que coincidan con la búsqueda.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const editableCell = (field, value, extraClass = "") => {
+          const displayVal = value ? escapeHtml(value) : `<span class="text-slate-600 italic">—</span>`;
+          if (!isEditMode) {
+            return `<td class="py-3 px-3.5 ${extraClass}">${displayVal}</td>`;
+          }
+          return `
+            <td onclick="startInlineEdit(this, ${item.id}, '${field}')"
+                title="Clic para editar ${field.toUpperCase()}"
+                class="py-3 px-3.5 cursor-pointer hover:bg-emerald-500/10 rounded transition-colors ${extraClass}">
+              ${displayVal}
+            </td>
+          `;
+        };
+
+        return `
+          <tr class="hover:bg-emerald-500/[0.03] transition-colors">
+            ${editableCell("unidad", item.unidad, "font-semibold text-white")}
+            ${editableCell("placa", item.placa, "font-mono text-emerald-300")}
+            ${editableCell("gps", item.gps, "font-mono text-slate-300")}
+            ${editableCell("detektor", item.detektor, "font-mono text-cyan-300")}
+            ${editableCell("activacion", item.activacion, "font-mono text-amber-300")}
+            ${editableCell("respuesta", item.respuesta, "font-mono text-purple-300")}
+            ${editableCell("detalles", item.detalles, "text-slate-300")}
+            <td class="py-3 px-3.5 text-right whitespace-nowrap">
+              <div class="inline-flex items-center gap-1.5">
+                <button type="button" onclick="copyTrackerRow(${item.id})" class="px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-[11px] font-medium cursor-pointer" title="Copiar fila completa">
+                  📋 Copiar
+                </button>
+                ${isEditMode ? `
+                  <button type="button" onclick="deletePublicItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-[11px] font-medium cursor-pointer" title="Eliminar registro">
+                    🗑️
+                  </button>
+                ` : ""}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function startInlineEdit(tdEl, id, field) {
+      if (!isEditMode || tdEl.querySelector("input")) return;
+      const item = publicItems.find(x => x.id === id);
+      if (!item) return;
+
+      const currentVal = item[field] || "";
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = currentVal;
+      input.className = "w-full px-2 py-1 rounded bg-slate-950 border border-emerald-400 text-xs text-white font-mono focus:outline-none";
+
+      const commit = () => {
+        const nextVal = input.value.trim();
+        if (nextVal !== currentVal) {
+          item[field] = nextVal;
+          persistTrackers("Celda actualizada");
+        }
+        renderPublicTable();
+      };
+
+      input.addEventListener("blur", commit);
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          input.blur();
+        } else if (e.key === "Escape") {
+          renderPublicTable();
+        }
+      });
+
+      tdEl.innerHTML = "";
+      tdEl.appendChild(input);
+      input.focus();
+      input.select();
+    }
+
+    function addPublicItem(e) {
+      e.preventDefault();
+      if (!isEditMode) return;
+
+      const newItem = {
+        id: Date.now(),
+        unidad: document.getElementById("pubUnidad").value.trim(),
+        placa: document.getElementById("pubPlaca").value.trim().toUpperCase(),
+        gps: document.getElementById("pubGps").value.trim(),
+        detektor: document.getElementById("pubDetektor").value.trim().toUpperCase(),
+        activacion: document.getElementById("pubActivacion").value.trim().toUpperCase(),
+        respuesta: document.getElementById("pubRespuesta").value.trim().toUpperCase(),
+        detalles: document.getElementById("pubDetalles").value.trim()
+      };
+
+      publicItems.unshift(newItem);
+      persistTrackers("Unidad agregada");
+      e.target.reset();
+      renderPublicTable();
+      showToast(`Unidad ${newItem.unidad} guardada.`);
+    }
+
+    function deletePublicItem(id) {
+      if (!isEditMode) return;
+      publicItems = publicItems.filter(x => x.id !== id);
+      persistTrackers("Registro eliminado");
+      renderPublicTable();
+      showToast("Registro eliminado de Trackers.");
+    }
+
+    function copyTrackerRow(id) {
+      const item = publicItems.find(x => x.id === id);
+      if (!item) return;
+      const summary = [
+        `UNIDAD: ${item.unidad}`,
+        `PLACA: ${item.placa}`,
+        item.gps ? `GPS: ${item.gps}` : null,
+        item.detektor ? `DETEKTOR: ${item.detektor}` : null,
+        item.activacion ? `L ACTIVACION: ${item.activacion}` : null,
+        item.respuesta ? `L RESPUESTA: ${item.respuesta}` : null,
+        item.detalles ? `DETALLES: ${item.detalles}` : null
+      ].filter(Boolean).join(" | ");
+      copyText(summary, `Datos de ${item.unidad}`);
+    }
+
+    // =========================================================================
+    // BUSCADOR INTELIGENTE Y TABLA DE SANCTUARY
+    // =========================================================================
+    function normalizeText(str) {
+      return String(str || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function levenshtein(a, b) {
+      if (a.length === 0) return b.length;
+      if (b.length === 0) return a.length;
+      const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+      for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+          matrix[i][j] = b[i - 1] === a[j - 1]
+            ? matrix[i - 1][j - 1]
+            : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+        }
+      }
+      return matrix[b.length][a.length];
+    }
+
+    function smartMatch(item, query) {
+      if (selectedCategory !== "ALL" && item.categoria !== selectedCategory) return false;
+      if (!query) return true;
+
+      const searchableBlob = normalizeText(
+        `${item.servicio} ${item.categoria} ${item.usuario} ${item.host} ${item.notas}`
+      );
+      const wordsInItem = searchableBlob.split(/[\s\-_./:@]+/).filter(Boolean);
+      const queryTokens = normalizeText(query).split(/\s+/).filter(Boolean);
+
+      return queryTokens.every(token => {
+        if (searchableBlob.includes(token)) return true;
+        if (token.length >= 4) {
+          return wordsInItem.some(w => Math.abs(w.length - token.length) <= 2 && levenshtein(w, token) <= 1);
+        }
+        return false;
+      });
+    }
+
+    function highlightMatch(text, query) {
+      if (!text) return "";
+      const safe = escapeHtml(text);
+      if (!query) return safe;
+      const tokens = query.trim().split(/\s+/).filter(t => t.length >= 2);
+      if (!tokens.length) return safe;
+      const pattern = new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+      return safe.replace(pattern, "<mark>$1</mark>");
+    }
+
+    function setVaultCategory(cat, btnEl) {
+      selectedCategory = cat;
+      document.querySelectorAll("#categoryChips .chip-btn").forEach(btn => {
+        btn.className = "chip-btn px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10 hover:border-emerald-500/50 cursor-pointer";
+      });
+      if (btnEl) {
+        btnEl.className = "chip-btn px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/25 text-emerald-200 border border-emerald-400 cursor-pointer";
+      }
+      renderVaultTable();
+    }
+
+    function clearVaultSearch() {
+      const input = document.getElementById("smartVaultSearch");
+      if (input) input.value = "";
+      selectedCategory = "ALL";
+      const firstChip = document.querySelector("#categoryChips .chip-btn");
+      setVaultCategory("ALL", firstChip);
+    }
+
+    function renderVaultTable() {
+      if (!isUnlocked) return;
+      const tbody = document.getElementById("vaultTableBody");
+      const stats = document.getElementById("vaultSearchStats");
+      const pill = document.getElementById("sanctuaryCountPill");
+      const query = document.getElementById("smartVaultSearch")?.value || "";
+
+      const filtered = vaultItems.filter(item => smartMatch(item, query));
+      if (pill) pill.textContent = vaultItems.length;
+      if (stats) stats.textContent = `Mostrando ${filtered.length} de ${vaultItems.length} registros`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-8 text-center text-slate-400 text-xs">
+              No se encontraron coincidencias en Sanctuary.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const isShown = revealedIds.has(item.id);
+        const passDisplay = isShown ? escapeHtml(item.pass) : "••••••••••••";
+
+        return `
+          <tr class="hover:bg-emerald-500/[0.03] transition-colors">
+            <td class="py-3 px-3.5 font-semibold text-white">${highlightMatch(item.servicio, query)}</td>
+            <td class="py-3 px-3.5">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                ${escapeHtml(item.categoria)}
+              </span>
+            </td>
+            <td class="py-3 px-3.5 font-mono text-slate-200">
+              <div class="inline-flex items-center gap-1.5">
+                <span>${highlightMatch(item.usuario, query)}</span>
+                <button type="button" onclick="copyText('${escapeAttr(item.usuario)}', 'Usuario')" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] cursor-pointer" title="Copiar usuario">📋</button>
+              </div>
+            </td>
+            <td class="py-3 px-3.5 font-mono text-emerald-300">
+              <div class="inline-flex items-center gap-1.5">
+                <span>${passDisplay}</span>
+                <button type="button" onclick="toggleReveal(${item.id})" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] cursor-pointer" title="Mostrar / Ocultar">${isShown ? "🙈" : "👁️"}</button>
+                <button type="button" onclick="copyText('${escapeAttr(item.pass)}', 'Contraseña')" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[11px] cursor-pointer" title="Copiar contraseña">🔑</button>
+              </div>
+            </td>
+            <td class="py-3 px-3.5 font-mono text-slate-300">${highlightMatch(item.host || "—", query)}</td>
+            <td class="py-3 px-3.5 text-slate-400">${highlightMatch(item.notas || "—", query)}</td>
+            <td class="py-3 px-3.5 text-right whitespace-nowrap">
+              ${isEditMode ? `
+                <button type="button" onclick="deleteVaultItem(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-[11px] font-medium cursor-pointer">
+                  Eliminar
+                </button>
+              ` : `<span class="text-[11px] text-slate-500 font-mono">Solo lectura</span>`}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function addVaultItem(e) {
+      e.preventDefault();
+      if (!isUnlocked || !isEditMode) return;
+
+      const newItem = {
+        id: Date.now(),
+        servicio: document.getElementById("vServicio").value.trim(),
+        categoria: document.getElementById("vCategoria").value,
+        usuario: document.getElementById("vUsuario").value.trim(),
+        pass: document.getElementById("vPass").value.trim(),
+        host: document.getElementById("vHost").value.trim(),
+        notas: document.getElementById("vNotas").value.trim()
+      };
+
+      vaultItems.unshift(newItem);
+      persistVault();
+      e.target.reset();
+      renderVaultTable();
+      showToast("Registro guardado en Sanctuary.");
+    }
+
+    function deleteVaultItem(id) {
+      if (!isUnlocked || !isEditMode) return;
+      vaultItems = vaultItems.filter(x => x.id !== id);
+      persistVault();
+      renderVaultTable();
+      showToast("Registro eliminado de Sanctuary.");
+    }
+
+    function toggleReveal(id) {
+      if (revealedIds.has(id)) {
+        revealedIds.delete(id);
+      } else {
+        revealedIds.add(id);
+        setTimeout(() => {
+          if (revealedIds.delete(id) && isUnlocked) renderVaultTable();
+        }, 15000);
+      }
+      renderVaultTable();
+    }
+
+    function generateStrongPass() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
+      const arr = new Uint32Array(14);
+      crypto.getRandomValues(arr);
+      document.getElementById("vPass").value = Array.from(arr, x => chars[x % chars.length]).join("");
+      showToast("Contraseña aleatoria generada.");
+    }
+
+    // =========================================================================
+    // EXPORTACIÓN EXCEL / RESPALDOS JSON Y UTILIDADES
+    // =========================================================================
+    function exportToExcelCSV() {
+      const inVault = !document.getElementById("viewVault").classList.contains("hidden") && isUnlocked;
+      const rows = [];
+      let filename = "";
+
+      if (inVault) {
+        rows.push(["Servicio", "Categoria", "Usuario", "Contrasena", "IP_URL", "Notas"]);
+        vaultItems.forEach(i => rows.push([i.servicio, i.categoria, i.usuario, i.pass, i.host, i.notas]));
+        filename = `MDZ_Sanctuary_${new Date().toISOString().slice(0, 10)}.csv`;
+      } else {
+        rows.push(["UNIDAD", "PLACA", "GPS", "DETEKTOR", "L ACTIVACION", "L RESPUESTA", "DETALLES"]);
+        publicItems.forEach(i => rows.push([i.unidad, i.placa, i.gps, i.detektor, i.activacion, i.respuesta, i.detalles]));
+        filename = `MDZ_Trackers_${new Date().toISOString().slice(0, 10)}.csv`;
+      }
+
+      const csvContent = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      showToast(`Exportado: ${filename}`);
+    }
+
+    function exportTrackersBackupJSON() {
+      const blob = new Blob([JSON.stringify(publicItems, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `MDZ_Trackers_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      showToast("Respaldo JSON de Trackers descargado.");
+    }
+
+    function importTrackersBackupJSON(event) {
+      if (!isEditMode) return;
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!Array.isArray(parsed)) throw new Error("Formato inválido");
+          publicItems = parsed;
+          persistTrackers("Respaldo restaurado");
+          renderPublicTable();
+          showToast(`Se restauraron ${parsed.length} registros en Trackers.`);
+        } catch (err) {
+          showToast("El archivo JSON seleccionado no es válido.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
     function exportVaultBackupJSON() {
       if (!isUnlocked) return;
       const blob = new Blob([JSON.stringify(vaultItems, null, 2)], { type: "application/json" });
@@ -858,6 +1601,37 @@
       showToast("Respaldo JSON de Sanctuary descargado.");
     }
 
+    function copyText(text, label) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+      showToast(`${label} copiado al portapapeles.`);
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.remove("translate-y-24", "opacity-0");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        t.classList.add("translate-y-24", "opacity-0");
+      }, 2600);
+    }
+
     function escapeHtml(str) {
       return String(str || "").replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]));
     }
@@ -866,6 +1640,21 @@
       return String(str || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
     }
 
+    // Atajos de teclado: Ctrl+K para Sanctuary/2FA, '/' para buscador inteligente
+    document.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        handleSanctuaryAction();
+      } else if (e.key === "/" && isUnlocked && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
+        e.preventDefault();
+        switchTab("sanctuary");
+        document.getElementById("smartVaultSearch")?.focus();
+      } else if (e.key === "Escape") {
+        closeSanctuaryModal();
+      }
+    });
+
+    // Inicialización al cargar
     renderPublicTable();
     updateEditModeUI();
     updateSanctuaryUI();
