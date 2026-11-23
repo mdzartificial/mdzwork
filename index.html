@@ -891,13 +891,16 @@
     </div>
 
     <!-- ===================================================================
-         SUB-CUADRO EN VISTA GENERAL: DIRECTORIO (AL FINAL)
+         SUB-CUADRO EN VISTA GENERAL: DIRECTORIO (AL FINAL, PLEGABLE)
          =================================================================== -->
     <div style="margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border-glass);">
-      <div class="section-header">
+      <div class="section-header" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
         <div class="section-title">
           <h2>📒 Directorio</h2>
           <span class="autosave-pill"><span class="dot-pulse"></span> <span id="directoryCountText">0 registros</span></span>
+          <button type="button" id="btnToggleDirectory" class="btn-glass btn-sm" onclick="toggleDirectoryPanel()">
+            ▼ Desplegar Directorio
+          </button>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button id="btnAddDirColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('directory')">➕ Añadir Columna</button>
@@ -910,22 +913,24 @@
         </div>
       </div>
 
-      <!-- Formulario dinámico del Directorio (Visible con Modo Edición Activo) -->
-      <form id="formDirectory" class="form-grid" onsubmit="addDirectoryItem(event)"></form>
+      <div id="directoryCollapsibleBody" style="display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.07);">
+        <!-- Formulario dinámico del Directorio (Visible con Modo Edición Activo) -->
+        <form id="formDirectory" class="form-grid" onsubmit="addDirectoryItem(event)"></form>
 
-      <!-- Buscador del Directorio -->
-      <div class="search-input-wrap" style="margin-bottom: 14px;">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="directorySearch" placeholder="Buscar en Directorio por nombre, área, teléfono, correo, enlace o notas..." oninput="renderDirectoryTable()" />
-        <button type="button" class="search-clear" onclick="document.getElementById('directorySearch').value=''; renderDirectoryTable();">Limpiar</button>
-      </div>
+        <!-- Buscador del Directorio -->
+        <div class="search-input-wrap" style="margin-bottom: 14px;">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="directorySearch" placeholder="Buscar en Directorio por nombre, área, teléfono, correo, enlace o notas..." oninput="renderDirectoryTable()" />
+          <button type="button" class="search-clear" onclick="document.getElementById('directorySearch').value=''; renderDirectoryTable();">Limpiar</button>
+        </div>
 
-      <!-- Tabla Directorio -->
-      <div class="table-wrap">
-        <table>
-          <thead id="directoryTableHead"></thead>
-          <tbody id="directoryTableBody"></tbody>
-        </table>
+        <!-- Tabla Directorio -->
+        <div class="table-wrap">
+          <table>
+            <thead id="directoryTableHead"></thead>
+            <tbody id="directoryTableBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -2119,6 +2124,15 @@
   // =========================================================================
   // DIRECTORIO EN VISTA GENERAL (CRUD, COLUMNAS Y EDICIÓN EN LÍNEA)
   // =========================================================================
+  function toggleDirectoryPanel() {
+    const body = document.getElementById("directoryCollapsibleBody");
+    const btn = document.getElementById("btnToggleDirectory");
+    if (!body || !btn) return;
+    const isHidden = body.style.display === "none";
+    body.style.display = isHidden ? "block" : "none";
+    btn.innerHTML = isHidden ? "▲ Ocultar Directorio" : "▼ Desplegar Directorio";
+  }
+
   function renderDirectoryForm() {
     const formEl = document.getElementById("formDirectory");
     const fieldsHtml = directoryColumns.map(col => `
