@@ -570,6 +570,7 @@
       justify-content: center;
       position: relative;
       overflow: visible;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
     .login-hero h3 {
       font-size: 1.24rem;
@@ -685,12 +686,12 @@
     }
     #loginModalCard.croc-angry .login-croc-badge {
       border-color: #ef4444;
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(127, 29, 29, 0.6));
-      box-shadow: 0 0 24px rgba(239, 68, 68, 0.55);
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.35), rgba(127, 29, 29, 0.72));
+      box-shadow: 0 0 28px rgba(239, 68, 68, 0.75);
     }
     #loginModalCard.croc-angry.led-border::before {
-      border-color: rgba(239, 68, 68, 0.75) !important;
-      box-shadow: 0 0 45px rgba(239, 68, 68, 0.55), inset 0 0 35px rgba(239, 68, 68, 0.25) !important;
+      border-color: rgba(239, 68, 68, 0.85) !important;
+      box-shadow: 0 0 50px rgba(239, 68, 68, 0.65), inset 0 0 40px rgba(239, 68, 68, 0.32) !important;
     }
     #loginModalCard.croc-angry::after {
       border-top-color: #ef4444 !important;
@@ -698,14 +699,118 @@
     }
     #loginModalCard.croc-angry .croc-upper path:first-child { fill: #ef4444 !important; stroke: #fecaca !important; }
     #loginModalCard.croc-angry .croc-lower path:first-child { fill: #b91c1c !important; stroke: #fca5a5 !important; }
-    #loginModalCard.croc-angry .croc-upper { animation: crocUpperSnap 0.16s ease-in-out infinite !important; }
-    #loginModalCard.croc-angry .croc-lower { animation: crocLowerSnap 0.16s ease-in-out infinite !important; }
+    #loginModalCard.croc-angry .croc-upper { animation: crocUpperSnap 0.14s ease-in-out infinite !important; }
+    #loginModalCard.croc-angry .croc-lower { animation: crocLowerSnap 0.14s ease-in-out infinite !important; }
 
     @keyframes angryShake {
-      10%, 90% { transform: translateX(-3px); }
-      20%, 80% { transform: translateX(5px); }
-      30%, 50%, 70% { transform: translateX(-7px); }
-      40%, 60% { transform: translateX(7px); }
+      10%, 90% { transform: translateX(-4px); }
+      20%, 80% { transform: translateX(6px); }
+      30%, 50%, 70% { transform: translateX(-8px); }
+      40%, 60% { transform: translateX(8px); }
+    }
+
+    /* =========================================================================
+       ALERTA ROJA TOTAL CUANDO FALLAN LAS CREDENCIALES O EL 2FA
+       ========================================================================= */
+    body.auth-alert-red #totpModal {
+      background: radial-gradient(900px 700px at 50% 50%, #260606 0%, #0d0202 62%, #050101 100%) !important;
+    }
+
+    body.auth-alert-red #loginOrbBg {
+      filter: blur(2px) hue-rotate(-145deg) saturate(1.85) brightness(1.08) !important;
+    }
+
+    body.auth-alert-red #loginCoreGlow {
+      background: radial-gradient(
+        circle,
+        rgba(24, 3, 3, 0.88) 0%,
+        rgba(24, 3, 3, 0.68) 48%,
+        rgba(239, 68, 68, 0.18) 68%,
+        transparent 78%
+      ) !important;
+      box-shadow: inset 0 0 70px rgba(239, 68, 68, 0.35) !important;
+    }
+    body.auth-alert-red #loginCoreGlow::after {
+      background: radial-gradient(
+        110% 70% at 32% 16%,
+        rgba(254, 202, 202, 0.18) 0%,
+        rgba(239, 68, 68, 0.08) 36%,
+        transparent 62%
+      ) !important;
+    }
+
+    body.auth-alert-red .hud-arc-label {
+      fill: rgba(254, 202, 202, 0.92) !important;
+      text-shadow: 0 0 12px rgba(239, 68, 68, 0.95) !important;
+    }
+    body.auth-alert-red .hud-arc-bottom {
+      fill: rgba(248, 113, 113, 0.75) !important;
+    }
+
+    body.auth-alert-red .login-status-badge {
+      background: rgba(239, 68, 68, 0.24) !important;
+      border-color: rgba(248, 113, 113, 0.7) !important;
+      color: #fca5a5 !important;
+    }
+
+    body.auth-alert-red .login-hero h3 span,
+    body.auth-alert-red .login-input-icon,
+    body.auth-alert-red #modalCountdown {
+      color: #f87171 !important;
+    }
+
+    body.auth-alert-red #loginModalCard .login-input-group input {
+      background: rgba(26, 4, 4, 0.82) !important;
+      border-color: rgba(248, 113, 113, 0.55) !important;
+      box-shadow: inset 0 0 14px rgba(239, 68, 68, 0.22) !important;
+    }
+    body.auth-alert-red #loginModalCard .login-input-group input:focus {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5) !important;
+    }
+
+    body.auth-alert-red #loginModalCard .totp-panel {
+      background: rgba(26, 4, 4, 0.78) !important;
+      border-color: rgba(248, 113, 113, 0.55) !important;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 28px rgba(239, 68, 68, 0.28) !important;
+    }
+
+    body.auth-alert-red #loginModalCard .totp-panel .totp-input {
+      background: rgba(15, 2, 2, 0.88) !important;
+      border-color: rgba(248, 113, 113, 0.65) !important;
+      color: #fca5a5 !important;
+      text-shadow: 0 0 12px rgba(239, 68, 68, 0.8) !important;
+    }
+
+    body.auth-alert-red .totp-timer-fill {
+      background: linear-gradient(90deg, #991b1b, #ef4444, #fca5a5) !important;
+    }
+
+    body.auth-alert-red #loginModalCard .btn-login-submit {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.92), rgba(153, 27, 27, 0.88)) !important;
+      border-color: rgba(254, 202, 202, 0.7) !important;
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    }
+
+    body.auth-alert-red .login-croc-badge {
+      transform: scale(1.12);
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 34px rgba(239, 68, 68, 0.88) !important;
+    }
+    body.auth-alert-red .croc-upper {
+      animation: crocFuryUpper 0.11s ease-in-out infinite !important;
+    }
+    body.auth-alert-red .croc-lower {
+      animation: crocFuryLower 0.11s ease-in-out infinite !important;
+    }
+
+    @keyframes crocFuryUpper {
+      0%, 100% { transform: rotate(2deg); }
+      50% { transform: rotate(-28deg); }
+    }
+    @keyframes crocFuryLower {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(24deg); }
     }
 
     .byte-particle {
@@ -1137,7 +1242,7 @@
       </text>
       <text class="hud-arc-label hud-arc-bottom">
         <textPath href="#hudBottomArc" startOffset="50%" text-anchor="middle">
-          ENCRYPTED RLS AUTH • 30S
+          ENCRYPTED SKYNET • 30S
         </textPath>
       </text>
     </svg>
@@ -1145,7 +1250,7 @@
     <div class="login-top-meta">
       <span id="loginCloudBadge" class="login-status-badge">
         <span class="login-status-dot"></span>
-        <span id="loginCloudText">Auth RLS Activo</span>
+        <span id="loginCloudText">Orbitado</span>
       </span>
     </div>
 
@@ -1276,6 +1381,7 @@
   let lastEvaluatedGps = null;
   let pendingMfaFactorId = null;
   let holoOrbInstance = null;
+  let isAuthAlertRed = false;
 
   const sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
@@ -1403,30 +1509,46 @@
   // =========================================================================
   // AUTENTICACIÓN SEGURA CON SUPABASE AUTH + MFA NATIVO (TOTP EN SERVIDOR)
   // =========================================================================
+  function clearAuthAlertRed() {
+    isAuthAlertRed = false;
+    document.body.classList.remove("auth-alert-red");
+    const badgeText = document.getElementById("loginCloudText");
+    if (badgeText && badgeText.textContent === "ACCESO DENEGADO") {
+      badgeText.textContent = "Auth RLS Activo";
+    }
+  }
+
   function triggerAngryCroc() {
     const card = document.getElementById("loginModalCard");
     const wrap = document.getElementById("loginCrocWrap");
+    const badgeText = document.getElementById("loginCloudText");
     if (!card || !wrap) return;
+
+    isAuthAlertRed = true;
+    document.body.classList.add("auth-alert-red");
+    if (badgeText) badgeText.textContent = "ACCESO DENEGADO";
 
     card.classList.remove("croc-angry");
     void card.offsetWidth;
     card.classList.add("croc-angry");
 
-    const bytes = ["01", "10", "0xFF", "ERR", "00", "11", "0x00", "101", "010", "403"];
-    for (let i = 0; i < 14; i++) {
+    const bytes = ["ERR", "403", "DENY", "0x00", "ALERT", "NOPE", "0xFF", "LOCK", "FAIL", "101"];
+    for (let i = 0; i < 24; i++) {
       const span = document.createElement("span");
       span.className = "byte-particle";
       span.textContent = bytes[Math.floor(Math.random() * bytes.length)];
-      span.style.setProperty("--tx", `${35 + Math.random() * 115}px`);
-      span.style.setProperty("--ty", `${(Math.random() - 0.5) * 76}px`);
-      span.style.setProperty("--rot", `${(Math.random() - 0.5) * 65}deg`);
-      span.style.animationDelay = `${Math.random() * 0.16}s`;
+      span.style.setProperty("--tx", `${40 + Math.random() * 145}px`);
+      span.style.setProperty("--ty", `${(Math.random() - 0.5) * 105}px`);
+      span.style.setProperty("--rot", `${(Math.random() - 0.5) * 85}deg`);
+      span.style.animationDelay = `${Math.random() * 0.2}s`;
       wrap.appendChild(span);
-      setTimeout(() => span.remove(), 1100);
+      setTimeout(() => span.remove(), 1200);
     }
 
     clearTimeout(window._angryTimer);
-    window._angryTimer = setTimeout(() => card.classList.remove("croc-angry"), 1200);
+    window._angryTimer = setTimeout(() => {
+      card.classList.remove("croc-angry");
+    }, 1500);
   }
 
   function handleSanctuaryAction() { if (isAuthenticated) lockSanctuary(); else openTotpModal(); }
@@ -1442,6 +1564,7 @@
   }
 
   function openTotpModal() {
+    clearAuthAlertRed();
     document.getElementById("totpErrorMsg").textContent = "";
     document.getElementById("authUserInput").value = "";
     document.getElementById("authPassInput").value = "";
@@ -1480,6 +1603,7 @@
 
     // SI NO TIENE 2FA VINCULADO: OBLIGARLO A CONFIGURARLO AHORA MISMO
     if (!totpFactor) {
+      clearAuthAlertRed();
       errEl.textContent = "";
       await startForcedLoginMfaSetup(factors?.all || []);
       return;
@@ -1535,6 +1659,7 @@
     if (error) {
       console.error("Error MFA enroll:", error);
       document.getElementById("totpErrorMsg").textContent = `⛔ Error QR 2FA: ${error.message}`;
+      triggerAngryCroc();
       await sbClient.auth.signOut();
       return;
     }
@@ -1566,6 +1691,7 @@
     const errBox = document.getElementById("forcedMfaErr");
     if (!/^\d{6}$/.test(code) || !pendingMfaFactorId) {
       errBox.textContent = "Ingresa los 6 dígitos de tu app.";
+      triggerAngryCroc();
       return;
     }
 
@@ -1592,6 +1718,7 @@
   }
 
   async function bootAuthenticatedSession(session) {
+    clearAuthAlertRed();
     currentUserRole = session.user.app_metadata?.role || "viewer";
     currentUsername = session.user.email.replace("@mdz.local", "").toUpperCase();
     isAuthenticated = true;
@@ -2547,10 +2674,17 @@
       ctx.globalAlpha = m.alpha;
 
       const tailGrad = ctx.createLinearGradient(0, 0, -m.tailLen, 0);
-      tailGrad.addColorStop(0, "rgba(167, 243, 208, 0.85)");
-      tailGrad.addColorStop(0.25, "rgba(16, 185, 129, 0.55)");
-      tailGrad.addColorStop(0.65, "rgba(5, 150, 105, 0.18)");
-      tailGrad.addColorStop(1, "rgba(5, 150, 105, 0)");
+      if (isAuthAlertRed) {
+        tailGrad.addColorStop(0, "rgba(254, 202, 202, 0.92)");
+        tailGrad.addColorStop(0.25, "rgba(239, 68, 68, 0.7)");
+        tailGrad.addColorStop(0.65, "rgba(153, 27, 27, 0.25)");
+        tailGrad.addColorStop(1, "rgba(153, 27, 27, 0)");
+      } else {
+        tailGrad.addColorStop(0, "rgba(167, 243, 208, 0.85)");
+        tailGrad.addColorStop(0.25, "rgba(16, 185, 129, 0.55)");
+        tailGrad.addColorStop(0.65, "rgba(5, 150, 105, 0.18)");
+        tailGrad.addColorStop(1, "rgba(5, 150, 105, 0)");
+      }
 
       ctx.fillStyle = tailGrad;
       ctx.beginPath();
@@ -2561,14 +2695,14 @@
       ctx.fill();
 
       ctx.scale(m.scale, m.scale);
-      const jaw = 0.12 + Math.abs(Math.sin(m.jawPhase)) * 0.22;
-      ctx.shadowColor = "#10b981";
-      ctx.shadowBlur = 14;
+      const jaw = (isAuthAlertRed ? 0.22 : 0.12) + Math.abs(Math.sin(m.jawPhase)) * (isAuthAlertRed ? 0.34 : 0.22);
+      ctx.shadowColor = isAuthAlertRed ? "#ef4444" : "#10b981";
+      ctx.shadowBlur = isAuthAlertRed ? 18 : 14;
 
       ctx.save();
       ctx.rotate(-jaw);
-      ctx.fillStyle = "#10b981";
-      ctx.strokeStyle = "#a7f3d0";
+      ctx.fillStyle = isAuthAlertRed ? "#ef4444" : "#10b981";
+      ctx.strokeStyle = isAuthAlertRed ? "#fecaca" : "#a7f3d0";
       ctx.lineWidth = 1.2;
       ctx.beginPath();
       ctx.moveTo(-10, -2); ctx.lineTo(-6, -8); ctx.lineTo(14, -6); ctx.lineTo(18, -1); ctx.lineTo(-10, -1);
@@ -2586,8 +2720,8 @@
 
       ctx.save();
       ctx.rotate(jaw * 0.85);
-      ctx.fillStyle = "#047857";
-      ctx.strokeStyle = "#6ee7b7";
+      ctx.fillStyle = isAuthAlertRed ? "#991b1b" : "#047857";
+      ctx.strokeStyle = isAuthAlertRed ? "#fca5a5" : "#6ee7b7";
       ctx.lineWidth = 1.1;
       ctx.beginPath();
       ctx.moveTo(-9, 1); ctx.lineTo(16, 1); ctx.lineTo(13, 6); ctx.lineTo(-6, 6);
@@ -2614,15 +2748,15 @@
         s.pulse += s.speed;
         ctx.save();
         ctx.globalAlpha = 0.12 + (Math.sin(s.pulse) * 0.5 + 0.5) * 0.42;
-        ctx.fillStyle = "#a7f3d0";
+        ctx.fillStyle = isAuthAlertRed ? "#fca5a5" : "#a7f3d0";
         ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
 
       for (let i = 0; i < crocMeteors.length; i++) {
         const m = crocMeteors[i];
-        m.x += m.vx; m.y += m.vy; m.jawPhase += 0.14;
-        if (Math.random() < 0.45) {
+        m.x += m.vx; m.y += m.vy; m.jawPhase += isAuthAlertRed ? 0.28 : 0.14;
+        if (Math.random() < (isAuthAlertRed ? 0.7 : 0.45)) {
           meteorSparks.push({
             x: m.x - Math.cos(m.angle) * 12, y: m.y - Math.sin(m.angle) * 12,
             vx: -m.vx * 0.15 + (Math.random() - 0.5) * 0.8, vy: -m.vy * 0.15 + (Math.random() - 0.5) * 0.8,
@@ -2639,7 +2773,7 @@
         if (sp.life <= 0) { meteorSparks.splice(i, 1); continue; }
         ctx.save();
         ctx.globalAlpha = sp.life * 0.75;
-        ctx.fillStyle = "#6ee7b7";
+        ctx.fillStyle = isAuthAlertRed ? "#f87171" : "#6ee7b7";
         ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r * sp.life, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
@@ -2651,7 +2785,9 @@
         if (f.y < 0) f.y = H; if (f.y > H) f.y = 0;
         ctx.save();
         ctx.globalAlpha = 0.2 + (Math.sin(f.pulse) * 0.5 + 0.5) * 0.45;
-        ctx.fillStyle = "#6ee7b7"; ctx.shadowColor = "#10b981"; ctx.shadowBlur = 8;
+        ctx.fillStyle = isAuthAlertRed ? "#f87171" : "#6ee7b7";
+        ctx.shadowColor = isAuthAlertRed ? "#ef4444" : "#10b981";
+        ctx.shadowBlur = 8;
         ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
@@ -2661,12 +2797,12 @@
         b.phase += 0.025;
         let x, y, alpha;
         if (b.mode === "orbit") {
-          b.angle += b.speed;
+          b.angle += b.speed * (isAuthAlertRed ? 1.6 : 1);
           x = cx + Math.cos(b.angle) * b.rx; y = cy + Math.sin(b.angle) * b.ry;
           const lateralBoost = Math.abs(Math.cos(b.angle));
           alpha = (0.18 + lateralBoost * 0.55) * (0.65 + Math.sin(b.phase) * 0.35);
         } else {
-          b.offsetX += b.vx;
+          b.offsetX += b.vx * (isAuthAlertRed ? 1.6 : 1);
           if (Math.abs(b.offsetX) > 620) {
             b.offsetX = b.side * 325; b.offsetY = (Math.random() - 0.5) * 90;
             b.text = BYTE_TOKENS[Math.floor(Math.random() * BYTE_TOKENS.length)];
@@ -2678,8 +2814,11 @@
         ctx.save();
         ctx.font = `600 ${b.size.toFixed(1)}px "JetBrains Mono", monospace`;
         ctx.globalAlpha = alpha;
-        ctx.fillStyle = b.phase % 2 > 1 ? "#a7f3d0" : "#34d399";
-        ctx.shadowColor = "#10b981"; ctx.shadowBlur = 10;
+        ctx.fillStyle = isAuthAlertRed
+          ? (b.phase % 2 > 1 ? "#fecaca" : "#f87171")
+          : (b.phase % 2 > 1 ? "#a7f3d0" : "#34d399");
+        ctx.shadowColor = isAuthAlertRed ? "#ef4444" : "#10b981";
+        ctx.shadowBlur = 10;
         ctx.fillText(b.text, x, y);
         ctx.restore();
       }
