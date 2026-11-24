@@ -71,8 +71,4 @@ body {
   height: 100vh;
   object-fit: cover;
 }
-/* AMPLIAR ANIMACIÓN DEL FONDO */
-#header {
-    overflow: hidden;
-    position: relative;
-}
+
