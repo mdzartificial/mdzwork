@@ -31,7 +31,7 @@
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+   * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: var(--font-sans);
@@ -431,6 +431,46 @@
     @keyframes bioPulse {
       0% { opacity: 0.35; }
       100% { opacity: 0.9; }
+    }
+    /* Animaciones del Pantano (Ondas, Juncos, Hongos y Burbujas) */
+    .swamp-wave {
+      animation: swampDrift 10s linear infinite;
+    }
+    .swamp-wave.slow { animation-duration: 15s; animation-direction: reverse; }
+    .swamp-wave.fast { animation-duration: 7.5s; }
+    @keyframes swampDrift {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-120px); }
+    }
+
+    .reed-sway {
+      transform-origin: bottom center;
+      animation: reedWind 5.5s ease-in-out infinite alternate;
+    }
+    .reed-sway.slow { animation-duration: 7.2s; animation-delay: -1.5s; }
+    .reed-sway.fast { animation-duration: 4.3s; animation-delay: -0.8s; }
+    @keyframes reedWind {
+      0% { transform: rotate(-2.5deg); }
+      100% { transform: rotate(2.8deg); }
+    }
+
+    .shroom-glow {
+      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.75));
+      animation: bioPulse 3.8s ease-in-out infinite alternate;
+    }
+
+    .swamp-bubble {
+      opacity: 0;
+      animation: bubbleRise 6s ease-in infinite;
+    }
+    .swamp-bubble.b2 { animation-duration: 7.5s; animation-delay: 1.5s; }
+    .swamp-bubble.b3 { animation-duration: 5.5s; animation-delay: 2.8s; }
+    .swamp-bubble.b4 { animation-duration: 8s; animation-delay: 4s; }
+    @keyframes bubbleRise {
+      0%   { transform: translateY(0) scale(0.6); opacity: 0; }
+      20%  { opacity: 0.65; }
+      85%  { opacity: 0.4; }
+      100% { transform: translateY(-95px) scale(1.25); opacity: 0; }
     }
 
     #loginBgCanvas {
@@ -1109,61 +1149,149 @@
 <!-- PANTALLA DE LOGIN OBLIGATORIA: BOSQUE SANCTUARY PARALLAX + COCODRILOS COMIENDO BYTES -->
 <div id="totpModal" class="modal-backdrop open">
   <!-- Fondo multicapa con Parallax inspirado en bosque nocturno -->
+<!-- Fondo multicapa con Parallax: Hábitat de Pantano & Bosque de Manglar -->
   <div id="loginScene" aria-hidden="true">
-    <!-- Capa 1: Troncos profundos -->
-    <svg class="forest-layer" data-depth="0.18" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+    <!-- CAPA 1 (Fondo lejano): Siluetas de árboles altos y niebla de pantano -->
+    <svg class="forest-layer" data-depth="0.12" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
       <defs>
-        <linearGradient id="trunkDeep" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#06282e"/>
-          <stop offset="55%" stop-color="#041511"/>
-          <stop offset="100%" stop-color="#020806"/>
+        <linearGradient id="swampSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#04191e"/>
+          <stop offset="45%" stop-color="#051410"/>
+          <stop offset="80%" stop-color="#030d0a"/>
+          <stop offset="100%" stop-color="#020705"/>
+        </linearGradient>
+        <linearGradient id="bgTrunk" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#07272c"/>
+          <stop offset="65%" stop-color="#051713"/>
+          <stop offset="100%" stop-color="#020a08"/>
         </linearGradient>
       </defs>
-      <path d="M120 900 L145 480 L110 0 L215 0 L235 450 L265 900 Z" fill="url(#trunkDeep)" opacity="0.55"/>
-      <path d="M460 900 L490 520 L475 0 L535 0 L555 510 L585 900 Z" fill="url(#trunkDeep)" opacity="0.4"/>
-      <path d="M1080 900 L1100 460 L1125 0 L1195 0 L1185 480 L1220 900 Z" fill="url(#trunkDeep)" opacity="0.45"/>
-      <path d="M1370 900 L1390 420 L1350 0 L1490 0 L1475 460 L1520 900 Z" fill="url(#trunkDeep)" opacity="0.6"/>
+      <rect width="1600" height="900" fill="url(#swampSky)"/>
+      <!-- Árboles lejanos ligeramente inclinados -->
+      <path d="M160 820 C175 620, 150 320, 130 0 L215 0 C225 300, 240 600, 265 820 Z" fill="url(#bgTrunk)" opacity="0.5"/>
+      <path d="M410 820 C425 560, 445 280, 465 0 L525 0 C515 290, 500 570, 520 820 Z" fill="url(#bgTrunk)" opacity="0.38"/>
+      <path d="M680 820 C670 550, 690 260, 665 0 L710 0 C725 270, 715 560, 735 820 Z" fill="url(#bgTrunk)" opacity="0.28"/>
+      <path d="M1040 820 C1050 540, 1085 260, 1110 0 L1165 0 C1145 280, 1125 560, 1140 820 Z" fill="url(#bgTrunk)" opacity="0.35"/>
+      <path d="M1320 820 C1340 580, 1310 290, 1280 0 L1390 0 C1405 310, 1420 590, 1455 820 Z" fill="url(#bgTrunk)" opacity="0.52"/>
     </svg>
 
-    <!-- Capa 2: Rayos de luz y neblina -->
-    <div class="forest-layer" data-depth="0.32">
+    <!-- CAPA 2 (Atmósfera): Rayos de luz filtrados y neblina húmeda -->
+    <div class="forest-layer" data-depth="0.25">
       <div class="forest-sunrays"></div>
       <div class="forest-mist"></div>
     </div>
 
-    <!-- Capa 3: Ramas, lianas colgantes y focos bioluminiscentes -->
-    <svg class="forest-layer" data-depth="0.55" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+    <!-- CAPA 3 (Árboles de manglar, raíces retorcidas, ramas y lianas) -->
+    <svg class="forest-layer" data-depth="0.45" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
       <defs>
+        <linearGradient id="mangroveLeft" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#062c2d"/>
+          <stop offset="45%" stop-color="#041814"/>
+          <stop offset="100%" stop-color="#010705"/>
+        </linearGradient>
+        <linearGradient id="mangroveRight" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#062c2d"/>
+          <stop offset="45%" stop-color="#041814"/>
+          <stop offset="100%" stop-color="#010705"/>
+        </linearGradient>
         <radialGradient id="bioCyan" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.75"/>
-          <stop offset="60%" stop-color="#10b981" stop-opacity="0.25"/>
+          <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.72"/>
+          <stop offset="55%" stop-color="#10b981" stop-opacity="0.24"/>
           <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
         </radialGradient>
-        <linearGradient id="branchDark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#041c1a"/>
-          <stop offset="100%" stop-color="#010705"/>
+        <radialGradient id="shroomCap" cx="50%" cy="20%" r="75%">
+          <stop offset="0%" stop-color="#6ee7b7"/>
+          <stop offset="45%" stop-color="#0f766e"/>
+          <stop offset="100%" stop-color="#042f2e"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Gran árbol izquierdo con raíces de pantano -->
+      <path d="M-30 -20 L210 -20 C190 120, 230 220, 410 175 C520 148, 610 95, 730 115 C590 145, 480 215, 310 235 C205 248, 175 340, 170 490 C166 610, 210 690, 320 790 L245 815 C190 745, 165 695, 145 645 C135 710, 155 760, 195 825 L110 835 C95 765, 85 710, 75 660 C55 725, 25 780, -30 835 Z" fill="url(#mangroveLeft)"/>
+
+      <!-- Gran árbol derecho con raíces de manglar -->
+      <path d="M1630 -20 L1370 -20 C1395 140, 1340 230, 1170 185 C1050 155, 960 110, 840 130 C980 165, 1100 230, 1270 255 C1380 272, 1410 365, 1415 510 C1420 625, 1375 700, 1265 795 L1340 820 C1395 750, 1425 700, 1445 650 C1455 715, 1435 765, 1395 830 L1485 840 C1500 770, 1510 715, 1520 665 C1545 730, 1575 785, 1630 840 Z" fill="url(#mangroveRight)"/>
+
+      <!-- Lianas colgantes con movimiento orgánico -->
+      <g stroke="#03140f" fill="none" stroke-linecap="round">
+        <path class="vine-sway" stroke-width="3.2" d="M260 225 Q 242 350, 268 470 T 250 640"/>
+        <path class="vine-sway slow" stroke-width="1.8" d="M295 220 Q 312 325, 288 430 T 306 565"/>
+        <path class="vine-sway fast" stroke-width="2.4" d="M465 170 Q 450 285, 474 395 T 458 525"/>
+        <path class="vine-sway slow" stroke-width="2.6" d="M1130 180 Q 1148 295, 1122 405 T 1140 545"/>
+        <path class="vine-sway" stroke-width="3.4" d="M1315 245 Q 1296 370, 1326 490 T 1305 660"/>
+        <path class="vine-sway fast" stroke-width="1.7" d="M1355 250 Q 1372 345, 1348 450 T 1365 570"/>
+      </g>
+
+      <!-- Hongos bioluminiscentes en las raíces (guiño al bosque de Miyazaki) -->
+      <g class="shroom-glow">
+        <ellipse cx="218" cy="738" rx="16" ry="7" fill="url(#shroomCap)"/>
+        <ellipse cx="242" cy="748" rx="11" ry="5" fill="url(#shroomCap)"/>
+        <ellipse cx="200" cy="750" rx="9" ry="4" fill="url(#shroomCap)"/>
+        <ellipse cx="1368" cy="744" rx="17" ry="7.5" fill="url(#shroomCap)"/>
+        <ellipse cx="1342" cy="754" rx="12" ry="5" fill="url(#shroomCap)"/>
+        <ellipse cx="1392" cy="755" rx="9" ry="4" fill="url(#shroomCap)"/>
+      </g>
+
+      <!-- Focos bioluminiscentes en el musgo -->
+      <ellipse class="bio-glow" cx="235" cy="745" rx="75" ry="26" fill="url(#bioCyan)"/>
+      <ellipse class="bio-glow" cx="1365" cy="750" rx="85" ry="28" fill="url(#bioCyan)" style="animation-delay:-2s"/>
+      <ellipse class="bio-glow" cx="380" cy="195" rx="70" ry="22" fill="url(#bioCyan)" style="animation-delay:-1.2s"/>
+      <ellipse class="bio-glow" cx="1210" cy="210" rx="78" ry="24" fill="url(#bioCyan)" style="animation-delay:-3s"/>
+    </svg>
+
+    <!-- CAPA 4 (Primer plano): Agua del pantano, nenúfares, juncos y burbujas -->
+    <svg class="forest-layer" data-depth="0.65" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="swampWaterGrad" x1="0" y1="740" x2="0" y2="900" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#07352c" stop-opacity="0.58"/>
+          <stop offset="35%" stop-color="#04201b" stop-opacity="0.82"/>
+          <stop offset="100%" stop-color="#010806" stop-opacity="0.96"/>
+        </linearGradient>
+        <linearGradient id="waterShimmer" x1="0" y1="0" x2="1600" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#10b981" stop-opacity="0"/>
+          <stop offset="25%" stop-color="#34d399" stop-opacity="0.45"/>
+          <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.55"/>
+          <stop offset="75%" stop-color="#34d399" stop-opacity="0.45"/>
+          <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
         </linearGradient>
       </defs>
 
-      <!-- Ramas superiores izquierda y derecha -->
-      <path d="M-40 160 Q 240 210, 520 110 T 940 70 L 940 -20 L -40 -20 Z" fill="url(#branchDark)" opacity="0.92"/>
-      <path d="M1640 240 Q 1340 280, 1080 150 T 680 40 L 1640 -20 Z" fill="url(#branchDark)" opacity="0.9"/>
+      <!-- Cuerpo de agua del pantano -->
+      <path d="M0 760 Q 400 742, 800 758 T 1600 752 L 1600 900 L 0 900 Z" fill="url(#swampWaterGrad)"/>
 
-      <!-- Lianas con movimiento -->
-      <g stroke="#03120d" fill="none" stroke-linecap="round">
-        <path class="vine-sway" stroke-width="3" d="M210 130 Q 195 260, 220 380 T 205 560"/>
-        <path class="vine-sway slow" stroke-width="1.8" d="M245 140 Q 260 250, 238 355 T 255 500"/>
-        <path class="vine-sway fast" stroke-width="2.4" d="M430 105 Q 418 220, 440 330 T 425 460"/>
-        <path class="vine-sway slow" stroke-width="2.6" d="M1190 140 Q 1208 260, 1184 370 T 1202 520"/>
-        <path class="vine-sway" stroke-width="3.2" d="M1370 185 Q 1352 310, 1380 430 T 1362 610"/>
-        <path class="vine-sway fast" stroke-width="1.6" d="M1410 195 Q 1425 290, 1402 395 T 1418 510"/>
+      <!-- Ondas y reflejos en la superficie del agua -->
+      <path class="swamp-wave" d="M-40 765 Q 80 756, 200 765 T 440 765 T 680 765 T 920 765 T 1160 765 T 1400 765 T 1640 765" stroke="url(#waterShimmer)" stroke-width="2" fill="none"/>
+      <path class="swamp-wave slow" d="M-40 792 Q 110 785, 260 792 T 560 792 T 860 792 T 1160 792 T 1460 792 T 1760 792" stroke="url(#waterShimmer)" stroke-width="1.3" fill="none" opacity="0.55"/>
+      <path class="swamp-wave fast" d="M-40 828 Q 95 822, 230 828 T 500 828 T 770 828 T 1040 828 T 1310 828 T 1640 828" stroke="url(#waterShimmer)" stroke-width="1" fill="none" opacity="0.35"/>
+
+      <!-- Nenúfares flotando en el pantano -->
+      <g fill="#063b2b" stroke="#10b981" stroke-width="1.1" opacity="0.72">
+        <path d="M360 785 A 28 9 0 1 1 352 778 L 360 785 Z"/>
+        <path d="M415 796 A 20 6.5 0 1 1 409 791 L 415 796 Z"/>
+        <path d="M1180 788 A 30 9.5 0 1 1 1171 781 L 1180 788 Z"/>
+        <path d="M1238 800 A 18 6 0 1 1 1232 795 L 1238 800 Z"/>
       </g>
 
-      <!-- Destellos bioluminiscentes en las ramas -->
-      <ellipse class="bio-glow" cx="265" cy="175" rx="68" ry="26" fill="url(#bioCyan)"/>
-      <ellipse class="bio-glow" cx="1290" cy="215" rx="82" ry="30" fill="url(#bioCyan)" style="animation-delay:-2s"/>
-      <ellipse class="bio-glow" cx="180" cy="760" rx="110" ry="36" fill="url(#bioCyan)" style="animation-delay:-1.2s"/>
-      <ellipse class="bio-glow" cx="1420" cy="790" rx="125" ry="40" fill="url(#bioCyan)" style="animation-delay:-3s"/>
+      <!-- Juncos / Totoras en las orillas izquierda y derecha -->
+      <g stroke="#031610" fill="none" stroke-linecap="round">
+        <path class="reed-sway" stroke-width="4" d="M45 900 Q 52 800, 32 695"/>
+        <path class="reed-sway slow" stroke-width="3" d="M72 900 Q 86 815, 104 715"/>
+        <path class="reed-sway fast" stroke-width="3.5" d="M105 900 Q 98 825, 122 735"/>
+        <path class="reed-sway" stroke-width="2.5" d="M148 900 Q 158 835, 142 758"/>
+
+        <path class="reed-sway slow" stroke-width="4" d="M1555 900 Q 1545 800, 1568 690"/>
+        <path class="reed-sway" stroke-width="3.2" d="M1522 900 Q 1506 815, 1488 712"/>
+        <path class="reed-sway fast" stroke-width="3.5" d="M1488 900 Q 1498 830, 1472 740"/>
+        <path class="reed-sway" stroke-width="2.5" d="M1445 900 Q 1435 835, 1455 760"/>
+      </g>
+
+      <!-- Burbujas subiendo desde el fondo del pantano -->
+      <g fill="none" stroke="#6ee7b7" stroke-width="1.2">
+        <circle class="swamp-bubble" cx="310" cy="860" r="3.5"/>
+        <circle class="swamp-bubble b2" cx="540" cy="880" r="2.5"/>
+        <circle class="swamp-bubble b3" cx="1050" cy="870" r="4"/>
+        <circle class="swamp-bubble b4" cx="1280" cy="885" r="2.8"/>
+      </g>
     </svg>
   </div>
 
