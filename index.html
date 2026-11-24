@@ -620,9 +620,70 @@
       75% { transform: scale(2.8); opacity: 0; }
       100% { transform: scale(2.8); opacity: 0; }
     }
+
+    /* Pantalla de Login obligatoria al inicio */
+    body.locked-screen .container {
+      display: none !important;
+    }
+    body.locked-screen #totpModal {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.12), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(6, 78, 59, 0.2), #030706 70%);
+    }
+
+    /* Estado Molesto del Cocodrilo (Rojo + Temblor + Mordida rápida) */
+    .modal-card.croc-angry {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 42px rgba(239, 68, 68, 0.48) !important;
+      animation: angryShake 0.45s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    .modal-card.croc-angry.led-border::before {
+      background: linear-gradient(90deg, transparent, #ef4444, #fca5a5, #ef4444, transparent);
+    }
+    .modal-card.croc-angry .croc-upper path:first-child {
+      fill: #ef4444 !important;
+      stroke: #fecaca !important;
+    }
+    .modal-card.croc-angry .croc-lower path:first-child {
+      fill: #b91c1c !important;
+      stroke: #fca5a5 !important;
+    }
+    .modal-card.croc-angry .croc-upper {
+      animation: crocUpperSnap 0.16s ease-in-out infinite !important;
+    }
+    .modal-card.croc-angry .croc-lower {
+      animation: crocLowerSnap 0.16s ease-in-out infinite !important;
+    }
+
+    @keyframes angryShake {
+      10%, 90% { transform: translateX(-3px); }
+      20%, 80% { transform: translateX(5px); }
+      30%, 50%, 70% { transform: translateX(-7px); }
+      40%, 60% { transform: translateX(7px); }
+    }
+
+    /* Bytes escupidos por el cocodrilo */
+    .byte-particle {
+      position: absolute;
+      left: 34px;
+      top: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #f87171;
+      text-shadow: 0 0 8px #ef4444;
+      pointer-events: none;
+      z-index: 20;
+      animation: spitByte 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes spitByte {
+      0%   { opacity: 1; transform: translate(0, 0) scale(0.7) rotate(0deg); }
+      75%  { opacity: 0.95; }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.15) rotate(var(--rot)); }
+    }
   </style>
 </head>
-<body>
+<body class="locked-screen">
 
 <div class="container">
   <header class="glass-panel led-border">
@@ -650,7 +711,7 @@
     <div class="header-actions">
       <button class="btn-glass" onclick="exportToExcelCSV()">📊 Exportar Excel</button>
       <button id="btnEditToggle" class="btn-lock-icon btn-edit-locked" onclick="handleEditToggle()" title="Bloqueado">🔒</button>
-      <button id="btnSanctuaryTrigger" class="croc-habitat-btn btn-sanctuary-closed" onclick="handleSanctuaryAction()" title="MDZ™">
+      <button id="btnSanctuaryTrigger" class="croc-habitat-btn btn-sanctuary-closed" onclick="handleSanctuaryAction()" title="Cerrar Sesión">
         <span id="sanctuaryBtnText" style="display:none;">Sanctuary</span>
         <div class="croc-lottie-layer">
           <dotlottie-player
@@ -1031,20 +1092,22 @@
   </section>
 </div>
 
-<!-- MODAL DE INGRESO (USUARIO + CONTRASEÑA + CÓDIGO TOTP) -->
-<div id="totpModal" class="modal-backdrop" onclick="if(event.target===this) closeTotpModal()">
-  <div class="modal-card glass-panel led-border">
+<!-- PANTALLA DE LOGIN OBLIGATORIA (USUARIO + CONTRASEÑA + TOTP) -->
+<div id="totpModal" class="modal-backdrop open">
+  <div id="loginModalCard" class="modal-card glass-panel led-border">
     <div class="modal-header-croc croc-chomp">
-      <svg class="croc-svg" width="38" height="32" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g class="croc-upper">
-          <path d="M6 17C6 11.5 11.5 8 18 8H37C39.2 8 41 9.8 41 12V16.5H14L6 17Z" fill="#10B981" stroke="#A7F3D0" stroke-width="1.5"/>
-          <circle cx="15" cy="11.5" r="2.4" fill="#041510"/>
-          <path d="M22 16.5L24 20L26 16.5M29 16.5L31 20L33 16.5M35 16.5L37 20L39 16.5" stroke="#ECFDF5" stroke-width="1.5" stroke-linecap="round"/>
-        </g>
-        <g class="croc-lower">
-          <path d="M7 20.5H39C39 23.8 36.5 26 33 26H14C10 26 7 23.5 7 20.5Z" fill="#059669" stroke="#6EE7B7" stroke-width="1.5"/>
-        </g>
-      </svg>
+      <div id="loginCrocWrap" style="position:relative; display:inline-flex; overflow:visible;">
+        <svg class="croc-svg" width="42" height="34" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g class="croc-upper">
+            <path d="M6 17C6 11.5 11.5 8 18 8H37C39.2 8 41 9.8 41 12V16.5H14L6 17Z" fill="#10B981" stroke="#A7F3D0" stroke-width="1.5"/>
+            <circle cx="15" cy="11.5" r="2.4" fill="#041510"/>
+            <path d="M22 16.5L24 20L26 16.5M29 16.5L31 20L33 16.5M35 16.5L37 20L39 16.5" stroke="#ECFDF5" stroke-width="1.5" stroke-linecap="round"/>
+          </g>
+          <g class="croc-lower">
+            <path d="M7 20.5H39C39 23.8 36.5 26 33 26H14C10 26 7 23.5 7 20.5Z" fill="#059669" stroke="#6EE7B7" stroke-width="1.5"/>
+          </g>
+        </svg>
+      </div>
       <div>
         <h3 style="font-size:1.12rem;">Acceso MDZ™ Sanctuary</h3>
         <p style="font-size:0.8rem; color:var(--text-muted);">Ingresa tu usuario, contraseña y código de 6 dígitos.</p>
@@ -1076,10 +1139,7 @@
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
         <button type="button" class="link-subtle" onclick="toggleRecoveryPrompt()">¿Perdiste tu app? Re-vincular</button>
-        <div style="display:flex; gap:8px;">
-          <button type="button" class="btn-glass" onclick="closeTotpModal()">Cancelar</button>
-          <button type="submit" class="btn-primary">Ingresar</button>
-        </div>
+        <button type="submit" class="btn-primary">Ingresar</button>
       </div>
     </form>
 
@@ -1284,11 +1344,11 @@
     updateCounters();
 
     if (statusEl) statusEl.textContent = "Sincronizado en vivo (Supabase)";
-    if (!silent) showToast("☁️ Tablas sincronizadas con Supabase.");
+    if (!silent && isAuthenticated) showToast("☁️ Tablas sincronizadas con Supabase.");
   }
 
   async function initSupabaseSync() {
-    await loadAllFromSupabase(false);
+    await loadAllFromSupabase(true);
     if (!sbClient) return;
 
     const channel = sbClient.channel("mdz-tables-realtime");
@@ -1311,7 +1371,7 @@
   function persistGeofences() { syncGeofencesTable(); }
 
   // =========================================================================
-  // AUTENTICACIÓN POR ROLES + TOTP (RFC 6238 HMAC-SHA1)
+  // AUTENTICACIÓN POR ROLES + TOTP + COCODRILO FURIOSO ESCUPIENDO BYTES
   // =========================================================================
   function getTotpSecret() { return totpSecret; }
 
@@ -1384,17 +1444,42 @@
     container.innerHTML = `<svg width="${size * cell}" height="${size * cell}" viewBox="0 0 ${size * cell} ${size * cell}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
   }
 
+  function triggerAngryCroc() {
+    const card = document.getElementById("loginModalCard");
+    const wrap = document.getElementById("loginCrocWrap");
+    if (!card || !wrap) return;
+
+    card.classList.remove("croc-angry");
+    void card.offsetWidth;
+    card.classList.add("croc-angry");
+
+    const bytes = ["01", "10", "0xFF", "ERR", "00", "11", "0x00", "101", "010", "403"];
+    for (let i = 0; i < 14; i++) {
+      const span = document.createElement("span");
+      span.className = "byte-particle";
+      span.textContent = bytes[Math.floor(Math.random() * bytes.length)];
+      const tx = 35 + Math.random() * 115;
+      const ty = (Math.random() - 0.5) * 76;
+      const rot = (Math.random() - 0.5) * 65;
+      span.style.setProperty("--tx", `${tx}px`);
+      span.style.setProperty("--ty", `${ty}px`);
+      span.style.setProperty("--rot", `${rot}deg`);
+      span.style.animationDelay = `${Math.random() * 0.16}s`;
+      wrap.appendChild(span);
+      setTimeout(() => span.remove(), 1100);
+    }
+
+    clearTimeout(window._angryTimer);
+    window._angryTimer = setTimeout(() => card.classList.remove("croc-angry"), 1200);
+  }
+
   function handleSanctuaryAction() {
     if (isAuthenticated) { lockSanctuary(); }
-    else { pendingAction = "sanctuary"; openTotpModal(); }
+    else { openTotpModal(); }
   }
 
   function handleEditToggle() {
-    if (!isAuthenticated) {
-      pendingAction = "edit";
-      openTotpModal();
-      return;
-    }
+    if (!isAuthenticated) { openTotpModal(); return; }
     if (currentUserRole !== "dev") {
       showToast(`👁️ Tu usuario (${currentUsername}) es de solo lectura.`);
       return;
@@ -1420,7 +1505,11 @@
     setTimeout(() => document.getElementById("authUserInput").focus(), 70);
   }
 
-  function closeTotpModal() { document.getElementById("totpModal").classList.remove("open"); }
+  function closeTotpModal() {
+    if (!isAuthenticated) return;
+    document.getElementById("totpModal").classList.remove("open");
+  }
+
   function toggleRecoveryPrompt() {
     const box = document.getElementById("recoveryBox");
     box.style.display = box.style.display === "none" ? "block" : "none";
@@ -1430,6 +1519,7 @@
     const val = document.getElementById("recoveryKeyInput").value.trim();
     if (!recoveryMasterKey || val !== recoveryMasterKey) {
       document.getElementById("totpErrorMsg").textContent = "⛔ Clave maestra de recuperación incorrecta.";
+      triggerAngryCroc();
       return;
     }
     document.getElementById("totpErrorMsg").textContent = "";
@@ -1456,11 +1546,13 @@
     );
     if (!matchedUser) {
       errEl.textContent = "⛔ Usuario o contraseña incorrectos.";
+      triggerAngryCroc();
       return;
     }
 
     if (!/^\d{6}$/.test(code)) {
       errEl.textContent = "Ingresa un código numérico de 6 dígitos.";
+      triggerAngryCroc();
       return;
     }
 
@@ -1471,6 +1563,7 @@
     ]);
     if (!validCodes.includes(code)) {
       errEl.textContent = "⛔ Código TOTP incorrecto o expirado.";
+      triggerAngryCroc();
       document.getElementById("totpCodeInput").value = "";
       document.getElementById("totpCodeInput").focus();
       return;
@@ -1482,6 +1575,7 @@
     isEditMode = (currentUserRole === "dev");
 
     closeTotpModal();
+    document.body.classList.remove("locked-screen");
     updateSecurityUI();
     renderTrackersTable();
     renderDirectoryTable();
@@ -1489,14 +1583,6 @@
     renderSanctuaryForm();
     renderSanctuaryTable();
     renderSavedGeofences();
-
-    if (pendingAction === "sanctuary") {
-      switchTab("sanctuary");
-      setTimeout(() => document.getElementById("smartSanctuarySearch").focus(), 100);
-    } else if (pendingAction === "map") {
-      switchTab("map");
-    }
-    pendingAction = null;
 
     showToast(
       currentUserRole === "dev"
@@ -1518,12 +1604,13 @@
     renderTrackersTable();
     renderDirectoryTable();
     renderCommandsTable();
+    document.body.classList.add("locked-screen");
+    openTotpModal();
     showToast("🔒 Sesión cerrada.");
   }
 
   function switchTab(tabName) {
     if ((tabName === "sanctuary" || tabName === "map") && !isAuthenticated) {
-      pendingAction = tabName;
       openTotpModal();
       return;
     }
@@ -1555,10 +1642,10 @@
     if (!isAuthenticated) {
       btnEdit.className = "btn-lock-icon btn-edit-locked";
       btnEdit.innerHTML = "🔒";
-      btnEdit.title = "Bloqueado (Clic para iniciar sesión)";
+      btnEdit.title = "Bloqueado";
       btnSanc.className = "croc-habitat-btn btn-sanctuary-closed";
       sancText.textContent = "Sanctuary";
-      subtitle.textContent = "Vista protegida en modo lectura. Inicia sesión con tu usuario y código 2FA.";
+      subtitle.textContent = "Vista protegida en modo lectura.";
     } else if (currentUserRole === "viewer") {
       btnEdit.className = "btn-lock-icon btn-edit-paused";
       btnEdit.innerHTML = "👁️";
@@ -2618,11 +2705,12 @@
   function escapeHtml(str) { return String(str || "").replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
   function escapeAttr(str) { return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
 
-  // Inicialización: carga 100% desde las tablas reales de Supabase
+  // Inicialización: pantalla de login bloqueada + carga 100% desde Supabase
   updateCounters();
   updateSecurityUI();
   renderTrackersTable();
   initSupabaseSync();
+  setTimeout(() => document.getElementById("authUserInput").focus(), 100);
 </script>
 </body>
 </html>
