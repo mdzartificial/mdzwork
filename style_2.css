@@ -61,3 +61,10 @@ body {
 #kodama-graphic {
     filter: brightness(1.45) contrast(1.08) saturate(1.2);
 }
+
+/* Ocultar el título original de Miyazaki */
+#mobile-title,
+#Miyasaki,
+#A-tribute-to {
+    display: none !important;
+}
