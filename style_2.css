@@ -54,8 +54,8 @@ body {
   float: right;
   margin-right: 30px;
 }
-/* Ocultar título de tributo y controles para usarlo como fondo limpio */
-#h1, #h2, #mobile-title, .controls {
+/* Título de tributo visible; solo se ocultan los controles */
+.controls {
   display: none !important;
 }
 #kodama-graphic {

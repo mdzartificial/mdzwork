@@ -738,6 +738,67 @@
       75%  { opacity: 0.95; }
       100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.15) rotate(var(--rot)); }
     }
+
+    /* =========================================================
+       LIQUID GLASS — tarjeta de login transparente
+       ========================================================= */
+    #loginModalCard {
+      background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.09) 100%) !important;
+      backdrop-filter: blur(22px) saturate(180%) brightness(1.08);
+      -webkit-backdrop-filter: blur(22px) saturate(180%) brightness(1.08);
+      border: 1px solid rgba(255,255,255,0.28) !important;
+      box-shadow:
+        0 20px 50px rgba(0,0,0,0.35),
+        inset 0 1.5px 0 rgba(255,255,255,0.55),
+        inset 0 -1px 0 rgba(255,255,255,0.12),
+        inset 0 0 40px rgba(255,255,255,0.05) !important;
+    }
+    /* brillo especular curvo, estilo liquid glass */
+    #loginModalCard::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        radial-gradient(120% 60% at 12% -10%, rgba(255,255,255,0.30) 0%, transparent 55%),
+        linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.07) 50%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    #loginModalCard > * { position: relative; z-index: 1; }
+    #loginModalCard .login-top-meta,
+    #loginModalCard .login-footer-row { border-color: rgba(255,255,255,0.16); }
+    #loginModalCard .login-hero p,
+    #loginModalCard label { color: rgba(236,253,245,0.82); text-shadow: 0 1px 6px rgba(0,0,0,0.35); }
+    #loginModalCard .login-input-group input {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      color: #fff;
+    }
+    #loginModalCard .login-input-group input::placeholder { color: rgba(255,255,255,0.45); }
+    #loginModalCard .login-input-group input:focus {
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(110,231,183,0.85);
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.22);
+    }
+    #loginModalCard .totp-panel {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.20);
+    }
+    #loginModalCard .totp-panel .totp-input {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.28);
+    }
+    #loginModalCard .btn-login-submit {
+      background: linear-gradient(135deg, rgba(16,185,129,0.75), rgba(5,150,105,0.65));
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(16,185,129,0.30), inset 0 1px 0 rgba(255,255,255,0.45);
+    }
   </style>
 
 
@@ -1157,7 +1218,7 @@
   <!-- Fondo multicapa con Parallax inspirado en bosque nocturno -->
 <!-- Fondo multicapa con Parallax: Hábitat de Pantano & Bosque de Manglar -->
 <!-- Fondo real del bosque (Miyazaki SVG + GSAP) -->
-  <iframe id="loginForestFrame" src="index_2.html?v=3" aria-hidden="true"></iframe>
+  <iframe id="loginForestFrame" src="index_2.html?v=4" aria-hidden="true"></iframe>
 
   <!-- Canvas: Luciérnagas bioluminiscentes + Cocodrilos cazando bytes -->
   <canvas id="loginBgCanvas"></canvas>
@@ -2388,9 +2449,6 @@
       };
     }
 
-    for (let i = 0; i < 42; i++) bytes.push(spawnByte(i < 10));
-    for (let i = 0; i < 6; i++) crocs.push(spawnCroc(false)); // 6 nadadores cibernéticos
-    for (let i = 0; i < 3; i++) crocs.push(spawnCroc(true));  // 3 caminantes de suelo
     for (let i = 0; i < 24; i++) fireflies.push(spawnFirefly());
 
     function drawMechaCroc(c) {
@@ -2612,109 +2670,6 @@
         ctx.fill();
         ctx.restore();
       }
-
-      // Bytes flotantes
-      ctx.font = "600 12px 'JetBrains Mono', monospace";
-      for (let i = 0; i < bytes.length; i++) {
-        const b = bytes[i];
-        b.x += b.vx; b.y += b.vy;
-        if (b.x < -30) b.x = W + 20; if (b.x > W + 30) b.x = -20;
-        if (b.y < 30) b.y = H - 55; if (b.y > H - 45) b.y = 35;
-        ctx.fillStyle = `rgba(52, 211, 153, ${b.alpha})`;
-        ctx.fillText(b.text, b.x, b.y);
-      }
-
-      // Mecha-Crocs cazando bytes
-      for (let i = 0; i < crocs.length; i++) {
-        const c = crocs[i];
-        c.phase += c.isWalker ? (0.14 * c.baseSpeed) : (0.1 + c.baseSpeed * 0.04);
-        c.jawPhase += 0.1 + c.huntBoost * 0.12;
-        if (c.chompBoost > 0) c.chompBoost *= 0.86;
-        if (c.huntBoost > 0) c.huntBoost *= 0.92;
-
-        let nearest = null, minDist = 210;
-        const mouthX = c.x + c.dir * 26 * c.scale;
-        const mouthY = c.y;
-
-        for (let j = 0; j < bytes.length; j++) {
-          const b = bytes[j];
-          const dx = b.x - mouthX, dy = b.y - mouthY;
-          const dist = Math.hypot(dx, dy);
-
-          if (dist < 26 * c.scale) {
-            c.chompBoost = 1;
-            bytesDevoured++;
-            for (let s = 0; s < 8; s++) {
-              sparks.push({
-                x: b.x, y: b.y,
-                vx: (Math.random() - 0.5) * 4.2,
-                vy: (Math.random() - 0.5) * 4.2,
-                life: 1,
-                color: s % 2 === 0 ? "#6ee7b7" : "#f87171"
-              });
-            }
-            bytes[j] = spawnByte(c.isWalker);
-          } else if (dist < minDist && Math.sign(dx) === c.dir) {
-            if (!c.isWalker || Math.abs(dy) < 70) {
-              minDist = dist;
-              nearest = b;
-            }
-          }
-        }
-
-        if (nearest) {
-          c.huntBoost = 1;
-          if (!c.isWalker) {
-            c.vy += Math.sign(nearest.y - c.y) * 0.07;
-            c.vy = Math.max(-1.8, Math.min(1.8, c.vy));
-          }
-        } else if (!c.isWalker) {
-          c.vy *= 0.96;
-        }
-
-        const speedMult = 1 + c.huntBoost * 0.65;
-        c.x += c.dir * c.baseSpeed * speedMult;
-        if (c.isWalker) {
-          c.y = H - 56; // Pegado al suelo del login
-        } else {
-          c.y += c.vy;
-          if (c.y < 55 || c.y > H - 140) c.vy *= -1;
-        }
-
-        if (c.dir === 1 && c.x > W + 160) {
-          c.x = -150;
-          if (!c.isWalker) c.y = 70 + Math.random() * (H - 220);
-        }
-        if (c.dir === -1 && c.x < -160) {
-          c.x = W + 150;
-          if (!c.isWalker) c.y = 70 + Math.random() * (H - 220);
-        }
-
-        drawMechaCroc(c);
-      }
-
-      // Chispas de mordida
-      for (let i = sparks.length - 1; i >= 0; i--) {
-        const s = sparks[i];
-        s.x += s.vx; s.y += s.vy; s.life -= 0.045;
-        if (s.life <= 0) { sparks.splice(i, 1); continue; }
-        ctx.save();
-        ctx.globalAlpha = s.life;
-        ctx.fillStyle = s.color;
-        ctx.beginPath(); ctx.arc(s.x, s.y, 2.2, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-      }
-
-      // HUD táctico inferior (estilo terminal de la referencia)
-      const hudText = `BYTES DEVORADOS: ${String(bytesDevoured).padStart(5, "0")}  |  CROCS ONLINE: ${crocs.length}`;
-      ctx.save();
-      ctx.font = "700 12px 'JetBrains Mono', monospace";
-      ctx.textAlign = "center";
-      ctx.fillStyle = "rgba(52, 211, 153, 0.72)";
-      ctx.shadowColor = "rgba(16, 185, 129, 0.5)";
-      ctx.shadowBlur = 8;
-      ctx.fillText(hudText, W / 2, H - 16);
-      ctx.restore();
     }
     loop();
   })();
