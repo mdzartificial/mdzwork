@@ -94,7 +94,6 @@
       gap: 16px;
     }
 
-    /* Logo principal más grande */
     .brand-icon {
       width: 64px;
       height: 64px;
@@ -128,27 +127,11 @@
       color: var(--text-muted);
     }
 
-    /* Cocodrilo SVG animado mordiendo (Logo y Modal) */
-    .croc-svg {
-      display: block;
-      overflow: visible;
-    }
-    .croc-upper {
-      transform-origin: 12px 18px;
-      animation: crocUpperBite 3.6s ease-in-out infinite;
-    }
-    .croc-lower {
-      transform-origin: 12px 21px;
-      animation: crocLowerBite 3.6s ease-in-out infinite;
-    }
-    .brand:hover .croc-upper,
-    .croc-chomp .croc-upper {
-      animation: crocUpperSnap 0.42s ease-in-out infinite;
-    }
-    .brand:hover .croc-lower,
-    .croc-chomp .croc-lower {
-      animation: crocLowerSnap 0.42s ease-in-out infinite;
-    }
+    .croc-svg { display: block; overflow: visible; }
+    .croc-upper { transform-origin: 12px 18px; animation: crocUpperBite 3.6s ease-in-out infinite; }
+    .croc-lower { transform-origin: 12px 21px; animation: crocLowerBite 3.6s ease-in-out infinite; }
+    .brand:hover .croc-upper, .croc-chomp .croc-upper { animation: crocUpperSnap 0.42s ease-in-out infinite; }
+    .brand:hover .croc-lower, .croc-chomp .croc-lower { animation: crocLowerSnap 0.42s ease-in-out infinite; }
 
     @keyframes crocUpperBite {
       0%, 72%, 100% { transform: rotate(0deg); }
@@ -196,8 +179,6 @@
       transform: translateY(-1px);
       filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.45));
     }
-
-    /* Agua rojo verdoso al autenticarse */
     .croc-habitat-btn.btn-sanctuary-open {
       --water-fill: #dc2626;
       --wave-a: #ef4444;
@@ -224,12 +205,8 @@
       z-index: 2;
       pointer-events: none;
     }
-    .water-wave-1 {
-      animation: waveShift 3.6s linear infinite;
-    }
-    .water-ripple {
-      animation: rippleGlow 4.2s ease-in-out infinite;
-    }
+    .water-wave-1 { animation: waveShift 3.6s linear infinite; }
+    .water-ripple { animation: rippleGlow 4.2s ease-in-out infinite; }
     @keyframes waveShift {
       0%   { transform: translateX(0); }
       100% { transform: translateX(-28px); }
@@ -246,7 +223,6 @@
       flex-wrap: wrap;
     }
 
-    /* Botones */
     button {
       font-family: inherit;
       cursor: pointer;
@@ -278,7 +254,6 @@
       background: rgba(16, 185, 129, 0.18);
     }
 
-    /* Botón Candado Minimalista (Sin texto) */
     .btn-lock-icon {
       width: 40px;
       height: 40px;
@@ -292,10 +267,7 @@
       color: #cbd5e1;
       border: 1px solid rgba(148, 163, 184, 0.28);
     }
-    .btn-edit-locked:hover {
-      border-color: var(--accent);
-      color: var(--text-main);
-    }
+    .btn-edit-locked:hover { border-color: var(--accent); color: var(--text-main); }
     .btn-edit-active {
       background: rgba(16, 185, 129, 0.2);
       color: #6ee7b7;
@@ -316,10 +288,8 @@
       font-size: 0.78rem;
     }
     .btn-danger:hover { background: rgba(239, 68, 68, 0.28); }
-
     .btn-sm { padding: 5px 9px; font-size: 0.77rem; border-radius: 8px; }
 
-    /* Barra de Pestañas (Oculta hasta validar 2FA) */
     .tabs-wrapper {
       display: none;
       align-items: center;
@@ -330,10 +300,7 @@
       border: 1px solid var(--border-glass);
       width: fit-content;
     }
-    .tabs-wrapper.visible {
-      display: flex;
-      animation: fadeIn 0.25s ease;
-    }
+    .tabs-wrapper.visible { display: flex; animation: fadeIn 0.25s ease; }
 
     .tab-btn {
       background: transparent;
@@ -343,10 +310,7 @@
       border-radius: 10px;
       font-size: 0.88rem;
     }
-    .tab-btn:hover {
-      color: var(--text-main);
-      background: rgba(16, 185, 129, 0.08);
-    }
+    .tab-btn:hover { color: var(--text-main); background: rgba(16, 185, 129, 0.08); }
     .tab-btn.active {
       background: rgba(16, 185, 129, 0.18);
       color: var(--text-main);
@@ -363,7 +327,6 @@
       border-radius: 99px;
     }
 
-    /* Secciones */
     .workspace { display: none; padding: 22px; }
     .workspace.active { display: block; animation: fadeIn 0.22s ease; }
 
@@ -383,13 +346,7 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
 
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
+    .section-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .section-title h2 { font-size: 1.15rem; font-weight: 700; }
 
     .autosave-pill {
@@ -411,7 +368,6 @@
       box-shadow: 0 0 8px #10b981;
     }
 
-    /* Formularios */
     .form-grid {
       display: none;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -424,12 +380,7 @@
     }
     .form-grid.editable-open { display: grid; }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
+    .field { display: flex; flex-direction: column; gap: 5px; }
     .field label {
       font-size: 0.72rem;
       text-transform: uppercase;
@@ -449,13 +400,11 @@
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-
     input:focus, select:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16);
     }
 
-    /* Buscador Inteligente */
     .smart-search-box {
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.11), rgba(6, 13, 11, 0.92));
       border: 1px solid var(--border-active);
@@ -465,12 +414,7 @@
       box-shadow: 0 0 22px rgba(16, 185, 129, 0.1);
     }
 
-    .search-input-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
+    .search-input-wrap { position: relative; display: flex; align-items: center; }
     .search-input-wrap input {
       width: 100%;
       padding: 11px 95px 11px 38px;
@@ -479,18 +423,9 @@
       border: 1px solid rgba(16, 185, 129, 0.35);
       border-radius: 10px;
     }
-
-    .search-icon {
-      position: absolute;
-      left: 13px;
-      color: var(--accent);
-      font-size: 1rem;
-      pointer-events: none;
-    }
-
+    .search-icon { position: absolute; left: 13px; color: var(--accent); font-size: 1rem; pointer-events: none; }
     .search-clear {
-      position: absolute;
-      right: 10px;
+      position: absolute; right: 10px;
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-muted);
       padding: 4px 10px;
@@ -498,14 +433,7 @@
       border-radius: 6px;
     }
 
-    .filter-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 11px;
-      align-items: center;
-    }
-
+    .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; align-items: center; }
     .chip {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -524,35 +452,11 @@
       border-color: var(--accent);
       color: var(--text-main);
     }
+    .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .search-stats { margin-left: auto; font-size: 0.79rem; color: var(--accent-secondary); font-family: var(--font-mono); }
 
-    .legend-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .search-stats {
-      margin-left: auto;
-      font-size: 0.79rem;
-      color: var(--accent-secondary);
-      font-family: var(--font-mono);
-    }
-
-    /* Tablas */
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-      text-align: left;
-    }
-
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
     th {
       background: rgba(5, 12, 9, 0.94);
       color: var(--accent-secondary);
@@ -563,18 +467,9 @@
       border-bottom: 1px solid var(--border-glass);
       white-space: nowrap;
     }
-
-    td {
-      padding: 10px 13px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      vertical-align: middle;
-    }
-
+    td { padding: 10px 13px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); vertical-align: middle; }
     tr:hover td { background: rgba(16, 185, 129, 0.04); }
-    tr.drag-over td {
-      border-top: 2px solid var(--accent);
-      background: rgba(16, 185, 129, 0.12);
-    }
+    tr.drag-over td { border-top: 2px solid var(--accent); background: rgba(16, 185, 129, 0.12); }
 
     .mono { font-family: var(--font-mono); font-size: 0.83rem; }
     .col-unidad { color: #34d399; font-weight: 700; }
@@ -583,370 +478,144 @@
     .col-activacion { color: #fbbf24; }
 
     .drag-handle {
-      cursor: grab;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      padding: 2px 6px;
-      border-radius: 5px;
-      user-select: none;
-      display: inline-block;
+      cursor: grab; color: var(--text-muted); font-family: var(--font-mono);
+      padding: 2px 6px; border-radius: 5px; user-select: none; display: inline-block;
     }
-    .drag-handle:hover {
-      color: var(--accent);
-      background: rgba(16, 185, 129, 0.14);
-    }
+    .drag-handle:hover { color: var(--accent); background: rgba(16, 185, 129, 0.14); }
 
     .col-del-btn {
-      background: rgba(239, 68, 68, 0.16);
-      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.16); color: #fca5a5;
       border: 1px solid rgba(239, 68, 68, 0.35);
-      padding: 1px 6px;
-      font-size: 0.68rem;
-      border-radius: 5px;
-      margin-left: 6px;
+      padding: 1px 6px; font-size: 0.68rem; border-radius: 5px; margin-left: 6px;
     }
     .col-del-btn:hover { background: rgba(239, 68, 68, 0.35); }
 
-    /* Celdas editables */
     .cell-editable {
-      cursor: pointer;
-      border-radius: 6px;
-      padding: 4px 6px;
-      transition: background 0.15s;
-      min-height: 28px;
-      display: inline-block;
-      min-width: 60px;
+      cursor: pointer; border-radius: 6px; padding: 4px 6px; transition: background 0.15s;
+      min-height: 28px; display: inline-block; min-width: 60px;
     }
-    .cell-editable:hover {
-      background: rgba(16, 185, 129, 0.14);
-      outline: 1px dashed rgba(16, 185, 129, 0.45);
-    }
-    .cell-readonly {
-      padding: 4px 6px;
-      display: inline-block;
-    }
-    .cell-empty {
-      color: #475569;
-      font-style: italic;
-      font-size: 0.76rem;
-    }
+    .cell-editable:hover { background: rgba(16, 185, 129, 0.14); outline: 1px dashed rgba(16, 185, 129, 0.45); }
+    .cell-readonly { padding: 4px 6px; display: inline-block; }
+    .cell-empty { color: #475569; font-style: italic; font-size: 0.76rem; }
 
     .inline-input {
-      padding: 5px 8px;
-      font-size: 0.83rem;
-      width: 100%;
-      min-width: 110px;
-      background: #030806;
-      border: 1px solid var(--accent);
+      padding: 5px 8px; font-size: 0.83rem; width: 100%; min-width: 110px;
+      background: #030806; border: 1px solid var(--accent);
     }
 
     .badge-cat {
-      padding: 3px 9px;
-      border-radius: 99px;
-      font-size: 0.74rem;
-      font-weight: 600;
-      background: rgba(16, 185, 129, 0.15);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.32);
-      white-space: nowrap;
+      padding: 3px 9px; border-radius: 99px; font-size: 0.74rem; font-weight: 600;
+      background: rgba(16, 185, 129, 0.15); color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.32); white-space: nowrap;
     }
 
-    .ext-link {
-      color: #38bdf8;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      word-break: break-all;
-      transition: color 0.15s;
-    }
-    .ext-link:hover {
-      color: #7dd3fc;
-    }
+    .ext-link { color: #38bdf8; text-decoration: underline; text-underline-offset: 3px; word-break: break-all; transition: color 0.15s; }
+    .ext-link:hover { color: #7dd3fc; }
+    mark { background: rgba(16, 185, 129, 0.38); color: #ffffff; padding: 0 3px; border-radius: 3px; }
 
-    mark {
-      background: rgba(16, 185, 129, 0.38);
-      color: #ffffff;
-      padding: 0 3px;
-      border-radius: 3px;
-    }
-
-    /* Panel QR protegido */
     .qr-drawer {
-      display: none;
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 12px;
-      background: rgba(4, 10, 8, 0.92);
-      border: 1px solid rgba(16, 185, 129, 0.35);
+      display: none; margin-top: 14px; padding: 14px; border-radius: 12px;
+      background: rgba(4, 10, 8, 0.92); border: 1px solid rgba(16, 185, 129, 0.35);
     }
     .qr-drawer.open { display: block; animation: fadeIn 0.2s ease; }
-
-    .qr-flex {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: center;
-      margin-top: 10px;
-    }
-
-    .qr-box {
-      background: #ffffff;
-      padding: 10px;
-      border-radius: 10px;
-      display: inline-flex;
-      box-shadow: 0 0 18px rgba(16, 185, 129, 0.25);
-    }
-
+    .qr-flex { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 10px; }
+    .qr-box { background: #ffffff; padding: 10px; border-radius: 10px; display: inline-flex; box-shadow: 0 0 18px rgba(16, 185, 129, 0.25); }
     .secret-code-pill {
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      background: rgba(16, 185, 129, 0.14);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #6ee7b7;
-      padding: 6px 10px;
-      border-radius: 8px;
-      word-break: break-all;
+      font-family: var(--font-mono); font-size: 0.82rem; background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35); color: #6ee7b7;
+      padding: 6px 10px; border-radius: 8px; word-break: break-all;
     }
 
-    /* Modal de Verificación TOTP */
     .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 5, 0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      place-items: center;
-      z-index: 999;
-      padding: 16px;
+      position: fixed; inset: 0; background: rgba(2, 6, 5, 0.85);
+      backdrop-filter: blur(8px); display: none; place-items: center; z-index: 999; padding: 16px;
     }
     .modal-backdrop.open { display: grid; }
-
     .modal-card {
-      width: 100%;
-      max-width: 430px;
-      padding: 24px;
-      border: 1px solid var(--accent);
-      box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);
+      width: 100%; max-width: 430px; padding: 24px;
+      border: 1px solid var(--accent); box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);
     }
-
-    .modal-header-croc {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
+    .modal-header-croc { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .totp-input {
-      font-family: var(--font-mono);
-      font-size: 1.45rem;
-      letter-spacing: 0.35em;
-      text-align: center;
-      padding: 12px;
-      border: 1px solid rgba(16, 185, 129, 0.45);
+      font-family: var(--font-mono); font-size: 1.45rem; letter-spacing: 0.35em;
+      text-align: center; padding: 12px; border: 1px solid rgba(16, 185, 129, 0.45);
     }
-
-    .totp-timer-bar {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 99px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-    .totp-timer-fill {
-      height: 100%;
-      background: var(--accent);
-      width: 100%;
-      transition: width 0.5s linear;
-    }
-
-    .error-msg {
-      color: #fca5a5;
-      font-size: 0.8rem;
-      margin-top: 8px;
-      min-height: 18px;
-    }
-
-    .link-subtle {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.76rem;
-      padding: 0;
-      text-decoration: underline;
-      cursor: pointer;
-    }
+    .totp-timer-bar { height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+    .totp-timer-fill { height: 100%; background: var(--accent); width: 100%; transition: width 0.5s linear; }
+    .error-msg { color: #fca5a5; font-size: 0.8rem; margin-top: 8px; min-height: 18px; }
+    .link-subtle { background: none; border: none; color: var(--text-muted); font-size: 0.76rem; padding: 0; text-decoration: underline; cursor: pointer; }
     .link-subtle:hover { color: var(--accent-secondary); }
 
-    /* Toast */
     .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #06281e;
-      border: 1px solid var(--accent);
-      color: #ecfdf5;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-size: 0.84rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.25s ease;
-      z-index: 1000;
+      position: fixed; bottom: 20px; right: 20px; background: #06281e;
+      border: 1px solid var(--accent); color: #ecfdf5; padding: 10px 16px;
+      border-radius: 10px; font-size: 0.84rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
+      transform: translateY(100px); opacity: 0; transition: all 0.25s ease; z-index: 1000;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
 
-    /* Estilos del Mapa de Cobertura y Potencia (Solo visible tras 2FA) */
+    /* Mapa de Cobertura */
     .map-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-      padding: 11px 14px;
-      background: rgba(5, 11, 9, 0.72);
-      border: 1px solid rgba(16, 185, 129, 0.22);
-      border-radius: 12px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      gap: 10px; margin-bottom: 14px; padding: 11px 14px;
+      background: rgba(5, 11, 9, 0.72); border: 1px solid rgba(16, 185, 129, 0.22); border-radius: 12px;
     }
-    .map-layout {
-      display: grid;
-      grid-template-columns: 365px 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-    @media (max-width: 960px) {
-      .map-layout { grid-template-columns: 1fr; }
-    }
+    .map-layout { display: grid; grid-template-columns: 365px 1fr; gap: 16px; align-items: stretch; }
+    @media (max-width: 960px) { .map-layout { grid-template-columns: 1fr; } }
     .map-sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: rgba(5, 11, 9, 0.72);
-      border: 1px solid rgba(16, 185, 129, 0.22);
-      border-radius: 14px;
-      padding: 15px;
-      max-height: 650px;
-      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 12px; background: rgba(5, 11, 9, 0.72);
+      border: 1px solid rgba(16, 185, 129, 0.22); border-radius: 14px; padding: 15px;
+      max-height: 650px; overflow-y: auto;
     }
     #coverageMapContainer {
-      width: 100%;
-      min-height: 650px;
-      border-radius: 14px;
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      background: #040907;
-      z-index: 1;
+      width: 100%; min-height: 650px; border-radius: 14px;
+      border: 1px solid rgba(16, 185, 129, 0.35); background: #040907; z-index: 1;
     }
     .leaflet-container { background: #040907 !important; font-family: var(--font-sans) !important; }
-    .dark-map-tiles {
-      filter: invert(100%) hue-rotate(180deg) brightness(90%) contrast(94%) saturate(80%);
-    }
+    .dark-map-tiles { filter: invert(100%) hue-rotate(180deg) brightness(90%) contrast(94%) saturate(80%); }
     .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-      background: #0a1713 !important;
-      color: #ecfdf5 !important;
-      border: 1px solid #10b981 !important;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.75) !important;
+      background: #0a1713 !important; color: #ecfdf5 !important;
+      border: 1px solid #10b981 !important; box-shadow: 0 8px 24px rgba(0,0,0,0.75) !important;
     }
-    .nearest-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 250px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
+    .nearest-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 4px; }
     .nearest-card {
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.24);
-      border-radius: 10px;
-      padding: 9px 11px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.15s;
+      background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.24);
+      border-radius: 10px; padding: 9px 11px; font-size: 0.8rem; cursor: pointer; transition: all 0.15s;
     }
-    .nearest-card:hover {
-      border-color: var(--accent);
-      background: rgba(16, 185, 129, 0.16);
-    }
-    .signal-pill {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      padding: 2px 7px;
-      border-radius: 99px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
+    .nearest-card:hover { border-color: var(--accent); background: rgba(16, 185, 129, 0.16); }
+    .signal-pill { font-family: var(--font-mono); font-size: 0.72rem; padding: 2px 7px; border-radius: 99px; font-weight: 700; white-space: nowrap; }
     .sig-high { background: rgba(16, 185, 129, 0.22); color: #6ee7b7; border: 1px solid #10b981; }
     .sig-med { background: rgba(245, 158, 11, 0.22); color: #fcd34d; border: 1px solid #f59e0b; }
     .sig-low { background: rgba(239, 68, 68, 0.22); color: #fca5a5; border: 1px solid #ef4444; }
-    .tech-pill {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      padding: 1px 7px;
-      border-radius: 6px;
-      font-weight: 600;
-      border: 1px solid transparent;
-    }
+    .tech-pill { display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; padding: 1px 7px; border-radius: 6px; font-weight: 600; border: 1px solid transparent; }
     .tech-detektor { background: rgba(16, 185, 129, 0.18); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.45); }
     .tech-repotenciado { background: rgba(245, 158, 11, 0.18); color: #fcd34d; border-color: rgba(245, 158, 11, 0.45); }
     .tech-tracker { background: rgba(56, 189, 248, 0.18); color: #7dd3fc; border-color: rgba(56, 189, 248, 0.45); }
     .tech-vut { background: rgba(192, 132, 252, 0.18); color: #d8b4fe; border-color: rgba(192, 132, 252, 0.45); }
 
     .pl-badge {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      padding: 1px 6px;
-      border-radius: 5px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #f8fafc;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      margin-right: 4px;
+      display: inline-block; font-family: var(--font-mono); font-size: 0.7rem; padding: 1px 6px;
+      border-radius: 5px; background: rgba(255, 255, 255, 0.1); color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.2); margin-right: 4px;
     }
     .point-label-tooltip {
-      background: rgba(4, 12, 9, 0.92) !important;
-      color: #ecfdf5 !important;
-      border: 1px solid rgba(16, 185, 129, 0.55) !important;
-      border-radius: 6px !important;
-      padding: 3px 7px !important;
-      font-family: var(--font-mono) !important;
-      font-size: 0.7rem !important;
+      background: rgba(4, 12, 9, 0.92) !important; color: #ecfdf5 !important;
+      border: 1px solid rgba(16, 185, 129, 0.55) !important; border-radius: 6px !important;
+      padding: 3px 7px !important; font-family: var(--font-mono) !important; font-size: 0.7rem !important;
       box-shadow: 0 2px 8px rgba(0,0,0,0.65) !important;
     }
 
-    /* Marcador Rojo Pulsante para la Unidad Trackeada (GPS) */
-    .gps-pulse-wrapper {
-      position: relative;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .gps-pulse-wrapper { position: relative; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
     .gps-pulse-core {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #ef4444;
-      border: 2.5px solid #ffffff;
-      box-shadow: 0 0 12px #ef4444, 0 0 22px rgba(239, 68, 68, 0.9);
-      position: relative;
-      z-index: 2;
+      width: 14px; height: 14px; border-radius: 50%; background: #ef4444; border: 2.5px solid #ffffff;
+      box-shadow: 0 0 12px #ef4444, 0 0 22px rgba(239, 68, 68, 0.9); position: relative; z-index: 2;
       animation: gpsCoreBeat 1.2s ease-in-out infinite;
     }
     .gps-pulse-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: rgba(239, 68, 68, 0.55);
-      border: 2px solid #f87171;
-      z-index: 1;
-      animation: gpsRadarPulse 1.6s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      position: absolute; inset: 0; border-radius: 50%; background: rgba(239, 68, 68, 0.55);
+      border: 2px solid #f87171; z-index: 1; animation: gpsRadarPulse 1.6s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
     }
-    @keyframes gpsCoreBeat {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.18); }
-    }
+    @keyframes gpsCoreBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
     @keyframes gpsRadarPulse {
       0% { transform: scale(0.7); opacity: 0.95; }
       75% { transform: scale(2.8); opacity: 0; }
@@ -957,7 +626,6 @@
 <body>
 
 <div class="container">
-  <!-- Header con Logo Grande, Candado Minimalista y Cocodrilo Lottie + Agua sin recuadro -->
   <header class="glass-panel led-border">
     <div class="brand">
       <div class="brand-icon" title="MDZ™ WORK">
@@ -982,17 +650,9 @@
 
     <div class="header-actions">
       <button class="btn-glass" onclick="exportToExcelCSV()">📊 Exportar Excel</button>
-
-      <!-- Candado minimalista: cerrado si no estás autenticado, abierto si estás desbloqueado -->
-      <button id="btnEditToggle" class="btn-lock-icon btn-edit-locked" onclick="handleEditToggle()" title="Bloqueado">
-        🔒
-      </button>
-
-      <!-- Cocodrilo Lottie + Agua LED sin recuadro (Activa Sanctuary al hacer clic o Ctrl+K) -->
+      <button id="btnEditToggle" class="btn-lock-icon btn-edit-locked" onclick="handleEditToggle()" title="Bloqueado">🔒</button>
       <button id="btnSanctuaryTrigger" class="croc-habitat-btn btn-sanctuary-closed" onclick="handleSanctuaryAction()" title="MDZ™">
         <span id="sanctuaryBtnText" style="display:none;">Sanctuary</span>
-
-        <!-- Capa 1: Animación LottieFiles -->
         <div class="croc-lottie-layer">
           <dotlottie-player
             src="https://lottie.host/8e19a892-defe-46c0-b9fb-8c7e8ebdb826/ynLlvbfDXI.lottie"
@@ -1003,8 +663,6 @@
             autoplay>
           </dotlottie-player>
         </div>
-
-        <!-- Capa 2: Agua LED transparente sin recuadro (Cambia a rojo verdoso al autenticarse) -->
         <svg class="croc-water-overlay" width="156" height="62" viewBox="0 0 156 62" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="waterGrad" x1="0" y1="42" x2="0" y2="62" gradientUnits="userSpaceOnUse">
@@ -1026,7 +684,6 @@
     </div>
   </header>
 
-  <!-- Capa de Pestañas (Oculta hasta validar el código de 6 dígitos) -->
   <div id="tabsWrapper" class="tabs-wrapper">
     <button id="tabTrackers" class="tab-btn active" onclick="switchTab('trackers')">
       📍 Trackers <span id="trackersCountPill" class="count-pill">0</span>
@@ -1035,18 +692,16 @@
       🐊 Sanctuary <span id="sanctuaryCountPill" class="count-pill">0</span>
     </button>
     <button id="tabMap" class="tab-btn" onclick="switchTab('map')">
-      🗺️ Mapa Cobertura <span id="mapPointsCountPill" class="count-pill">78</span>
+      🗺️ Mapa Cobertura <span id="mapPointsCountPill" class="count-pill">0</span>
     </button>
   </div>
 
-  <!-- =====================================================================
-       SECCIÓN 1: TRACKERS
-       ===================================================================== -->
+  <!-- SECCIÓN 1: TRACKERS -->
   <section id="viewTrackers" class="workspace glass-panel active">
     <div class="section-header">
       <div class="section-title">
         <h2>Trackers</h2>
-        <span class="autosave-pill"><span class="dot-pulse"></span> Sincronización Nube Supabase</span>
+        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="cloudStatusText">Conectando a Supabase...</span></span>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="btnAddColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal()">➕ Añadir Columna</button>
@@ -1103,7 +758,7 @@
 
         <div class="search-input-wrap" style="margin-bottom: 10px;">
           <span class="search-icon">🔍</span>
-          <input type="text" id="commandsSearch" placeholder="Buscar comando AT, modelo (GV58CG, GV300W, GV55W, GV350, GV57CG), acción, cable o evento..." oninput="renderCommandsTable()" />
+          <input type="text" id="commandsSearch" placeholder="Buscar comando AT, modelo, acción, cable o evento..." oninput="renderCommandsTable()" />
           <button type="button" class="search-clear" onclick="clearCommandsSearch()">Limpiar</button>
         </div>
 
@@ -1167,9 +822,7 @@
     </div>
   </section>
 
-  <!-- =====================================================================
-       SECCIÓN 2: SANCTUARY (CREDENCIALES & BUSCADOR INTELIGENTE)
-       ===================================================================== -->
+  <!-- SECCIÓN 2: SANCTUARY -->
   <section id="viewSanctuary" class="workspace glass-panel led-border">
     <div class="section-header">
       <div class="section-title">
@@ -1237,14 +890,12 @@
     </div>
   </section>
 
-  <!-- =====================================================================
-       SECCIÓN 3: MAPA DE COBERTURA Y POTENCIA (78 PUNTOS OFICIALES DEL EXCEL)
-       ===================================================================== -->
+  <!-- SECCIÓN 3: MAPA DE COBERTURA -->
   <section id="viewMap" class="workspace glass-panel led-border">
     <div class="section-header">
       <div class="section-title">
         <h2>🗺️ Mapa de Cobertura & Referencia de Potencia</h2>
-        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="mapActiveCounter">78 / 78 Puntos Activos</span></span>
+        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="mapActiveCounter">0 / 0 Puntos Activos</span></span>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
         <select id="baseMapSelector" style="padding:5px 10px; font-size:0.78rem;" onchange="changeBaseMapLayer(this.value)">
@@ -1256,37 +907,35 @@
           <input type="checkbox" id="toggleRadiusCircles" checked onchange="toggleCoverageRings()" />
           Radios (1 km / 3 km)
         </label>
-        <button type="button" class="btn-glass btn-sm" onclick="fitLimaPoints()">🏙️ Lima (51)</button>
-        <button type="button" class="btn-glass btn-sm" onclick="fitAllFixedPoints()">🇵🇪 Todo Perú (78)</button>
+        <button type="button" id="btnFitLima" class="btn-glass btn-sm" onclick="fitLimaPoints()">🏙️ Lima (0)</button>
+        <button type="button" id="btnFitPeru" class="btn-glass btn-sm" onclick="fitAllFixedPoints()">🇵🇪 Todo Perú (0)</button>
         <button type="button" class="btn-glass btn-sm" onclick="exportGeofencesCSV()">📊 CSV Geocercas</button>
         <button type="button" class="btn-glass btn-sm" onclick="exportGeofencesGeoJSON()">🌐 GeoJSON</button>
       </div>
     </div>
 
-    <!-- Barra de Filtros Interactivos por Tecnología y Leyenda -->
     <div class="map-toolbar">
       <div class="filter-chips" id="mapTechFilterChips" style="margin-top:0;">
-        <span class="chip active" data-tech="ALL" onclick="setMapTechFilter('ALL', this)">Todos (78)</span>
+        <span class="chip active" data-tech="ALL" onclick="setMapTechFilter('ALL', this)">Todos (<span id="cntTechAll">0</span>)</span>
         <span class="chip" data-tech="DETEKTOR EVAL" onclick="setMapTechFilter('DETEKTOR EVAL', this)">
-          <span class="legend-dot" style="background:#10b981;"></span> DETEKTOR EVAL (36)
+          <span class="legend-dot" style="background:#10b981;"></span> DETEKTOR EVAL (<span id="cntTechDet">0</span>)
         </span>
         <span class="chip" data-tech="REPOTENCIADO EVAL" onclick="setMapTechFilter('REPOTENCIADO EVAL', this)">
-          <span class="legend-dot" style="background:#fbbf24;"></span> REPOTENCIADO EVAL (13)
+          <span class="legend-dot" style="background:#fbbf24;"></span> REPOTENCIADO EVAL (<span id="cntTechRep">0</span>)
         </span>
         <span class="chip" data-tech="TRACKER" onclick="setMapTechFilter('TRACKER', this)">
-          <span class="legend-dot" style="background:#38bdf8;"></span> TRACKER (15)
+          <span class="legend-dot" style="background:#38bdf8;"></span> TRACKER (<span id="cntTechTrk">0</span>)
         </span>
         <span class="chip" data-tech="VUT" onclick="setMapTechFilter('VUT', this)">
-          <span class="legend-dot" style="background:#c084fc;"></span> VUT (14)
+          <span class="legend-dot" style="background:#c084fc;"></span> VUT (<span id="cntTechVut">0</span>)
         </span>
       </div>
-      <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
-        49 con ID PL · 29 TRACKER/VUT
+      <span id="mapSummaryLabel" style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+        0 con ID PL · 0 TRACKER/VUT
       </span>
     </div>
 
     <div class="map-layout">
-      <!-- Panel de Control GPS vs Puntos Fijos y Geocercas -->
       <div class="map-sidebar">
         <div>
           <strong style="font-size:0.9rem; color:var(--accent-secondary);">📡 Evaluar Posición GPS vs Puntos Fijos</strong>
@@ -1321,18 +970,16 @@
           </div>
         </form>
 
-        <!-- Buscador y Selector de los 78 Puntos -->
         <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
           <div class="field" style="margin-bottom:8px;">
             <label>Buscar punto fijo por PL, nombre o tecnología</label>
             <input type="text" id="mapFixedSearch" placeholder="Ej. PL001, Trujillo, VUT, Musa..." oninput="filterFixedPointSelect(this.value)" />
           </div>
           <select id="fixedPointSelector" style="width:100%;" onchange="focusSelectedFixedPoint(this.value)">
-            <option value="">— Seleccionar punto fijo (1 - 78) —</option>
+            <option value="">— Seleccionar punto fijo —</option>
           </select>
         </div>
 
-        <!-- Resultados de Nodos Más Cercanos -->
         <div id="nearestResultsBox" style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
           <strong style="font-size:0.8rem; color:var(--text-main); display:block; margin-bottom:6px;">
             📶 Puntos Fijos Más Cercanos y Potencia:
@@ -1344,7 +991,6 @@
           </div>
         </div>
 
-        <!-- Constructor de Geocerca Circular -->
         <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
           <strong style="font-size:0.85rem; color:#38bdf8; display:block; margin-bottom:6px;">
             ⭕ Crear Geocerca Alrededor del Punto
@@ -1379,7 +1025,6 @@
         </div>
       </div>
 
-      <!-- Contenedor del Mapa Interactivo -->
       <div id="coverageMapContainer"></div>
     </div>
   </section>
@@ -1468,130 +1113,14 @@
 
 <script>
   // =========================================================================
-  // MAPA DE COBERTURA Y POTENCIA (78 PUNTOS EXACTOS DE lista_78_puntos_prioridad_PL.xlsx)
+  // CONFIGURACIÓN SUPABASE (100% DE LOS DATOS VIVEN EN LA NUBE)
   // =========================================================================
-  const FIXED_78_POINTS = [
-    { num: 1, pl: "PL001", punto: "LIMA-BASE", lat: -12.1109345, lon: -77.0105818, tecnologia: "DETEKTOR EVAL" },
-    { num: 2, pl: "PL003", punto: "LIMA-LA MILLA", lat: -12.0191580, lon: -77.0687180, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 3, pl: "PL004", punto: "LIMA-50 COMAS", lat: -11.9787660, lon: -77.0551450, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 4, pl: "PL005", punto: "LIMA-CARABAYLLO", lat: -11.8881730, lon: -77.0201800, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 5, pl: "PL006", punto: "LIMA-VERDE", lat: -12.1849140, lon: -76.9529800, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 6, pl: "PL007", punto: "LIMA-SATELITE", lat: -11.8651640, lon: -77.1311190, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 7, pl: "PL008", punto: "LIMA-LOMAS", lat: -11.8661540, lon: -77.0194170, tecnologia: "DETEKTOR EVAL" },
-    { num: 8, pl: "PL009", punto: "LIMA-MUSA", lat: -12.0876695, lon: -76.8835200, tecnologia: "DETEKTOR EVAL" },
-    { num: 9, pl: "PL011", punto: "LIMA-VIOLETA", lat: -11.8652745, lon: -77.0604212, tecnologia: "DETEKTOR EVAL" },
-    { num: 10, pl: "PL012", punto: "LIMA-SAN DIEGO", lat: -11.9621520, lon: -77.0867310, tecnologia: "DETEKTOR EVAL" },
-    { num: 11, pl: "PL013", punto: "LIMA-CRUZADO", lat: -11.9988820, lon: -77.1175840, tecnologia: "DETEKTOR EVAL" },
-    { num: 12, pl: "PL014", punto: "LIMA-HUAMPANI GOLF", lat: -11.9680060, lon: -76.7948060, tecnologia: "DETEKTOR EVAL" },
-    { num: 13, pl: "PL015", punto: "LIMA-REAL", lat: -11.7787995, lon: -77.1718517, tecnologia: "DETEKTOR EVAL" },
-    { num: 14, pl: "PL016", punto: "LIMA-COLLIQUE", lat: -11.9136010, lon: -77.0171970, tecnologia: "DETEKTOR EVAL" },
-    { num: 15, pl: "PL017", punto: "LIMA-VALLE", lat: -11.9754780, lon: -77.1209260, tecnologia: "DETEKTOR EVAL" },
-    { num: 16, pl: "PL018", punto: "LIMA-TRAPICHE", lat: -11.9032700, lon: -77.0531230, tecnologia: "DETEKTOR EVAL" },
-    { num: 17, pl: "PL019", punto: "LIMA-MARQUEZ", lat: -11.9433250, lon: -77.1317060, tecnologia: "DETEKTOR EVAL" },
-    { num: 18, pl: "PL020", punto: "LIMA-SARITA", lat: -12.0249880, lon: -77.1297610, tecnologia: "DETEKTOR EVAL" },
-    { num: 19, pl: "PL021", punto: "LIMA-MARTIN", lat: -11.9863700, lon: -77.0843510, tecnologia: "DETEKTOR EVAL" },
-    { num: 20, pl: "PL022", punto: "LIMA-VIOLETA2", lat: -11.8319555, lon: -77.1057242, tecnologia: "DETEKTOR EVAL" },
-    { num: 21, pl: "PL023", punto: "LIMA-IZQUIERDO", lat: -12.0524440, lon: -77.1068040, tecnologia: "DETEKTOR EVAL" },
-    { num: 22, pl: "PL024", punto: "LIMA-CONDOR2", lat: -11.9231230, lon: -76.9598460, tecnologia: "DETEKTOR EVAL" },
-    { num: 23, pl: "PL025", punto: "LIMA-SALVADOR", lat: -12.2070397, lon: -76.9283685, tecnologia: "DETEKTOR EVAL" },
-    { num: 24, pl: "PL026", punto: "LIMA-CONDOR", lat: -12.0023550, lon: -77.0075450, tecnologia: "DETEKTOR EVAL" },
-    { num: 25, pl: "PL027", punto: "LIMA-CONDOR3", lat: -11.9611570, lon: -76.9939880, tecnologia: "DETEKTOR EVAL" },
-    { num: 26, pl: "PL028", punto: "P-TRUJILLO-PORVENIR", lat: -8.0861568, lon: -78.9937905, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 27, pl: "PL029", punto: "LIMA-HUACHO", lat: -11.1154690, lon: -77.5890050, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 28, pl: "PL030", punto: "LIMA-IMPERIO", lat: -12.0479520, lon: -77.0370480, tecnologia: "DETEKTOR EVAL" },
-    { num: 29, pl: "PL031", punto: "LIMA-PACIFICO", lat: -11.9335680, lon: -77.0427700, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 30, pl: "PL032", punto: "LIMA-LURIN", lat: -12.2657800, lon: -76.8808980, tecnologia: "DETEKTOR EVAL" },
-    { num: 31, pl: "PL033", punto: "LIMA-PACHA2", lat: -11.9825580, lon: -76.9429780, tecnologia: "DETEKTOR EVAL" },
-    { num: 32, pl: "PL035", punto: "P-PUNO-PUNO", lat: -15.8417180, lon: -70.0330890, tecnologia: "DETEKTOR EVAL" },
-    { num: 33, pl: "PL036", punto: "LIMA-VERDE 2", lat: -12.2332660, lon: -76.9094700, tecnologia: "DETEKTOR EVAL" },
-    { num: 34, pl: "PL037", punto: "LIMA-PACHA3", lat: -11.9728060, lon: -76.8952410, tecnologia: "DETEKTOR EVAL" },
-    { num: 35, pl: "PL039", punto: "LIMA-NUEVO AMANECER", lat: -11.9126150, lon: -77.0884960, tecnologia: "DETEKTOR EVAL" },
-    { num: 36, pl: "PL045", punto: "LIMA-SANTA ANITA", lat: -12.0357940, lon: -76.9585870, tecnologia: "DETEKTOR EVAL" },
-    { num: 37, pl: "PL054", punto: "LIMA-MARRON", lat: -12.1401900, lon: -76.9790950, tecnologia: "DETEKTOR EVAL" },
-    { num: 38, pl: "PL055", punto: "LIMA-HUAYCAN", lat: -12.0229960, lon: -76.8094560, tecnologia: "DETEKTOR EVAL" },
-    { num: 39, pl: "PL058", punto: "LIMA-CHOSICA", lat: -11.9202140, lon: -76.6723345, tecnologia: "DETEKTOR EVAL" },
-    { num: 40, pl: "PL065", punto: "P-PIURA SAN PABLO", lat: -5.2921715, lon: -80.6184025, tecnologia: "DETEKTOR EVAL" },
-    { num: 41, pl: "PL068", punto: "LIMA-ORO", lat: -12.0805900, lon: -77.0327800, tecnologia: "DETEKTOR EVAL" },
-    { num: 42, pl: "PL069", punto: "LIMA-LA QUIPA", lat: -12.4608590, lon: -76.7711807, tecnologia: "DETEKTOR EVAL" },
-    { num: 43, pl: "PL070", punto: "LIMA-IMPERIAL CAÑETE", lat: -13.0735963, lon: -76.3824983, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 44, pl: "PL075", punto: "LIMA-PANTANO", lat: -12.1902598, lon: -77.0210615, tecnologia: "DETEKTOR EVAL" },
-    { num: 45, pl: "PL076", punto: "LIMA-PACHACAMAC", lat: -12.2203100, lon: -76.8870300, tecnologia: "DETEKTOR EVAL" },
-    { num: 46, pl: "PL086", punto: "LIMA-PATIVILCA", lat: -10.6697563, lon: -77.7938537, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 47, pl: "PL091", punto: "LIMA-BARRANCA", lat: -10.7476310, lon: -77.7489468, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 48, pl: "PL092", punto: "LIMA-CHANCAY", lat: -11.5637175, lon: -77.2661747, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 49, pl: "PL094", punto: "P-LA LIBERTAD-SALAVERRY", lat: -8.1866750, lon: -78.9823330, tecnologia: "REPOTENCIADO EVAL" },
-    { num: 50, pl: "", punto: "LIMA-AZUL", lat: -12.0713610, lon: -76.9900310, tecnologia: "TRACKER" },
-    { num: 51, pl: "", punto: "LIMA-MIRONES", lat: -12.0680610, lon: -77.0737940, tecnologia: "TRACKER" },
-    { num: 52, pl: "", punto: "LIMA-PACHA", lat: -12.0164970, lon: -76.9003690, tecnologia: "TRACKER" },
-    { num: 53, pl: "", punto: "P-ANCASH-CHIMBOTE", lat: -9.0640830, lon: -78.5882810, tecnologia: "TRACKER" },
-    { num: 54, pl: "", punto: "P-ANCASH-HUARAZ", lat: -9.5408310, lon: -77.5218000, tecnologia: "TRACKER" },
-    { num: 55, pl: "", punto: "P-AREQUIPA-AREQUIPA SUR", lat: -16.5285110, lon: -71.7807390, tecnologia: "TRACKER" },
-    { num: 56, pl: "", punto: "P-AREQUIPA-ATICO", lat: -16.2286690, lon: -73.6147690, tecnologia: "TRACKER" },
-    { num: 57, pl: "", punto: "P-AYACUCHO-AYACUCHO", lat: -13.1602690, lon: -74.2381140, tecnologia: "TRACKER" },
-    { num: 58, pl: "", punto: "P-ICA-ICA", lat: -14.0638440, lon: -75.7429970, tecnologia: "TRACKER" },
-    { num: 59, pl: "", punto: "P-ICA-SAN CLEMENTE", lat: -13.6829140, lon: -76.1582030, tecnologia: "TRACKER" },
-    { num: 60, pl: "", punto: "P-JUNIN-LA OROYA", lat: -11.5247800, lon: -75.9118700, tecnologia: "TRACKER" },
-    { num: 61, pl: "", punto: "P-LA LIBERTAD-PACASMAYO", lat: -7.3033600, lon: -79.4766500, tecnologia: "TRACKER" },
-    { num: 62, pl: "", punto: "P-LAMBAYEQUE-CHICLAYO 1", lat: -6.7494420, lon: -79.8691420, tecnologia: "TRACKER" },
-    { num: 63, pl: "", punto: "P-PUNO-JULIACA", lat: -15.4954310, lon: -70.1588750, tecnologia: "TRACKER" },
-    { num: 64, pl: "", punto: "P-TRUJILLO-CENTRO", lat: -8.1212360, lon: -79.0211500, tecnologia: "TRACKER" },
-    { num: 65, pl: "", punto: "LIMA-AGUSTINO(PE)", lat: -12.0525580, lon: -77.0029390, tecnologia: "VUT" },
-    { num: 66, pl: "", punto: "LIMA-ASIA(PE)", lat: -12.7588690, lon: -76.5991190, tecnologia: "VUT" },
-    { num: 67, pl: "", punto: "LIMA-PURUCHUCO(PE)", lat: -12.0515280, lon: -76.9293190, tecnologia: "VUT" },
-    { num: 68, pl: "", punto: "P-ANCASH-CASMA(PE)", lat: -9.4698690, lon: -78.3132390, tecnologia: "VUT" },
-    { num: 69, pl: "", punto: "P-ANCASH-NUEVO CHIMBOTE(PE)", lat: -9.1090190, lon: -78.5394670, tecnologia: "VUT" },
-    { num: 70, pl: "", punto: "P-AREQUIPA-AREQUIPA PUNO(PE)", lat: -16.3430080, lon: -71.5835360, tecnologia: "VUT" },
-    { num: 71, pl: "", punto: "P-HUANUCO-HUANUCO(PE)", lat: -9.9532280, lon: -76.2503670, tecnologia: "VUT" },
-    { num: 72, pl: "", punto: "P-ICA-CHINCHA(PE)", lat: -13.4082500, lon: -76.1300750, tecnologia: "VUT" },
-    { num: 73, pl: "", punto: "P-LA LIBERTAD-CHAO(PE)", lat: -8.5391220, lon: -78.6749390, tecnologia: "VUT" },
-    { num: 74, pl: "", punto: "P-MOQUEGUA-MOQUEGUA(PE)", lat: -17.1707280, lon: -70.9075500, tecnologia: "VUT" },
-    { num: 75, pl: "", punto: "P-PIURA-PIURA CENTRO(PE)", lat: -5.2002670, lon: -80.6215940, tecnologia: "VUT" },
-    { num: 76, pl: "", punto: "P-TACNA-TACNA(PE)", lat: -17.9962560, lon: -70.2604030, tecnologia: "VUT" },
-    { num: 77, pl: "", punto: "P-TRUJILLO NORTE(PE)", lat: -8.0157890, lon: -79.0678360, tecnologia: "VUT" },
-    { num: 78, pl: "", punto: "P-TUMBES-TUMBES(PE)", lat: -3.5730920, lon: -80.4567530, tecnologia: "VUT" }
-  ];
+  const SUPABASE_URL = "https://fsiqjdstgqkcsofxwrxu.supabase.co; // <-- PEGA AQUÍ TU PROJECT URL DE SUPABASE
+  const SUPABASE_KEY = "sb_publishable_KkukdsW-FO4iLaXdAb3MWA_t9UIBnsw";
 
-  let coverageMap = null;
-  let currentBaseLayer = null;
-  let fixedMarkersLayer = null;
-  let coverageRingsLayer = null;
-  let gpsRefLayer = null;
-  let fixedMarkerByNum = {};
-  let activeMapTechFilter = "ALL";
-  let lastEvaluatedGps = null;
-
-  function getTechColor(tech) {
-    const t = String(tech || "").toUpperCase();
-    if (t.includes("REPOTENCIADO")) return "#fbbf24";
-    if (t.includes("DETEKTOR")) return "#10b981";
-    if (t.includes("VUT")) return "#c084fc";
-    return "#38bdf8";
-  }
-
-  function getTechBadgeClass(tech) {
-    const t = String(tech || "").toUpperCase();
-    if (t.includes("REPOTENCIADO")) return "tech-repotenciado";
-    if (t.includes("DETEKTOR")) return "tech-detektor";
-    if (t.includes("VUT")) return "tech-vut";
-    return "tech-tracker";
-  }
-
-  function formatPointCode(pt) {
-    return pt.pl ? `${pt.pl}` : `#${pt.num}`;
-  }
-
-  function getFilteredFixedPoints() {
-    if (activeMapTechFilter === "ALL") return FIXED_78_POINTS;
-    return FIXED_78_POINTS.filter(p => p.tecnologia === activeMapTechFilter);
-  }
-
-  // =========================================================================
-  // ESTADO GLOBAL, CLAVES DE ALMACENAMIENTO Y DATOS SEMILLA
-  // =========================================================================
   const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
-  const DEFAULT_TOTP_SECRET = "JBSWY3DPEHPK3PXP4K2M7N8Q";
-  const RECOVERY_MASTER_KEY = "SKYNET2026";
-
+  const STORAGE_RECOVERY_KEY = "mdz_recovery_key_v1";
+  const STORAGE_MAP_POINTS = "mdz_map_points_v1";
   const STORAGE_TRACKERS = "mdz_trackers_v1";
   const STORAGE_TRACKER_COLS = "mdz_tracker_cols_v1";
   const STORAGE_DIRECTORY = "mdz_directory_v1";
@@ -1601,6 +1130,21 @@
   const STORAGE_SANCTUARY = "mdz_vault_data_v1";
   const STORAGE_SANCTUARY_COLS = "mdz_sanctuary_cols_v1";
   const STORAGE_GEOFENCES = "mdz_geofences_v1";
+
+  // Estado inicial vacío: nada hardcodeado en el HTML
+  let FIXED_78_POINTS = [];
+  let trackerColumns = [];
+  let trackersList = [];
+  let directoryColumns = [];
+  let directoryList = [];
+  let commandColumns = [];
+  let commandsList = [];
+  let sanctuaryColumns = [];
+  let sanctuaryList = [];
+  let savedGeofences = [];
+  let totpSecret = "";
+  let recoveryMasterKey = "";
+  let isCloudLoaded = false;
 
   let isAuthenticated = false;
   let isEditMode = false;
@@ -1616,200 +1160,105 @@
   let editingSancCellKey = null;
   let revealedIds = new Set();
 
-  function safeParseStorage(key, fallback) {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return fallback;
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : fallback;
-    } catch {
-      return fallback;
-    }
-  }
+  let coverageMap = null;
+  let currentBaseLayer = null;
+  let fixedMarkersLayer = null;
+  let coverageRingsLayer = null;
+  let gpsRefLayer = null;
+  let geofencesLayer = null;
+  let previewCircleLayer = null;
+  let fixedMarkerByNum = {};
+  let activeMapTechFilter = "ALL";
+  let lastEvaluatedGps = null;
 
-  const defaultTrackerColumns = [
-    { key: "unidad", label: "UNIDAD", required: true, mono: true },
-    { key: "placa", label: "PLACA", required: true, mono: true },
-    { key: "gps", label: "GPS", required: false, mono: true },
-    { key: "detektor", label: "DETEKTOR", required: false, mono: true },
-    { key: "activacion", label: "L ACTIVACION", required: false, mono: true },
-    { key: "respuesta", label: "L RESPUESTA", required: false, mono: true },
-    { key: "detalles", label: "DETALLES", required: false, mono: false },
-    { key: "col_operador_7448", label: "OPERADOR", required: false, mono: true, custom: true },
-    { key: "col_zona_5475", label: "ZONA", required: false, mono: true, custom: true }
-  ];
-
-  const defaultTrackersSeed = [
-    { id: 1795462399439, unidad: "FREQUENCY", placa: "CDC-841", gps: "862524060850415", detektor: "1DB72F", activacion: "9CA5A55-5D73634", respuesta: "KQC0C-95FJV", detalles: "P-341", col_operador_7448: "GIAN", col_zona_5475: "CAZADOR" },
-    { id: 1795448999836, unidad: "KILO 3", placa: "CRC-367", gps: "866314060897491", detektor: "1DB386", activacion: "CA21D94", respuesta: "9EF4M", detalles: "P-371", col_operador_7448: "PEDRO (S)", col_zona_5475: "LIMA CENTRO" },
-    { id: 1795449900718, unidad: "FOXTRO 1", placa: "CUB-026", gps: "866314062183122", detektor: "1DB65B-1DB36D", activacion: "8800C54", respuesta: "NNESQ", detalles: "P-371", col_operador_7448: "JAIRO (S)", col_zona_5475: "LIMA CENTRO" },
-    { id: 1, unidad: "NOVEMBER 5", placa: "BYU-795", gps: "868574042607064", detektor: "1DB199", activacion: "D7D21B3", respuesta: "3VNAF", detalles: "P-166-Cambiar Switch", col_zona_5475: "LIMA ESTE", col_operador_7448: "JACOB" },
-    { id: 2, unidad: "QUEBEC 2", placa: "CVJ-121", gps: "864696060281078", detektor: "1DB7E5", activacion: "A8C6566", respuesta: "MHC88", detalles: "P-371-PL011-93-81", col_operador_7448: "ISMAEL", col_zona_5475: "LIMA NORTE" },
-    { id: 4, unidad: "JULIET 1", placa: "CKP-306", gps: "868574042640297", detektor: "1DB476", activacion: "A1274F0", respuesta: "HTC42", detalles: "P-371-PL054", col_operador_7448: "LUCAS", col_zona_5475: "LIMA SUR" },
-    { id: 3, unidad: "QUEBEC 1", placa: "CRC-497", gps: "866314061138945", detektor: "2394F0", activacion: "7868C34", respuesta: "5Q0AD", detalles: "P-", col_zona_5475: "LIMA 2", col_operador_7448: "KALEB" },
-    { id: 1795449156437, unidad: "NOVEMBER 3", placa: "CDH-845", gps: "866314061709372", detektor: "1DB384", activacion: "F6B7637", respuesta: "LYNYP", detalles: "P-154", col_zona_5475: "TRUJILLO", col_operador_7448: "RUBEN" },
-    { id: 1795449346048, unidad: "FOXTRO 2", placa: "CKR-859", gps: "864696062242276", detektor: "1DB6B5", activacion: "BF832DB", respuesta: "C1MPE", detalles: "P-157", col_zona_5475: "PIURA", col_operador_7448: "FRANK M." },
-    { id: 1795461922460, unidad: "ALFA 2", placa: "BVY-725", gps: "868574042122239", detektor: "AAA", activacion: "77BBB3F-615A5A0", respuesta: "7HJ15-SYND8", detalles: "P-341 L", col_operador_7448: "CESAR A.", col_zona_5475: "AREQUIPA" },
-    { id: 1795461950410, unidad: "NOVEMBER 4", placa: "BYU-726", gps: "868574042644893", detektor: "AAA", activacion: "AB429D8-3492A3E", respuesta: "5L9FQ-WXHJ3", detalles: "P-166", col_operador_7448: "OSCAR N.", col_zona_5475: "JULIACA" },
-    { id: 1795461829033, unidad: "HALCON 1", placa: "CJV-560", gps: "4764422386", detektor: "AAA", activacion: "25C5342", respuesta: "N2K65", detalles: "P-371 L", col_operador_7448: "FELIX P.", col_zona_5475: "LIMA GENERAL" },
-    { id: 1795446429717, unidad: "LUIS S", placa: "CVU-658", gps: "864696060273265", detektor: "1DB46A", activacion: "AAA", respuesta: "AAA", detalles: "P-371-DA" },
-    { id: 1795463337188, unidad: "L200", placa: "AAA-BBB", gps: "", detektor: "23948D", activacion: "", respuesta: "", detalles: "", col_operador_7448: "ALEJANDRO", col_zona_5475: "TALLER" },
-    { id: 1795463355740, unidad: "HILUX", placa: "BUV-705", gps: "4764422309", detektor: "AAA", activacion: "C2A3722", respuesta: "V1LJM", detalles: "P-157 L", col_operador_7448: "RICARDO", col_zona_5475: "I+D" }
-  ];
-
-  const defaultDirectoryColumns = [
-    { key: "nombre", label: "NOMBRE / CONTACTO", required: true, mono: false },
-    { key: "area", label: "ÁREA / CARGO", required: false, mono: false },
-    { key: "telefono", label: "TELÉFONO / ANEXO", required: false, mono: true },
-    { key: "correo", label: "CORREO / ENLACE", required: false, mono: true },
-    { key: "notas", label: "OBSERVACIONES", required: false, mono: false }
-  ];
-
-  const defaultDirectorySeed = [
-    { id: 1795463904140, nombre: "CERTIFICADO", area: "VUCE", telefono: "6157800 / 6854", correo: "https://authorize.vuce.gob.pe/public/login-options/mercancias-restringidas", notas: "Certificados y homologaciones" },
-    { id: 1795463935844, nombre: "CLARO", area: "CLARO", telefono: "997998367", correo: "claro.com.pe", notas: "Consulta de numeros" }
-  ];
-
-  const defaultCommandColumns = [
-    { key: "modelo", label: "MODELO", required: true, mono: true },
-    { key: "tipo", label: "TIPO / CONFIGURACIÓN", required: false, mono: false },
-    { key: "accion", label: "ACCIÓN", required: true, mono: false },
-    { key: "comando", label: "COMANDO AT", required: true, mono: true },
-    { key: "detalle", label: "CABLEADO / EVENTO", required: false, mono: false }
-  ];
-
-  const defaultCommandsSeed = [
-    { id: 1795473337420, modelo: "GENERALES", tipo: "Borrar Buffer", accion: "Borra Buffer", comando: "AT+GTRTO=PEEC14,31,,,,,,FFFF$", detalle: "Borra Buffer" },
-    { id: 301, modelo: "GV58CG", tipo: "BLOQUEO REPOTENCIADO-LOJACK (Frec. Lojack)", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,1,,,,,3,,,,,,FFFF$", detalle: "CORTE: CABLE AMARILLO OUT 2 | LECTOR V: AZUL IN 1 | EVENTO: SEGURO ABIERTO (105021)" },
-    { id: 302, modelo: "GV58CG", tipo: "BLOQUEO REPOTENCIADO-LOJACK (Frec. Lojack)", accion: "DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,0,2,1,,,,,,2,0,,,,,3,,,,,,FFFF$", detalle: "CORTE: CABLE AMARILLO OUT 2 | LECTOR V: AZUL IN 1 | EVENTO: SEGURO CERRADO (105020)" },
-    { id: 303, modelo: "GV58CG", tipo: "BLOQUEO DETEKTOR (Frec. Detektor)", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,0,2,1,1,,,,,2,,,,,,3,,,,,,FFFF$", detalle: "CORTE: CABLE VERDE OUT 1 | LECTOR V: BLANCO IN 0 | EVENTO: BLOQUEO DE VEHICULO (105011)" },
-    { id: 304, modelo: "GV58CG", tipo: "BLOQUEO DETEKTOR (Frec. Detektor)", accion: "DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,0,2,1,0,,,,,2,,,,,,3,,,,,,FFFF$", detalle: "CORTE: CABLE VERDE OUT 1 | LECTOR V: BLANCO IN 0 | EVENTO: DESBLOQUEO VEHICULO (105010)" },
-    { id: 305, modelo: "GV58LAU (5816)", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,,,1,1,,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Activación de bloqueo GV58LAU" },
-    { id: 306, modelo: "GV58LAU (5816)", tipo: "Salida Digital", accion: "DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,,,1,0,,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Desactivación de bloqueo GV58LAU" },
-    { id: 307, modelo: "GV300W (3001)", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Corte de motor GV300W" },
-    { id: 308, modelo: "GV300W (3001)", tipo: "Salida Digital", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Restauración GV300W" },
-    { id: 309, modelo: "GV300W (3001)", tipo: "Mantenimiento", accion: "RESET", comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF", detalle: "Reinicio de equipo GV300W" },
-    { id: 310, modelo: "GV55W", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Bloqueo GV55W" },
-    { id: 311, modelo: "GV55W", tipo: "Salida Digital", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Desbloqueo GV55W" },
-    { id: 312, modelo: "GV350", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTOUT=PEEC14,1,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Bloqueo GV350" },
-    { id: 313, modelo: "GV350", tipo: "Salida Digital", accion: "DESBLOQUEAR", comando: "AT+GTOUT=PEEC14,0,,,,,,,,,,,,,,,,,,,,,,FFFF$", detalle: "Desbloqueo GV350" },
-    { id: 314, modelo: "GV57CG", tipo: "Salida Digital", accion: "BLOQUEAR", comando: "AT+GTDOS=PEEC14,,1,1,1,,,,,,,,,,,FFFF$", detalle: "Bloqueo GV57CG" },
-    { id: 315, modelo: "GV57CG", tipo: "Salida Digital", accion: "DEZSB / DESBLOQUEAR", comando: "AT+GTDOS=PEEC14,,1,1,0,,,,,,,,,,,FFFF$", detalle: "Desbloqueo GV57CG" },
-    { id: 316, modelo: "GENERALES", tipo: "Diagnóstico / Control", accion: "Reiniciar dispositivo", comando: "AT+GTRTO=PEEC14,3,,,,,,FFFF$", detalle: "Reinicio remoto estándar" },
-    { id: 317, modelo: "GENERALES", tipo: "Mantenimiento QMS", accion: "Reconectar a plataforma de mantenimiento", comando: "AT+GTRTO=queclinkDM,F3,,,,,,FFFF$", detalle: "Conexión a Queclink Device Management" },
-    { id: 318, modelo: "GENERALES", tipo: "Posición", accion: "Solicitar Ubicación", comando: "AT+GTRTO=PEEC14,1,,0,,,,FFFF$", detalle: "Reporte inmediato de coordenadas GPS" },
-    { id: 319, modelo: "GENERALES", tipo: "SIM Card", accion: "Solicitar información de la ICCID de la SIM", comando: "AT+GTRTO=PEEC14,6,,0,,,,FFFF$", detalle: "Consulta de número de serie ICCID" },
-    { id: 320, modelo: "GENERALES", tipo: "Intervalo de Reporte (Segundos)", accion: "CAMBIAR TIEMPO A 10 MINUTOS", comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,600,1000,1000,,30,600,00000000,0,,0,FFFF$", detalle: "Reporte cada 600s (10 min)" },
-    { id: 321, modelo: "GENERALES", tipo: "Intervalo de Reporte (Minutos)", accion: "CAMBIAR TIEMPO A 10 SEGUNDOS", comando: "AT+GTFRI=PEEC14,5,0,,0,0000,0000,0,10,1000,1000,,30,10,00000000,0,,0,FFFF$", detalle: "Reporte cada 10 min" }
-  ];
-
-  const defaultSanctuaryColumns = [
-    { key: "servicio", label: "SERVICIO / SISTEMA", required: true, mono: false },
-    { key: "categoria", label: "CATEGORÍA", required: false, mono: false },
-    { key: "usuario", label: "USUARIO", required: true, mono: true },
-    { key: "pass", label: "CONTRASEÑA", required: true, mono: true },
-    { key: "host", label: "URL / DIRECCIÓN", required: false, mono: true },
-    { key: "notas", label: "NOTAS / ETIQUETAS", required: false, mono: false }
-  ];
-
-  const defaultSanctuarySeed = [
-    { id: 1795474322283, servicio: "ACTIVACION 3.0", categoria: "Plataformas", usuario: "Hunterskvalero", pass: "Hunterskvalero2026", host: "https://tristan.24hm.net/ActivacionPeru/Login.aspx", notas: "LOJACK" },
-    { id: 1795474288842, servicio: "COG", categoria: "Plataformas", usuario: "sebastian.valero", pass: "S1k9v9G8*", host: "https://cogwebpe.24hm.net/login", notas: "COG" },
-    { id: 1795474196651, servicio: "BUK", categoria: "Otros", usuario: "kvalero@hunter.com.pe", pass: "S1k9v9G8*", host: "https://hunter.buk.pe/static_pages/portal", notas: "BUK" },
-    { id: 1795474159787, servicio: "QMS", categoria: "Accesos Web", usuario: "kvalero", pass: "Kvalero2027#", host: "http://qms.24hm.net:9080/authority/index?/user/manager", notas: "QMS" },
-    { id: 1795474050652, servicio: "NETSUITE", categoria: "Plataformas", usuario: "kvalero@hunter.com.pe", pass: "MEDUZA$Tm*", host: "https://www.netsuite.com/portal/home.shtml", notas: "Adventista-Lima-Surquillo" },
-    { id: 1795474004297, servicio: "CALIMA", categoria: "Accesos Web", usuario: "admin", pass: "3Y2Ujaz3oQUe67iP", host: "192.168.7.2", notas: "CALIMA III" },
-    { id: 1795473975574, servicio: "NEBULINK", categoria: "Plataformas", usuario: "kvalero@hunter.com.pe", pass: "MEDUZA$Tm*", host: "https://nebulink.queclink.com/login", notas: "Modems Queclink" },
-    { id: 1795473925181, servicio: "TWSIO", categoria: "Plataformas", usuario: "tecnicosRF", pass: "pzq0H32", host: "https://twsiowebpe.24hm.net/twsio/menu_sig/vista/login.php", notas: "TWSIO" },
-    { id: 1795473484123, servicio: "PAGE", categoria: "Otros", usuario: "SKYNET", pass: "SKYNET2026", host: "GITHUB", notas: "PASS" },
-    { id: 1795473454160, servicio: "SUNAT FACTURAS", categoria: "Otros", usuario: "HUNTERDO", pass: "Regdoc2021Hu", host: "https://www.sunat.gob.pe/portalanterior.html", notas: "Consulta de Facturas" },
-    { id: 1795463122396, servicio: "TWSIO", categoria: "Plataformas", usuario: "svalero", pass: "35zv51t", host: "https://twsiowebpe.24hm.net/twsio/menu_sig/vista/login.php", notas: "TWSIO" }
-  ];
-
-  let trackerColumns = safeParseStorage(STORAGE_TRACKER_COLS, [...defaultTrackerColumns]);
-  let trackersList = safeParseStorage(STORAGE_TRACKERS, [...defaultTrackersSeed]);
-  let directoryColumns = safeParseStorage(STORAGE_DIRECTORY_COLS, [...defaultDirectoryColumns]);
-  let directoryList = safeParseStorage(STORAGE_DIRECTORY, [...defaultDirectorySeed]);
-  let commandColumns = safeParseStorage(STORAGE_COMMAND_COLS, [...defaultCommandColumns]);
-  let commandsList = safeParseStorage(STORAGE_COMMANDS, [...defaultCommandsSeed]);
-  let sanctuaryColumns = safeParseStorage(STORAGE_SANCTUARY_COLS, [...defaultSanctuaryColumns]);
-  let sanctuaryList = safeParseStorage(STORAGE_SANCTUARY, [...defaultSanctuarySeed]);
-  let savedGeofences = safeParseStorage(STORAGE_GEOFENCES, []);
-
-  // =========================================================================
-  // CONEXIÓN SUPABASE (SINCRONIZACIÓN EN LA NUBE + REALTIME)
-  // =========================================================================
-  const SUPABASE_URL = "https://fsiqjdstgqkcsofxwrxu.supabase.co"; // <-- PEGA AQUÍ TU PROJECT URL DE SUPABASE
-  const SUPABASE_KEY = "sb_publishable_KkukdsW-FO4iLaXdAb3MWA_t9UIBnsw";
   const sbClient = (window.supabase && !SUPABASE_URL.includes("TU_PROYECTO"))
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
     : null;
 
   async function saveToCloud(key, value) {
-    if (!sbClient) return;
+    if (!sbClient) {
+      showToast("⛔ Configura SUPABASE_URL para guardar en la nube.");
+      return;
+    }
     const { error } = await sbClient
       .from("mdz_workspace_data")
       .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: "key" });
     if (error) {
-      console.error("Error Supabase:", error);
-      showToast("⚠️ Guardado local (error al sincronizar nube).");
+      console.error("Error guardando en Supabase:", error);
+      showToast("⚠️ Error al sincronizar con Supabase.");
     }
   }
 
   function applyCloudKey(key, val) {
     if (key === STORAGE_TRACKERS && Array.isArray(val)) {
       trackersList = val;
-      localStorage.setItem(STORAGE_TRACKERS, JSON.stringify(val));
       renderTrackersTable();
     } else if (key === STORAGE_TRACKER_COLS && Array.isArray(val)) {
       trackerColumns = val;
-      localStorage.setItem(STORAGE_TRACKER_COLS, JSON.stringify(val));
       renderTrackersForm();
       renderTrackersTable();
     } else if (key === STORAGE_DIRECTORY && Array.isArray(val)) {
       directoryList = val;
-      localStorage.setItem(STORAGE_DIRECTORY, JSON.stringify(val));
       renderDirectoryTable();
     } else if (key === STORAGE_DIRECTORY_COLS && Array.isArray(val)) {
       directoryColumns = val;
-      localStorage.setItem(STORAGE_DIRECTORY_COLS, JSON.stringify(val));
       renderDirectoryForm();
       renderDirectoryTable();
     } else if (key === STORAGE_COMMANDS && Array.isArray(val)) {
       commandsList = val;
-      localStorage.setItem(STORAGE_COMMANDS, JSON.stringify(val));
       renderCommandsTable();
     } else if (key === STORAGE_COMMAND_COLS && Array.isArray(val)) {
       commandColumns = val;
-      localStorage.setItem(STORAGE_COMMAND_COLS, JSON.stringify(val));
       renderCommandsForm();
       renderCommandsTable();
     } else if (key === STORAGE_SANCTUARY && Array.isArray(val)) {
       sanctuaryList = val;
-      localStorage.setItem(STORAGE_SANCTUARY, JSON.stringify(val));
       if (isAuthenticated) renderSanctuaryTable();
     } else if (key === STORAGE_SANCTUARY_COLS && Array.isArray(val)) {
       sanctuaryColumns = val;
-      localStorage.setItem(STORAGE_SANCTUARY_COLS, JSON.stringify(val));
       if (isAuthenticated) { renderSanctuaryForm(); renderSanctuaryTable(); }
     } else if (key === STORAGE_GEOFENCES && Array.isArray(val)) {
       savedGeofences = val;
-      localStorage.setItem(STORAGE_GEOFENCES, JSON.stringify(val));
       renderSavedGeofences();
+    } else if (key === STORAGE_MAP_POINTS && Array.isArray(val)) {
+      FIXED_78_POINTS = val;
+      updateMapTechStats();
+      if (coverageMap) {
+        renderFixedPointsOnMap();
+        populateFixedPointSelector(document.getElementById("mapFixedSearch").value);
+      }
     } else if (key === STORAGE_TOTP_SECRET && typeof val === "string") {
-      localStorage.setItem(STORAGE_TOTP_SECRET, val);
+      totpSecret = val;
+    } else if (key === STORAGE_RECOVERY_KEY && typeof val === "string") {
+      recoveryMasterKey = val;
     }
     updateCounters();
   }
 
   async function initSupabaseSync() {
-    if (!sbClient) return;
-    const { data, error } = await sbClient.from("mdz_workspace_data").select("key, value");
-    if (!error && Array.isArray(data)) {
-      data.forEach(row => applyCloudKey(row.key, row.value));
-      showToast("☁️ Sincronizado con Supabase.");
+    const statusEl = document.getElementById("cloudStatusText");
+    if (!sbClient) {
+      if (statusEl) statusEl.textContent = "Falta configurar SUPABASE_URL";
+      renderTrackersTable();
+      return;
     }
 
+    const { data, error } = await sbClient.from("mdz_workspace_data").select("key, value");
+    if (error) {
+      console.error("Error cargando Supabase:", error);
+      if (statusEl) statusEl.textContent = "Error de conexión Supabase";
+      showToast("⛔ No se pudo conectar con Supabase.");
+      return;
+    }
+
+    isCloudLoaded = true;
+    if (Array.isArray(data)) {
+      data.forEach(row => applyCloudKey(row.key, row.value));
+    }
+    if (statusEl) statusEl.textContent = "Sincronizado en vivo (Supabase)";
+    showToast("☁️ Datos cargados desde Supabase.");
+
+    // Escuchar cambios en tiempo real desde cualquier dispositivo
     sbClient
       .channel("mdz-realtime-sync")
       .on("postgres_changes", { event: "*", schema: "public", table: "mdz_workspace_data" }, payload => {
@@ -1820,27 +1269,20 @@
       .subscribe();
   }
 
-  function persistTrackers() { localStorage.setItem(STORAGE_TRACKERS, JSON.stringify(trackersList)); saveToCloud(STORAGE_TRACKERS, trackersList); updateCounters(); }
-  function persistTrackerColumns() { localStorage.setItem(STORAGE_TRACKER_COLS, JSON.stringify(trackerColumns)); saveToCloud(STORAGE_TRACKER_COLS, trackerColumns); }
-  function persistDirectory() { localStorage.setItem(STORAGE_DIRECTORY, JSON.stringify(directoryList)); saveToCloud(STORAGE_DIRECTORY, directoryList); updateCounters(); }
-  function persistDirectoryColumns() { localStorage.setItem(STORAGE_DIRECTORY_COLS, JSON.stringify(directoryColumns)); saveToCloud(STORAGE_DIRECTORY_COLS, directoryColumns); }
-  function persistCommands() { localStorage.setItem(STORAGE_COMMANDS, JSON.stringify(commandsList)); saveToCloud(STORAGE_COMMANDS, commandsList); updateCounters(); }
-  function persistCommandColumns() { localStorage.setItem(STORAGE_COMMAND_COLS, JSON.stringify(commandColumns)); saveToCloud(STORAGE_COMMAND_COLS, commandColumns); }
-  function persistSanctuary() { localStorage.setItem(STORAGE_SANCTUARY, JSON.stringify(sanctuaryList)); saveToCloud(STORAGE_SANCTUARY, sanctuaryList); updateCounters(); }
-  function persistSanctuaryColumns() { localStorage.setItem(STORAGE_SANCTUARY_COLS, JSON.stringify(sanctuaryColumns)); saveToCloud(STORAGE_SANCTUARY_COLS, sanctuaryColumns); }
-  function persistGeofences() { localStorage.setItem(STORAGE_GEOFENCES, JSON.stringify(savedGeofences)); saveToCloud(STORAGE_GEOFENCES, savedGeofences); }
+  function persistTrackers() { saveToCloud(STORAGE_TRACKERS, trackersList); updateCounters(); }
+  function persistTrackerColumns() { saveToCloud(STORAGE_TRACKER_COLS, trackerColumns); }
+  function persistDirectory() { saveToCloud(STORAGE_DIRECTORY, directoryList); updateCounters(); }
+  function persistDirectoryColumns() { saveToCloud(STORAGE_DIRECTORY_COLS, directoryColumns); }
+  function persistCommands() { saveToCloud(STORAGE_COMMANDS, commandsList); updateCounters(); }
+  function persistCommandColumns() { saveToCloud(STORAGE_COMMAND_COLS, commandColumns); }
+  function persistSanctuary() { saveToCloud(STORAGE_SANCTUARY, sanctuaryList); updateCounters(); }
+  function persistSanctuaryColumns() { saveToCloud(STORAGE_SANCTUARY_COLS, sanctuaryColumns); }
+  function persistGeofences() { saveToCloud(STORAGE_GEOFENCES, savedGeofences); }
 
   // =========================================================================
-  // AUTENTICACIÓN TOTP (RFC 6238 HMAC-SHA1) Y CONTROL DE CAPAS
+  // AUTENTICACIÓN TOTP (RFC 6238 HMAC-SHA1) DESDE SUPABASE
   // =========================================================================
-  function getTotpSecret() {
-    let sec = localStorage.getItem(STORAGE_TOTP_SECRET);
-    if (!sec) {
-      sec = DEFAULT_TOTP_SECRET;
-      localStorage.setItem(STORAGE_TOTP_SECRET, sec);
-    }
-    return sec;
-  }
+  function getTotpSecret() { return totpSecret; }
 
   function buildOtpAuthUri() {
     const secret = getTotpSecret();
@@ -1870,13 +1312,7 @@
     view.setUint32(0, Math.floor(counter / 0x100000000));
     view.setUint32(4, counter >>> 0);
 
-    const cryptoKey = await crypto.subtle.importKey(
-      "raw",
-      keyBytes,
-      { name: "HMAC", hash: "SHA-1" },
-      false,
-      ["sign"]
-    );
+    const cryptoKey = await crypto.subtle.importKey("raw", keyBytes, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
     const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBuf));
     const offset = hmac[hmac.length - 1] & 0x0f;
     const code = (
@@ -1898,8 +1334,7 @@
     const size = 21;
     const cell = 6;
     let rects = "";
-    const isFinder = (r, c) =>
-      (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
+    const isFinder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
 
     for (let r = 0; r < size; r++) {
       for (let c = 0; c < size; c++) {
@@ -1912,34 +1347,21 @@
           const seed = Math.abs(Math.imul(hash ^ (r * 31 + c * 17), 2654435761));
           dark = (seed & 1) === 1;
         }
-        if (dark) {
-          rects += `<rect x="${c * cell}" y="${r * cell}" width="${cell}" height="${cell}" fill="#041510"/>`;
-        }
+        if (dark) rects += `<rect x="${c * cell}" y="${r * cell}" width="${cell}" height="${cell}" fill="#041510"/>`;
       }
     }
     container.innerHTML = `<svg width="${size * cell}" height="${size * cell}" viewBox="0 0 ${size * cell} ${size * cell}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
   }
 
   function handleSanctuaryAction() {
-    if (isAuthenticated) {
-      lockSanctuary();
-    } else {
-      pendingAction = "sanctuary";
-      openTotpModal();
-    }
+    if (isAuthenticated) { lockSanctuary(); }
+    else { pendingAction = "sanctuary"; openTotpModal(); }
   }
 
   function handleEditToggle() {
-    if (!isAuthenticated) {
-      pendingAction = "edit";
-      openTotpModal();
-      return;
-    }
+    if (!isAuthenticated) { pendingAction = "edit"; openTotpModal(); return; }
     isEditMode = !isEditMode;
-    editingCellKey = null;
-    editingDirCellKey = null;
-    editingCmdCellKey = null;
-    editingSancCellKey = null;
+    editingCellKey = editingDirCellKey = editingCmdCellKey = editingSancCellKey = null;
     updateSecurityUI();
     renderTrackersTable();
     renderDirectoryTable();
@@ -1957,10 +1379,7 @@
     setTimeout(() => document.getElementById("totpCodeInput").focus(), 70);
   }
 
-  function closeTotpModal() {
-    document.getElementById("totpModal").classList.remove("open");
-  }
-
+  function closeTotpModal() { document.getElementById("totpModal").classList.remove("open"); }
   function toggleRecoveryPrompt() {
     const box = document.getElementById("recoveryBox");
     box.style.display = box.style.display === "none" ? "block" : "none";
@@ -1968,7 +1387,7 @@
 
   function unlockRecoveryQr() {
     const val = document.getElementById("recoveryKeyInput").value.trim();
-    if (val !== RECOVERY_MASTER_KEY) {
+    if (!recoveryMasterKey || val !== recoveryMasterKey) {
       document.getElementById("totpErrorMsg").textContent = "⛔ Clave maestra de recuperación incorrecta.";
       return;
     }
@@ -1982,11 +1401,15 @@
     e.preventDefault();
     const code = document.getElementById("totpCodeInput").value.replace(/\s+/g, "");
     const errEl = document.getElementById("totpErrorMsg");
+    const secret = getTotpSecret();
+    if (!secret) {
+      errEl.textContent = "⏳ Esperando llave 2FA desde Supabase...";
+      return;
+    }
     if (!/^\d{6}$/.test(code)) {
       errEl.textContent = "Ingresa un código numérico de 6 dígitos.";
       return;
     }
-    const secret = getTotpSecret();
     const validCodes = await Promise.all([
       computeTotpAtOffset(secret, -1),
       computeTotpAtOffset(secret, 0),
@@ -2022,10 +1445,7 @@
   function lockSanctuary() {
     isAuthenticated = false;
     isEditMode = false;
-    editingCellKey = null;
-    editingDirCellKey = null;
-    editingCmdCellKey = null;
-    editingSancCellKey = null;
+    editingCellKey = editingDirCellKey = editingCmdCellKey = editingSancCellKey = null;
     revealedIds.clear();
     document.getElementById("internalQrDrawer").classList.remove("open");
     switchTab("trackers");
@@ -2101,29 +1521,58 @@
   }
 
   // =========================================================================
-  // MAPA DE COBERTURA: RENDERIZADO, CAPAS BASE, FILTROS Y GEOCERCAS
+  // MAPA DE COBERTURA Y POTENCIA (ALIMENTADO 100% DESDE SUPABASE)
   // =========================================================================
-  let geofencesLayer = null;
-  let previewCircleLayer = null;
+  function getTechColor(tech) {
+    const t = String(tech || "").toUpperCase();
+    if (t.includes("REPOTENCIADO")) return "#fbbf24";
+    if (t.includes("DETEKTOR")) return "#10b981";
+    if (t.includes("VUT")) return "#c084fc";
+    return "#38bdf8";
+  }
+
+  function getTechBadgeClass(tech) {
+    const t = String(tech || "").toUpperCase();
+    if (t.includes("REPOTENCIADO")) return "tech-repotenciado";
+    if (t.includes("DETEKTOR")) return "tech-detektor";
+    if (t.includes("VUT")) return "tech-vut";
+    return "tech-tracker";
+  }
+
+  function formatPointCode(pt) { return pt.pl ? `${pt.pl}` : `#${pt.num}`; }
+
+  function getFilteredFixedPoints() {
+    if (activeMapTechFilter === "ALL") return FIXED_78_POINTS;
+    return FIXED_78_POINTS.filter(p => p.tecnologia === activeMapTechFilter);
+  }
+
+  function updateMapTechStats() {
+    const total = FIXED_78_POINTS.length;
+    const det = FIXED_78_POINTS.filter(p => p.tecnologia === "DETEKTOR EVAL").length;
+    const rep = FIXED_78_POINTS.filter(p => p.tecnologia === "REPOTENCIADO EVAL").length;
+    const trk = FIXED_78_POINTS.filter(p => p.tecnologia === "TRACKER").length;
+    const vut = FIXED_78_POINTS.filter(p => p.tecnologia === "VUT").length;
+    const lima = FIXED_78_POINTS.filter(p => String(p.punto || "").startsWith("LIMA-")).length;
+    const withPl = FIXED_78_POINTS.filter(p => p.pl && p.pl.trim() !== "").length;
+
+    document.getElementById("cntTechAll").textContent = total;
+    document.getElementById("cntTechDet").textContent = det;
+    document.getElementById("cntTechRep").textContent = rep;
+    document.getElementById("cntTechTrk").textContent = trk;
+    document.getElementById("cntTechVut").textContent = vut;
+    document.getElementById("btnFitLima").textContent = `🏙️ Lima (${lima})`;
+    document.getElementById("btnFitPeru").textContent = `🇵🇪 Todo Perú (${total})`;
+    document.getElementById("mapSummaryLabel").textContent = `${withPl} con ID PL · ${total - withPl} TRACKER/VUT`;
+  }
 
   function createBaseTileLayer(mode) {
     if (mode === "satellite") {
-      return L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-        attribution: "Tiles &copy; Esri",
-        maxZoom: 19
-      });
+      return L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { attribution: "Tiles &copy; Esri", maxZoom: 19 });
     }
     if (mode === "light") {
-      return L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-        maxZoom: 19
-      });
+      return L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors", maxZoom: 19 });
     }
-    return L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-      className: "dark-map-tiles",
-      maxZoom: 19
-    });
+    return L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors", className: "dark-map-tiles", maxZoom: 19 });
   }
 
   function changeBaseMapLayer(mode) {
@@ -2136,10 +1585,7 @@
 
   function initOrRefreshCoverageMap() {
     if (!isAuthenticated) return;
-    if (typeof L === "undefined") {
-      showToast("⚠️ No se pudo cargar la librería de mapas. Verifica tu conexión.");
-      return;
-    }
+    if (typeof L === "undefined") { showToast("⚠️ No se pudo cargar Leaflet."); return; }
 
     if (!coverageMap) {
       coverageMap = L.map("coverageMapContainer", { zoomControl: true }).setView([-12.04, -77.02], 11);
@@ -2155,7 +1601,6 @@
       coverageMap.on("click", e => {
         const allowClick = document.getElementById("enableMapClickPlacement");
         if (!allowClick || !allowClick.checked) return;
-
         const lat = Number(e.latlng.lat.toFixed(7));
         const lon = Number(e.latlng.lng.toFixed(7));
         document.getElementById("gpsLatInput").value = lat;
@@ -2164,10 +1609,7 @@
         evaluateGpsAgainstFixed(lat, lon, false);
       });
     }
-
-    setTimeout(() => {
-      coverageMap.invalidateSize();
-    }, 120);
+    setTimeout(() => { coverageMap.invalidateSize(); }, 120);
   }
 
   function renderFixedPointsOnMap() {
@@ -2178,9 +1620,7 @@
 
     const visiblePoints = getFilteredFixedPoints();
     const counterEl = document.getElementById("mapActiveCounter");
-    if (counterEl) {
-      counterEl.textContent = `${visiblePoints.length} / ${FIXED_78_POINTS.length} Puntos Activos`;
-    }
+    if (counterEl) counterEl.textContent = `${visiblePoints.length} / ${FIXED_78_POINTS.length} Puntos Activos`;
 
     visiblePoints.forEach(pt => {
       const nodeColor = getTechColor(pt.tecnologia);
@@ -2188,49 +1628,23 @@
       const codeLabel = pt.pl ? `<span class="pl-badge">${escapeHtml(pt.pl)}</span>` : `<span class="pl-badge">#${pt.num}</span>`;
       const gmapsUrl = `https://www.google.com/maps?q=${pt.lat},${pt.lon}`;
 
-      L.circle([pt.lat, pt.lon], {
-        radius: 1000,
-        color: nodeColor,
-        weight: 0.9,
-        opacity: 0.38,
-        fillColor: nodeColor,
-        fillOpacity: 0.06
-      }).addTo(coverageRingsLayer);
-
-      L.circle([pt.lat, pt.lon], {
-        radius: 3000,
-        color: nodeColor,
-        weight: 0.65,
-        opacity: 0.22,
-        dashArray: "4 4",
-        fillOpacity: 0
-      }).addTo(coverageRingsLayer);
+      L.circle([pt.lat, pt.lon], { radius: 1000, color: nodeColor, weight: 0.9, opacity: 0.38, fillColor: nodeColor, fillOpacity: 0.06 }).addTo(coverageRingsLayer);
+      L.circle([pt.lat, pt.lon], { radius: 3000, color: nodeColor, weight: 0.65, opacity: 0.22, dashArray: "4 4", fillOpacity: 0 }).addTo(coverageRingsLayer);
 
       const marker = L.circleMarker([pt.lat, pt.lon], {
-        radius: pt.pl ? 7 : 6.2,
-        fillColor: nodeColor,
-        color: "#ecfdf5",
-        weight: 1.5,
-        opacity: 1,
-        fillOpacity: 0.94
+        radius: pt.pl ? 7 : 6.2, fillColor: nodeColor, color: "#ecfdf5", weight: 1.5, opacity: 1, fillOpacity: 0.94
       });
 
       marker.bindTooltip(
         `<strong>${pt.pl ? escapeHtml(pt.pl) + " · " : "#" + pt.num + " · "}${escapeHtml(pt.punto)}</strong> <span style="opacity:0.8;">(${escapeHtml(pt.tecnologia)})</span>`,
-        {
-          direction: "top",
-          offset: [0, -6],
-          className: "point-label-tooltip"
-        }
+        { direction: "top", offset: [0, -6], className: "point-label-tooltip" }
       );
 
       marker.bindPopup(`
         <div style="font-size:0.82rem; line-height:1.55; min-width:240px;">
-          <div style="margin-bottom:4px;">
-            ${codeLabel}<strong style="color:#34d399; font-size:0.88rem;">${escapeHtml(pt.punto)}</strong>
-          </div>
+          <div style="margin-bottom:4px;">${codeLabel}<strong style="color:#34d399; font-size:0.88rem;">${escapeHtml(pt.punto)}</strong></div>
           <span class="tech-pill ${badgeCls}" style="margin-bottom:5px;">${escapeHtml(pt.tecnologia)}</span>
-          <div style="font-size:0.75rem; color:#94a3b8;">N.º Excel: <strong>${pt.num}</strong>${pt.pl ? ` · ID: <strong>${escapeHtml(pt.pl)}</strong>` : " · Sin ID PL"}</div>
+          <div style="font-size:0.75rem; color:#94a3b8;">N.º: <strong>${pt.num}</strong>${pt.pl ? ` · ID: <strong>${escapeHtml(pt.pl)}</strong>` : " · Sin ID PL"}</div>
           <div style="font-family:monospace; color:#cbd5e1; margin-top:3px;">LAT: ${pt.lat.toFixed(7)}</div>
           <div style="font-family:monospace; color:#cbd5e1;">LON: ${pt.lon.toFixed(7)}</div>
           <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
@@ -2253,38 +1667,28 @@
     if (el) el.classList.add("active");
     renderFixedPointsOnMap();
     populateFixedPointSelector(document.getElementById("mapFixedSearch").value);
-    if (lastEvaluatedGps) {
-      evaluateGpsAgainstFixed(lastEvaluatedGps.lat, lastEvaluatedGps.lon, false);
-    }
+    if (lastEvaluatedGps) evaluateGpsAgainstFixed(lastEvaluatedGps.lat, lastEvaluatedGps.lon, false);
   }
 
   function toggleCoverageRings() {
     if (!coverageMap || !coverageRingsLayer) return;
     const checked = document.getElementById("toggleRadiusCircles").checked;
-    if (checked) {
-      if (!coverageMap.hasLayer(coverageRingsLayer)) coverageRingsLayer.addTo(coverageMap);
-    } else {
-      if (coverageMap.hasLayer(coverageRingsLayer)) coverageMap.removeLayer(coverageRingsLayer);
-    }
+    if (checked) { if (!coverageMap.hasLayer(coverageRingsLayer)) coverageRingsLayer.addTo(coverageMap); }
+    else { if (coverageMap.hasLayer(coverageRingsLayer)) coverageMap.removeLayer(coverageRingsLayer); }
   }
 
   function fitAllFixedPoints() {
     if (!coverageMap) return;
     const pts = getFilteredFixedPoints();
     if (!pts.length) return;
-    const bounds = L.latLngBounds(pts.map(p => [p.lat, p.lon]));
-    coverageMap.fitBounds(bounds, { padding: [30, 30] });
+    coverageMap.fitBounds(L.latLngBounds(pts.map(p => [p.lat, p.lon])), { padding: [30, 30] });
   }
 
   function fitLimaPoints() {
     if (!coverageMap) return;
-    const pts = getFilteredFixedPoints().filter(p => p.punto.startsWith("LIMA-"));
-    if (!pts.length) {
-      showToast("⚠️ No hay puntos de Lima con el filtro actual.");
-      return;
-    }
-    const bounds = L.latLngBounds(pts.map(p => [p.lat, p.lon]));
-    coverageMap.fitBounds(bounds, { padding: [30, 30] });
+    const pts = getFilteredFixedPoints().filter(p => String(p.punto || "").startsWith("LIMA-"));
+    if (!pts.length) { showToast("⚠️ No hay puntos de Lima con el filtro actual."); return; }
+    coverageMap.fitBounds(L.latLngBounds(pts.map(p => [p.lat, p.lon])), { padding: [30, 30] });
   }
 
   function populateFixedPointSelector(filterQuery) {
@@ -2292,19 +1696,12 @@
     if (!sel) return;
     const q = normalizeText(filterQuery);
     const basePts = getFilteredFixedPoints();
-    const matches = basePts.filter(p =>
-      !q || normalizeText(`${p.num} ${p.pl} ${p.punto} ${p.tecnologia} ${p.lat} ${p.lon}`).includes(q)
-    );
+    const matches = basePts.filter(p => !q || normalizeText(`${p.num} ${p.pl} ${p.punto} ${p.tecnologia} ${p.lat} ${p.lon}`).includes(q));
     sel.innerHTML = `<option value="">— Seleccionar punto fijo (${matches.length} de ${basePts.length}) —</option>` +
-      matches.map(p => {
-        const tag = p.pl ? `${p.pl} | ` : `#${p.num} | `;
-        return `<option value="${p.num}">${escapeHtml(tag + p.punto)} [${escapeHtml(p.tecnologia)}]</option>`;
-      }).join("");
+      matches.map(p => `<option value="${p.num}">${escapeHtml((p.pl ? `${p.pl} | ` : `#${p.num} | `) + p.punto)} [${escapeHtml(p.tecnologia)}]</option>`).join("");
   }
 
-  function filterFixedPointSelect(val) {
-    populateFixedPointSelector(val);
-  }
+  function filterFixedPointSelect(val) { populateFixedPointSelector(val); }
 
   function focusSelectedFixedPoint(numStr) {
     const num = parseInt(numStr, 10);
@@ -2331,7 +1728,7 @@
     const lat = parseFloat(document.getElementById("gpsLatInput").value);
     const lon = parseFloat(document.getElementById("gpsLonInput").value);
     if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-      showToast("⛔ Coordenadas inválidas. Verifica Latitud (-90 a 90) y Longitud (-180 a 180).");
+      showToast("⛔ Coordenadas inválidas.");
       return;
     }
     evaluateGpsAgainstFixed(lat, lon, true);
@@ -2340,26 +1737,18 @@
   function clearGpsReference() {
     lastEvaluatedGps = null;
     if (gpsRefLayer) gpsRefLayer.clearLayers();
-    if (previewCircleLayer && coverageMap) {
-      coverageMap.removeLayer(previewCircleLayer);
-      previewCircleLayer = null;
-    }
+    if (previewCircleLayer && coverageMap) { coverageMap.removeLayer(previewCircleLayer); previewCircleLayer = null; }
     document.getElementById("gpsQuickPaste").value = "";
     document.getElementById("gpsLatInput").value = "";
     document.getElementById("gpsLonInput").value = "";
-    document.getElementById("nearestPointsList").innerHTML = `
-      <p style="font-size:0.78rem; color:var(--text-muted);">
-        Ingresa una coordenada GPS o marca un punto en el mapa para calcular los nodos más cercanos y el nivel de señal estimado.
-      </p>`;
+    document.getElementById("nearestPointsList").innerHTML = `<p style="font-size:0.78rem; color:var(--text-muted);">Ingresa una coordenada GPS o marca un punto en el mapa para calcular los nodos más cercanos.</p>`;
   }
 
   function haversineMeters(lat1, lon1, lat2, lon2) {
     const R = 6371000;
     const toRad = d => (d * Math.PI) / 180;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a = Math.sin(dLat / 2) ** 2 +
-              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
     return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
@@ -2377,11 +1766,7 @@
     const pool = getFilteredFixedPoints();
     if (!pool.length) return;
 
-    const ranked = pool.map(pt => ({
-      ...pt,
-      dist: haversineMeters(lat, lon, pt.lat, pt.lon)
-    })).sort((a, b) => a.dist - b.dist);
-
+    const ranked = pool.map(pt => ({ ...pt, dist: haversineMeters(lat, lon, pt.lat, pt.lon) })).sort((a, b) => a.dist - b.dist);
     const top5 = ranked.slice(0, 5);
     const closest = top5[0];
     const powerInfo = estimatePowerRating(closest.dist);
@@ -2390,16 +1775,10 @@
     const gpsPulseIcon = L.divIcon({
       className: "",
       html: `<div class="gps-pulse-wrapper"><span class="gps-pulse-ring"></span><span class="gps-pulse-core"></span></div>`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 12],
-      popupAnchor: [0, -12]
+      iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12]
     });
 
-    const gpsMarker = L.marker([lat, lon], {
-      icon: gpsPulseIcon,
-      zIndexOffset: 1000
-    }).addTo(gpsRefLayer);
-
+    const gpsMarker = L.marker([lat, lon], { icon: gpsPulseIcon, zIndexOffset: 1000 }).addTo(gpsRefLayer);
     gpsMarker.bindPopup(`
       <div style="font-size:0.82rem; line-height:1.5;">
         <strong style="color:#f87171;">🔴 Unidad Trackeada (GPS)</strong><br/>
@@ -2410,37 +1789,23 @@
       </div>
     `).openPopup();
 
-    L.polyline([[lat, lon], [closest.lat, closest.lon]], {
-      color: powerInfo.color,
-      weight: 2.5,
-      dashArray: "6 6"
-    }).addTo(gpsRefLayer);
+    L.polyline([[lat, lon], [closest.lat, closest.lon]], { color: powerInfo.color, weight: 2.5, dashArray: "6 6" }).addTo(gpsRefLayer);
+    if (centerMap) coverageMap.fitBounds(L.latLngBounds([[lat, lon], [closest.lat, closest.lon]]), { padding: [60, 60], maxZoom: 15 });
 
-    if (centerMap) {
-      const pairBounds = L.latLngBounds([[lat, lon], [closest.lat, closest.lon]]);
-      coverageMap.fitBounds(pairBounds, { padding: [60, 60], maxZoom: 15 });
-    }
-
-    const listEl = document.getElementById("nearestPointsList");
-    listEl.innerHTML = top5.map((item, idx) => {
+    document.getElementById("nearestPointsList").innerHTML = top5.map((item, idx) => {
       const pwr = estimatePowerRating(item.dist);
       const distText = item.dist >= 1000 ? `${(item.dist / 1000).toFixed(2)} km` : `${Math.round(item.dist)} m`;
-      const codeText = item.pl ? item.pl : `#${item.num}`;
       return `
         <div class="nearest-card" onclick="focusSelectedFixedPoint(${item.num})">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
             <div>
-              <strong style="color:#34d399; display:block;">${idx === 0 ? "★ " : ""}${escapeHtml(codeText)} · ${escapeHtml(item.punto)}</strong>
+              <strong style="color:#34d399; display:block;">${idx === 0 ? "★ " : ""}${escapeHtml(formatPointCode(item))} · ${escapeHtml(item.punto)}</strong>
               <span class="tech-pill ${getTechBadgeClass(item.tecnologia)}" style="margin-top:3px;">${escapeHtml(item.tecnologia)}</span>
             </div>
             <span class="signal-pill ${pwr.cls}">${distText}</span>
           </div>
-          <div style="font-size:0.74rem; color:var(--text-muted); font-family:monospace; margin-top:4px;">
-            ${item.lat.toFixed(7)}, ${item.lon.toFixed(7)}
-          </div>
-          <div style="font-size:0.73rem; color:${pwr.color}; font-weight:600; margin-top:2px;">
-            ${pwr.label}
-          </div>
+          <div style="font-size:0.74rem; color:var(--text-muted); font-family:monospace; margin-top:4px;">${item.lat.toFixed(7)}, ${item.lon.toFixed(7)}</div>
+          <div style="font-size:0.73rem; color:${pwr.color}; font-weight:600; margin-top:2px;">${pwr.label}</div>
         </div>
       `;
     }).join("");
@@ -2451,21 +1816,9 @@
     const lat = parseFloat(document.getElementById("gpsLatInput").value);
     const lon = parseFloat(document.getElementById("gpsLonInput").value);
     const radius = parseFloat(document.getElementById("geoRadiusInput").value) || 500;
-    if (isNaN(lat) || isNaN(lon)) {
-      showToast("⚠️ Primero ingresa o haz clic en una Latitud/Longitud en el mapa.");
-      return;
-    }
-    if (previewCircleLayer) {
-      coverageMap.removeLayer(previewCircleLayer);
-    }
-    previewCircleLayer = L.circle([lat, lon], {
-      radius,
-      color: "#38bdf8",
-      weight: 2,
-      dashArray: "6 4",
-      fillColor: "#38bdf8",
-      fillOpacity: 0.14
-    }).addTo(coverageMap);
+    if (isNaN(lat) || isNaN(lon)) { showToast("⚠️ Primero ingresa o marca una coordenada GPS."); return; }
+    if (previewCircleLayer) coverageMap.removeLayer(previewCircleLayer);
+    previewCircleLayer = L.circle([lat, lon], { radius, color: "#38bdf8", weight: 2, dashArray: "6 4", fillColor: "#38bdf8", fillOpacity: 0.14 }).addTo(coverageMap);
     coverageMap.fitBounds(previewCircleLayer.getBounds(), { padding: [40, 40] });
   }
 
@@ -2476,37 +1829,16 @@
     const radius = parseFloat(document.getElementById("geoRadiusInput").value);
     const name = document.getElementById("geoNameInput").value.trim();
     const notes = document.getElementById("geoNotesInput").value.trim();
-
-    if (isNaN(lat) || isNaN(lon)) {
-      showToast("⚠️ Selecciona un punto en el mapa o ingresa Latitud/Longitud.");
-      return;
-    }
-    if (!name || isNaN(radius) || radius <= 0) {
-      showToast("⚠️ Ingresa un nombre y un radio válido en metros.");
-      return;
-    }
+    if (isNaN(lat) || isNaN(lon) || !name || isNaN(radius) || radius <= 0) { showToast("⚠️ Datos de geocerca incompletos."); return; }
 
     const insidePoints = FIXED_78_POINTS.filter(pt => haversineMeters(lat, lon, pt.lat, pt.lon) <= radius);
-    const newGeo = {
-      id: Date.now(),
-      nombre: name,
-      lat,
-      lon,
-      radio: radius,
-      notas: notes,
-      puntosDentro: insidePoints.map(p => `${formatPointCode(p)} ${p.punto}`)
-    };
-
-    savedGeofences.unshift(newGeo);
+    savedGeofences.unshift({ id: Date.now(), nombre: name, lat, lon, radio: radius, notas: notes, puntosDentro: insidePoints.map(p => `${formatPointCode(p)} ${p.punto}`) });
     persistGeofences();
-    if (previewCircleLayer && coverageMap) {
-      coverageMap.removeLayer(previewCircleLayer);
-      previewCircleLayer = null;
-    }
+    if (previewCircleLayer && coverageMap) { coverageMap.removeLayer(previewCircleLayer); previewCircleLayer = null; }
     document.getElementById("geoNameInput").value = "";
     document.getElementById("geoNotesInput").value = "";
     renderSavedGeofences();
-    showToast(`⭕ Geocerca "${name}" guardada (${insidePoints.length} puntos fijos dentro).`);
+    showToast(`⭕ Geocerca "${name}" guardada (${insidePoints.length} puntos dentro).`);
   }
 
   function renderSavedGeofences() {
@@ -2518,40 +1850,21 @@
       if (!geofencesLayer) geofencesLayer = L.layerGroup().addTo(coverageMap);
       geofencesLayer.clearLayers();
       savedGeofences.forEach(g => {
-        const circle = L.circle([g.lat, g.lon], {
-          radius: g.radio,
-          color: "#38bdf8",
-          weight: 2,
-          fillColor: "#38bdf8",
-          fillOpacity: 0.16
-        }).addTo(geofencesLayer);
-        circle.bindPopup(`
-          <div style="font-size:0.82rem; line-height:1.45;">
-            <strong style="color:#38bdf8;">⭕ ${escapeHtml(g.nombre)}</strong><br/>
-            <span>Radio: <strong>${g.radio} m</strong></span><br/>
-            <span>Puntos fijos dentro: <strong>${(g.puntosDentro || []).length}</strong></span><br/>
-            ${g.notas ? `<span>Notas: ${escapeHtml(g.notas)}</span><br/>` : ""}
-            <span style="font-family:monospace; font-size:0.74rem; color:#94a3b8;">${g.lat.toFixed(6)}, ${g.lon.toFixed(6)}</span>
-          </div>
-        `);
+        L.circle([g.lat, g.lon], { radius: g.radio, color: "#38bdf8", weight: 2, fillColor: "#38bdf8", fillOpacity: 0.16 })
+          .bindPopup(`<div style="font-size:0.82rem; line-height:1.45;"><strong style="color:#38bdf8;">⭕ ${escapeHtml(g.nombre)}</strong><br/>Radio: <strong>${g.radio} m</strong><br/>Puntos dentro: <strong>${(g.puntosDentro || []).length}</strong>${g.notas ? `<br/>Notas: ${escapeHtml(g.notas)}` : ""}</div>`)
+          .addTo(geofencesLayer);
       });
     }
 
     if (!listEl) return;
-    if (!savedGeofences.length) {
-      listEl.innerHTML = `<p style="font-size:0.75rem; color:var(--text-muted);">Aún no hay geocercas guardadas.</p>`;
-      return;
-    }
-
+    if (!savedGeofences.length) { listEl.innerHTML = `<p style="font-size:0.75rem; color:var(--text-muted);">Aún no hay geocercas guardadas.</p>`; return; }
     listEl.innerHTML = savedGeofences.map(g => `
       <div class="nearest-card" onclick="focusGeofence(${g.id})">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
           <strong style="color:#38bdf8;">⭕ ${escapeHtml(g.nombre)}</strong>
           <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="event.stopPropagation(); deleteGeofence(${g.id})">✕</button>
         </div>
-        <div style="font-size:0.73rem; color:var(--text-muted); margin-top:2px;">
-          Radio: ${g.radio} m · ${(g.puntosDentro || []).length} puntos dentro
-        </div>
+        <div style="font-size:0.73rem; color:var(--text-muted); margin-top:2px;">Radio: ${g.radio} m · ${(g.puntosDentro || []).length} puntos dentro</div>
         ${g.notas ? `<div style="font-size:0.72rem; color:#cbd5e1; margin-top:2px;">${escapeHtml(g.notas)}</div>` : ""}
       </div>
     `).join("");
@@ -2560,8 +1873,7 @@
   function focusGeofence(id) {
     const g = savedGeofences.find(x => x.id === id);
     if (!g || !coverageMap) return;
-    const circle = L.circle([g.lat, g.lon], { radius: g.radio });
-    coverageMap.fitBounds(circle.getBounds(), { padding: [45, 45] });
+    coverageMap.fitBounds(L.circle([g.lat, g.lon], { radius: g.radio }).getBounds(), { padding: [45, 45] });
   }
 
   function deleteGeofence(id) {
@@ -2572,115 +1884,56 @@
   }
 
   function exportGeofencesCSV() {
-    if (!savedGeofences.length) {
-      showToast("⚠️ No hay geocercas guardadas para exportar.");
-      return;
-    }
+    if (!savedGeofences.length) { showToast("⚠️ No hay geocercas guardadas."); return; }
     const rows = [["ID", "Nombre", "Latitud", "Longitud", "Radio_Metros", "Cantidad_Puntos_Dentro", "Puntos_Dentro", "Observaciones"]];
-    savedGeofences.forEach(g => {
-      rows.push([
-        g.id,
-        g.nombre,
-        g.lat,
-        g.lon,
-        g.radio,
-        (g.puntosDentro || []).length,
-        (g.puntosDentro || []).join(" | "),
-        g.notas || ""
-      ]);
-    });
+    savedGeofences.forEach(g => rows.push([g.id, g.nombre, g.lat, g.lon, g.radio, (g.puntosDentro || []).length, (g.puntosDentro || []).join(" | "), g.notas || ""]));
     const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
     a.download = "MDZ_Geocercas_Cobertura.csv";
     a.click();
     showToast("📊 Geocercas exportadas a CSV.");
   }
 
   function exportGeofencesGeoJSON() {
-    if (!savedGeofences.length) {
-      showToast("⚠️ No hay geocercas guardadas para exportar.");
-      return;
-    }
-    const geojson = {
+    if (!savedGeofences.length) { showToast("⚠️ No hay geocercas guardadas."); return; }
+    downloadJson({
       type: "FeatureCollection",
       features: savedGeofences.map(g => ({
         type: "Feature",
-        properties: {
-          id: g.id,
-          nombre: g.nombre,
-          radio_metros: g.radio,
-          puntos_dentro: g.puntosDentro || [],
-          observaciones: g.notas || ""
-        },
-        geometry: {
-          type: "Point",
-          coordinates: [g.lon, g.lat]
-        }
+        properties: { id: g.id, nombre: g.nombre, radio_metros: g.radio, puntos_dentro: g.puntosDentro || [], observaciones: g.notas || "" },
+        geometry: { type: "Point", coordinates: [g.lon, g.lat] }
       }))
-    };
-    downloadJson(geojson, "MDZ_Geocercas.geojson");
+    }, "MDZ_Geocercas.geojson");
   }
 
   // =========================================================================
-  // COLUMNAS DINÁMICAS (TRACKERS, DIRECTORIO, COMANDOS Y SANCTUARY)
+  // COLUMNAS DINÁMICAS
   // =========================================================================
   function openAddColumnModal(target = "trackers") {
     if (!isEditMode) return;
     addColumnTarget = target;
-    const titles = {
-      trackers: "➕ Nueva Columna en Trackers",
-      directory: "➕ Nueva Columna en Directorio",
-      commands: "➕ Nueva Columna en Comandos",
-      sanctuary: "➕ Nueva Columna en Sanctuary"
-    };
+    const titles = { trackers: "➕ Nueva Columna en Trackers", directory: "➕ Nueva Columna en Directorio", commands: "➕ Nueva Columna en Comandos", sanctuary: "➕ Nueva Columna en Sanctuary" };
     document.getElementById("addColumnModalTitle").textContent = titles[target] || "➕ Nueva Columna";
     document.getElementById("newColumnNameInput").value = "";
     document.getElementById("addColumnModal").classList.add("open");
     setTimeout(() => document.getElementById("newColumnNameInput").focus(), 60);
   }
 
-  function closeAddColumnModal() {
-    document.getElementById("addColumnModal").classList.remove("open");
-  }
+  function closeAddColumnModal() { document.getElementById("addColumnModal").classList.remove("open"); }
 
   function confirmAddColumn(e) {
     e.preventDefault();
     if (!isEditMode) return;
     const rawLabel = document.getElementById("newColumnNameInput").value.trim().toUpperCase();
     if (!rawLabel) return;
-
     const slug = "col_" + rawLabel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_") + "_" + Date.now().toString().slice(-4);
-    const newColObj = {
-      key: slug,
-      label: rawLabel,
-      required: false,
-      mono: true,
-      custom: true
-    };
+    const newColObj = { key: slug, label: rawLabel, required: false, mono: true, custom: true };
 
-    if (addColumnTarget === "directory") {
-      directoryColumns.push(newColObj);
-      persistDirectoryColumns();
-      renderDirectoryForm();
-      renderDirectoryTable();
-    } else if (addColumnTarget === "commands") {
-      commandColumns.push(newColObj);
-      persistCommandColumns();
-      renderCommandsForm();
-      renderCommandsTable();
-    } else if (addColumnTarget === "sanctuary") {
-      sanctuaryColumns.push(newColObj);
-      persistSanctuaryColumns();
-      renderSanctuaryForm();
-      renderSanctuaryTable();
-    } else {
-      trackerColumns.push(newColObj);
-      persistTrackerColumns();
-      renderTrackersForm();
-      renderTrackersTable();
-    }
+    if (addColumnTarget === "directory") { directoryColumns.push(newColObj); persistDirectoryColumns(); renderDirectoryForm(); renderDirectoryTable(); }
+    else if (addColumnTarget === "commands") { commandColumns.push(newColObj); persistCommandColumns(); renderCommandsForm(); renderCommandsTable(); }
+    else if (addColumnTarget === "sanctuary") { sanctuaryColumns.push(newColObj); persistSanctuaryColumns(); renderSanctuaryForm(); renderSanctuaryTable(); }
+    else { trackerColumns.push(newColObj); persistTrackerColumns(); renderTrackersForm(); renderTrackersTable(); }
 
     closeAddColumnModal();
     showToast(`➕ Columna "${rawLabel}" añadida.`);
@@ -2688,39 +1941,17 @@
 
   function removeCustomColumn(colKey, target = "trackers") {
     if (!isEditMode) return;
-    if (target === "directory") {
-      const col = directoryColumns.find(c => c.key === colKey);
-      if (!col || !col.custom) return;
-      directoryColumns = directoryColumns.filter(c => c.key !== colKey);
-      persistDirectoryColumns();
-      renderDirectoryForm();
-      renderDirectoryTable();
-      showToast(`🗑️ Columna "${col.label}" eliminada.`);
-    } else if (target === "commands") {
-      const col = commandColumns.find(c => c.key === colKey);
-      if (!col || !col.custom) return;
-      commandColumns = commandColumns.filter(c => c.key !== colKey);
-      persistCommandColumns();
-      renderCommandsForm();
-      renderCommandsTable();
-      showToast(`🗑️ Columna "${col.label}" eliminada.`);
-    } else if (target === "sanctuary") {
-      const col = sanctuaryColumns.find(c => c.key === colKey);
-      if (!col || !col.custom) return;
-      sanctuaryColumns = sanctuaryColumns.filter(c => c.key !== colKey);
-      persistSanctuaryColumns();
-      renderSanctuaryForm();
-      renderSanctuaryTable();
-      showToast(`🗑️ Columna "${col.label}" eliminada.`);
-    } else {
-      const col = trackerColumns.find(c => c.key === colKey);
-      if (!col || !col.custom) return;
-      trackerColumns = trackerColumns.filter(c => c.key !== colKey);
-      persistTrackerColumns();
-      renderTrackersForm();
-      renderTrackersTable();
-      showToast(`🗑️ Columna "${col.label}" eliminada.`);
-    }
+    const map = {
+      directory: [() => directoryColumns, v => { directoryColumns = v; persistDirectoryColumns(); renderDirectoryForm(); renderDirectoryTable(); }],
+      commands:  [() => commandColumns,   v => { commandColumns = v; persistCommandColumns(); renderCommandsForm(); renderCommandsTable(); }],
+      sanctuary: [() => sanctuaryColumns, v => { sanctuaryColumns = v; persistSanctuaryColumns(); renderSanctuaryForm(); renderSanctuaryTable(); }],
+      trackers:  [() => trackerColumns,   v => { trackerColumns = v; persistTrackerColumns(); renderTrackersForm(); renderTrackersTable(); }]
+    };
+    const [getter, setter] = map[target] || map.trackers;
+    const col = getter().find(c => c.key === colKey);
+    if (!col || !col.custom) return;
+    setter(getter().filter(c => c.key !== colKey));
+    showToast(`🗑️ Columna "${col.label}" eliminada.`);
   }
 
   function toggleInternalQrPanel() {
@@ -2734,87 +1965,59 @@
     }
   }
 
-  function copyTotpSecret() {
-    navigator.clipboard.writeText(getTotpSecret());
-    showToast("📋 Clave Base32 copiada al portapapeles.");
-  }
+  function copyTotpSecret() { navigator.clipboard.writeText(getTotpSecret()); showToast("📋 Clave Base32 copiada."); }
 
   function rotateTotpSecret() {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
     const rand = new Uint8Array(24);
     crypto.getRandomValues(rand);
-    const newSecret = Array.from(rand, b => alphabet[b % 32]).join("");
-    localStorage.setItem(STORAGE_TOTP_SECRET, newSecret);
-    saveToCloud(STORAGE_TOTP_SECRET, newSecret);
-    document.getElementById("internalSecretDisplay").textContent = newSecret;
+    totpSecret = Array.from(rand, b => alphabet[b % 32]).join("");
+    saveToCloud(STORAGE_TOTP_SECRET, totpSecret);
+    document.getElementById("internalSecretDisplay").textContent = totpSecret;
     renderSimpleMatrixQR(document.getElementById("internalQrBox"), buildOtpAuthUri());
-    showToast("🔄 Nueva llave 2FA generada y sincronizada en la nube.");
+    showToast("🔄 Nueva llave 2FA sincronizada en Supabase.");
   }
 
   // =========================================================================
-  // REORDENAMIENTO Y RENDERIZADO DE TRACKERS
+  // TRACKERS
   // =========================================================================
   function renderTrackersForm() {
     const formEl = document.getElementById("formTrackers");
-    const fieldsHtml = trackerColumns.map(col => `
+    formEl.innerHTML = trackerColumns.map(col => `
       <div class="field">
         <label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label>
         <input type="text" id="tField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} />
       </div>
-    `).join("");
-
-    formEl.innerHTML = `
-      ${fieldsHtml}
-      <div class="field" style="justify-content: flex-end;">
-        <button type="submit" class="btn-primary">+ Agregar</button>
-      </div>
-    `;
+    `).join("") + `<div class="field" style="justify-content: flex-end;"><button type="submit" class="btn-primary">+ Agregar</button></div>`;
   }
 
   function moveTrackerRow(id, direction) {
     if (!isEditMode) return;
     const idx = trackersList.findIndex(t => t.id === id);
-    if (idx === -1) return;
     const targetIdx = idx + direction;
-    if (targetIdx < 0 || targetIdx >= trackersList.length) return;
-
+    if (idx === -1 || targetIdx < 0 || targetIdx >= trackersList.length) return;
     const [moved] = trackersList.splice(idx, 1);
     trackersList.splice(targetIdx, 0, moved);
     persistTrackers();
     renderTrackersTable();
   }
 
-  function onTrackerDragStart(e, id) {
-    if (!isEditMode) return;
-    draggedTrackerId = id;
-    e.dataTransfer.effectAllowed = "move";
-  }
-
-  function onTrackerDragOver(e) {
-    if (!isEditMode) return;
-    e.preventDefault();
-    e.currentTarget.classList.add("drag-over");
-  }
-
-  function onTrackerDragLeave(e) {
-    e.currentTarget.classList.remove("drag-over");
-  }
-
+  function onTrackerDragStart(e, id) { if (!isEditMode) return; draggedTrackerId = id; e.dataTransfer.effectAllowed = "move"; }
+  function onTrackerDragOver(e) { if (!isEditMode) return; e.preventDefault(); e.currentTarget.classList.add("drag-over"); }
+  function onTrackerDragLeave(e) { e.currentTarget.classList.remove("drag-over"); }
   function onTrackerDrop(e, targetId) {
     e.preventDefault();
     e.currentTarget.classList.remove("drag-over");
     if (!isEditMode || draggedTrackerId === null || draggedTrackerId === targetId) return;
-
     const fromIdx = trackersList.findIndex(t => t.id === draggedTrackerId);
     const toIdx = trackersList.findIndex(t => t.id === targetId);
     if (fromIdx === -1 || toIdx === -1) return;
-
     const [moved] = trackersList.splice(fromIdx, 1);
     trackersList.splice(toIdx, 0, moved);
     draggedTrackerId = null;
     persistTrackers();
     renderTrackersTable();
-    showToast("↕️ Orden de vehículos actualizado.");
+    showToast("↕️ Orden actualizado en Supabase.");
   }
 
   function getColumnStyleClass(key) {
@@ -2834,21 +2037,19 @@
 
     const moveTh = isEditMode ? `<th style="width:76px;">ORDEN</th>` : "";
     const colsTh = trackerColumns.map(col => {
-      const delColBtn = (isEditMode && col.custom)
-        ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}')" title="Eliminar columna">✕</button>`
-        : "";
+      const delColBtn = (isEditMode && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}')" title="Eliminar columna">✕</button>` : "";
       return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
     }).join("");
     thead.innerHTML = `<tr>${moveTh}${colsTh}<th>ACCIONES</th></tr>`;
 
-    const filtered = trackersList.filter(item => {
-      const combined = trackerColumns.map(c => item[c.key] || "").join(" ");
-      return normalizeText(combined).includes(q);
-    });
+    if (!isCloudLoaded) {
+      tbody.innerHTML = `<tr><td colspan="${Math.max(trackerColumns.length + 1, 2)}" style="text-align:center; color:var(--text-muted); padding:22px;">${sbClient ? "⏳ Cargando datos desde Supabase..." : "⚠️ Configura SUPABASE_URL en el código para conectar."}</td></tr>`;
+      return;
+    }
 
+    const filtered = trackersList.filter(item => normalizeText(trackerColumns.map(c => item[c.key] || "").join(" ")).includes(q));
     if (!filtered.length) {
-      const totalCols = trackerColumns.length + (isEditMode ? 2 : 1);
-      tbody.innerHTML = `<tr><td colspan="${totalCols}" style="text-align:center; color:var(--text-muted); padding:22px;">No se encontraron registros en Trackers.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${trackerColumns.length + (isEditMode ? 2 : 1)}" style="text-align:center; color:var(--text-muted); padding:22px;">No se encontraron registros en Trackers.</td></tr>`;
       return;
     }
 
@@ -2858,58 +2059,23 @@
           <span class="drag-handle" title="Arrastra para mover fila">⋮⋮</span>
           <button type="button" class="btn-glass btn-sm" onclick="moveTrackerRow(${item.id}, -1)" ${visibleIdx === 0 ? "disabled style='opacity:0.35'" : ""} title="Subir">↑</button>
           <button type="button" class="btn-glass btn-sm" onclick="moveTrackerRow(${item.id}, 1)" ${visibleIdx === filtered.length - 1 ? "disabled style='opacity:0.35'" : ""} title="Bajar">↓</button>
-        </td>
-      ` : "";
+        </td>` : "";
 
       const cellsHtml = trackerColumns.map(col => {
-        const field = col.key;
-        const key = `${item.id}_${field}`;
-        const rawVal = item[field] || "";
-        const styleCls = getColumnStyleClass(field);
-
+        const field = col.key, key = `${item.id}_${field}`, rawVal = item[field] || "", styleCls = getColumnStyleClass(field);
         if (isEditMode && editingCellKey === key) {
-          return `<td class="${styleCls}">
-            <input
-              type="text"
-              class="inline-input"
-              id="edit_${key}"
-              value="${escapeAttr(rawVal)}"
-              onblur="saveTrackerCell(${item.id}, '${escapeAttr(field)}', this.value)"
-              onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCellKey=null; renderTrackersTable();}"
-            />
-          </td>`;
+          return `<td class="${styleCls}"><input type="text" class="inline-input" id="edit_${key}" value="${escapeAttr(rawVal)}" onblur="saveTrackerCell(${item.id}, '${escapeAttr(field)}', this.value)" onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCellKey=null; renderTrackersTable();}" /></td>`;
         }
-
-        const displayContent = rawVal
-          ? escapeHtml(rawVal)
-          : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
-
-        if (isEditMode) {
-          return `<td class="${styleCls}">
-            <span class="cell-editable" onclick="activateTrackerCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${displayContent}</span>
-          </td>`;
-        }
-        return `<td class="${styleCls}"><span class="cell-readonly">${displayContent}</span></td>`;
+        const displayContent = rawVal ? escapeHtml(rawVal) : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
+        return isEditMode
+          ? `<td class="${styleCls}"><span class="cell-editable" onclick="activateTrackerCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${displayContent}</span></td>`
+          : `<td class="${styleCls}"><span class="cell-readonly">${displayContent}</span></td>`;
       }).join("");
 
-      const deleteBtn = isEditMode
-        ? `<button class="btn-danger" onclick="deleteTrackerItem(${item.id})">Eliminar</button>`
-        : "";
+      const deleteBtn = isEditMode ? `<button class="btn-danger" onclick="deleteTrackerItem(${item.id})">Eliminar</button>` : "";
+      const dragAttrs = isEditMode ? `draggable="true" ondragstart="onTrackerDragStart(event, ${item.id})" ondragover="onTrackerDragOver(event)" ondragleave="onTrackerDragLeave(event)" ondrop="onTrackerDrop(event, ${item.id})"` : "";
 
-      const dragAttrs = isEditMode
-        ? `draggable="true" ondragstart="onTrackerDragStart(event, ${item.id})" ondragover="onTrackerDragOver(event)" ondragleave="onTrackerDragLeave(event)" ondrop="onTrackerDrop(event, ${item.id})"`
-        : "";
-
-      return `
-        <tr ${dragAttrs}>
-          ${orderCell}
-          ${cellsHtml}
-          <td style="white-space:nowrap;">
-            <button class="btn-glass btn-sm" onclick="copyTrackerRow(${item.id})" title="Copiar fila">Copiar</button>
-            ${deleteBtn}
-          </td>
-        </tr>
-      `;
+      return `<tr ${dragAttrs}>${orderCell}${cellsHtml}<td style="white-space:nowrap;"><button class="btn-glass btn-sm" onclick="copyTrackerRow(${item.id})">Copiar</button> ${deleteBtn}</td></tr>`;
     }).join("");
   }
 
@@ -2918,18 +2084,12 @@
     editingCellKey = `${id}_${field}`;
     renderTrackersTable();
     const inp = document.getElementById(`edit_${editingCellKey}`);
-    if (inp) {
-      inp.focus();
-      inp.select();
-    }
+    if (inp) { inp.focus(); inp.select(); }
   }
 
   function saveTrackerCell(id, field, newValue) {
     const idx = trackersList.findIndex(t => t.id === id);
-    if (idx !== -1) {
-      trackersList[idx][field] = newValue.trim();
-      persistTrackers();
-    }
+    if (idx !== -1) { trackersList[idx][field] = newValue.trim(); persistTrackers(); }
     editingCellKey = null;
     renderTrackersTable();
   }
@@ -2938,15 +2098,12 @@
     e.preventDefault();
     if (!isEditMode) return;
     const newRow = { id: Date.now() };
-    trackerColumns.forEach(col => {
-      const el = document.getElementById(`tField_${col.key}`);
-      newRow[col.key] = el ? el.value.trim() : "";
-    });
+    trackerColumns.forEach(col => { const el = document.getElementById(`tField_${col.key}`); newRow[col.key] = el ? el.value.trim() : ""; });
     trackersList.push(newRow);
     persistTrackers();
     e.target.reset();
     renderTrackersTable();
-    showToast("✅ Registro guardado en Trackers.");
+    showToast("✅ Registro guardado en Supabase.");
   }
 
   function deleteTrackerItem(id) {
@@ -2960,21 +2117,18 @@
   function copyTrackerRow(id) {
     const t = trackersList.find(x => x.id === id);
     if (!t) return;
-    const text = trackerColumns.map(c => `${c.label}: ${t[c.key] || "-"}`).join(" | ");
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(trackerColumns.map(c => `${c.label}: ${t[c.key] || "-"}`).join(" | "));
     showToast(`📋 Datos de ${t.unidad || "unidad"} copiados.`);
   }
 
   // =========================================================================
-  // DETECCIÓN Y RENDERIZADO DE ENLACES DIRECTOS (URLs / IPs)
+  // ENLACES, DIRECTORIO, COMANDOS Y SANCTUARY
   // =========================================================================
   function normalizeHref(raw) {
     const val = String(raw || "").trim();
     if (!val) return null;
     if (/^https?:\/\//i.test(val)) return val;
-    if (/^(localhost|(\d{1,3}\.){3}\d{1,3}|[a-z0-9-]+(\.[a-z0-9-]+)+)(:\d+)?(\/.*)?$/i.test(val)) {
-      return "https://" + val;
-    }
+    if (/^(localhost|(\d{1,3}\.){3}\d{1,3}|[a-z0-9-]+(\.[a-z0-9-]+)+)(:\d+)?(\/.*)?$/i.test(val)) return "https://" + val;
     return null;
   }
 
@@ -2984,62 +2138,28 @@
     const href = normalizeHref(text);
     const labelHtml = queryForHighlight ? highlightMatch(text, queryForHighlight) : escapeHtml(text);
     if (!href) return labelHtml;
-
-    return `
-      <div style="display:inline-flex; align-items:center; gap:7px; flex-wrap:wrap;">
-        <a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="ext-link" title="Abrir enlace en nueva pestaña">${labelHtml}</a>
-        <a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="btn-glass btn-sm" style="text-decoration:none; padding:3px 8px; font-size:0.72rem;" title="Ir directo al enlace">↗ Ir</a>
-      </div>
-    `;
+    return `<div style="display:inline-flex; align-items:center; gap:7px; flex-wrap:wrap;"><a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="ext-link">${labelHtml}</a><a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" class="btn-glass btn-sm" style="text-decoration:none; padding:3px 8px; font-size:0.72rem;">↗ Ir</a></div>`;
   }
 
-  // =========================================================================
-  // DIRECTORIO EN VISTA GENERAL
-  // =========================================================================
   function toggleDirectoryPanel() {
-    const body = document.getElementById("directoryCollapsibleBody");
-    const btn = document.getElementById("btnToggleDirectory");
-    if (!body || !btn) return;
+    const body = document.getElementById("directoryCollapsibleBody"), btn = document.getElementById("btnToggleDirectory");
     const isHidden = body.style.display === "none";
     body.style.display = isHidden ? "block" : "none";
     btn.innerHTML = isHidden ? "▲ Ocultar Directorio" : "▼ Desplegar Directorio";
   }
 
   function renderDirectoryForm() {
-    const formEl = document.getElementById("formDirectory");
-    const fieldsHtml = directoryColumns.map(col => `
-      <div class="field">
-        <label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label>
-        <input type="text" id="dField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} />
-      </div>
-    `).join("");
-
-    formEl.innerHTML = `
-      ${fieldsHtml}
-      <div class="field" style="justify-content: flex-end;">
-        <button type="submit" class="btn-primary">+ Agregar</button>
-      </div>
-    `;
+    document.getElementById("formDirectory").innerHTML = directoryColumns.map(col => `
+      <div class="field"><label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label><input type="text" id="dField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} /></div>
+    `).join("") + `<div class="field" style="justify-content: flex-end;"><button type="submit" class="btn-primary">+ Agregar</button></div>`;
   }
 
   function renderDirectoryTable() {
-    const thead = document.getElementById("directoryTableHead");
-    const tbody = document.getElementById("directoryTableBody");
+    const thead = document.getElementById("directoryTableHead"), tbody = document.getElementById("directoryTableBody");
     const q = normalizeText(document.getElementById("directorySearch").value);
+    thead.innerHTML = `<tr>${directoryColumns.map(col => `<th>${escapeHtml(col.label)}${(isEditMode && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'directory')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
 
-    const colsTh = directoryColumns.map(col => {
-      const delColBtn = (isEditMode && col.custom)
-        ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'directory')" title="Eliminar columna">✕</button>`
-        : "";
-      return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
-    }).join("");
-    thead.innerHTML = `<tr>${colsTh}<th>ACCIONES</th></tr>`;
-
-    const filtered = directoryList.filter(item => {
-      const combined = directoryColumns.map(c => item[c.key] || "").join(" ");
-      return normalizeText(combined).includes(q);
-    });
-
+    const filtered = directoryList.filter(item => normalizeText(directoryColumns.map(c => item[c.key] || "").join(" ")).includes(q));
     if (!filtered.length) {
       tbody.innerHTML = `<tr><td colspan="${directoryColumns.length + 1}" style="text-align:center; color:var(--text-muted); padding:20px;">No se encontraron registros en Directorio.</td></tr>`;
       return;
@@ -3047,53 +2167,18 @@
 
     tbody.innerHTML = filtered.map(item => {
       const cellsHtml = directoryColumns.map(col => {
-        const field = col.key;
-        const key = `${item.id}_${field}`;
-        const rawVal = item[field] || "";
-        const styleCls = col.mono ? "mono" : (field === "nombre" ? "col-unidad" : "");
-
+        const field = col.key, key = `${item.id}_${field}`, rawVal = item[field] || "", styleCls = col.mono ? "mono" : (field === "nombre" ? "col-unidad" : "");
         if (isEditMode && editingDirCellKey === key) {
-          return `<td class="${styleCls}">
-            <input
-              type="text"
-              class="inline-input"
-              id="editDir_${key}"
-              value="${escapeAttr(rawVal)}"
-              onblur="saveDirectoryCell(${item.id}, '${escapeAttr(field)}', this.value)"
-              onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingDirCellKey=null; renderDirectoryTable();}"
-            />
-          </td>`;
+          return `<td class="${styleCls}"><input type="text" class="inline-input" id="editDir_${key}" value="${escapeAttr(rawVal)}" onblur="saveDirectoryCell(${item.id}, '${escapeAttr(field)}', this.value)" onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingDirCellKey=null; renderDirectoryTable();}" /></td>`;
         }
-
         const isLinkVal = normalizeHref(rawVal);
-        const displayContent = rawVal
-          ? (isLinkVal ? renderSmartLinkHtml(rawVal) : escapeHtml(rawVal))
-          : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
-
+        const displayContent = rawVal ? (isLinkVal ? renderSmartLinkHtml(rawVal) : escapeHtml(rawVal)) : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
         if (isEditMode) {
-          return `<td class="${styleCls}">
-            <div style="display:inline-flex; align-items:center; gap:6px;">
-              <span class="cell-editable" onclick="activateDirectoryCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${rawVal ? escapeHtml(rawVal) : '<span class="cell-empty">— AGREGAR —</span>'}</span>
-              ${isLinkVal ? `<a href="${escapeAttr(isLinkVal)}" target="_blank" rel="noopener noreferrer" class="btn-glass btn-sm" style="text-decoration:none; padding:3px 7px;" title="Abrir enlace">↗</a>` : ""}
-            </div>
-          </td>`;
+          return `<td class="${styleCls}"><div style="display:inline-flex; align-items:center; gap:6px;"><span class="cell-editable" onclick="activateDirectoryCell(${item.id}, '${escapeAttr(field)}')">${rawVal ? escapeHtml(rawVal) : '<span class="cell-empty">— AGREGAR —</span>'}</span>${isLinkVal ? `<a href="${escapeAttr(isLinkVal)}" target="_blank" rel="noopener noreferrer" class="btn-glass btn-sm" style="text-decoration:none; padding:3px 7px;">↗</a>` : ""}</div></td>`;
         }
         return `<td class="${styleCls}"><span class="cell-readonly">${displayContent}</span></td>`;
       }).join("");
-
-      const deleteBtn = isEditMode
-        ? `<button class="btn-danger" onclick="deleteDirectoryItem(${item.id})">Eliminar</button>`
-        : "";
-
-      return `
-        <tr>
-          ${cellsHtml}
-          <td style="white-space:nowrap;">
-            <button class="btn-glass btn-sm" onclick="copyDirectoryRow(${item.id})" title="Copiar fila">Copiar</button>
-            ${deleteBtn}
-          </td>
-        </tr>
-      `;
+      return `<tr>${cellsHtml}<td style="white-space:nowrap;"><button class="btn-glass btn-sm" onclick="copyDirectoryRow(${item.id})">Copiar</button> ${isEditMode ? `<button class="btn-danger" onclick="deleteDirectoryItem(${item.id})">Eliminar</button>` : ""}</td></tr>`;
     }).join("");
   }
 
@@ -3102,232 +2187,104 @@
     editingDirCellKey = `${id}_${field}`;
     renderDirectoryTable();
     const inp = document.getElementById(`editDir_${editingDirCellKey}`);
-    if (inp) {
-      inp.focus();
-      inp.select();
-    }
+    if (inp) { inp.focus(); inp.select(); }
   }
-
   function saveDirectoryCell(id, field, newValue) {
     const idx = directoryList.findIndex(d => d.id === id);
-    if (idx !== -1) {
-      directoryList[idx][field] = newValue.trim();
-      persistDirectory();
-    }
+    if (idx !== -1) { directoryList[idx][field] = newValue.trim(); persistDirectory(); }
     editingDirCellKey = null;
     renderDirectoryTable();
   }
-
   function addDirectoryItem(e) {
     e.preventDefault();
     if (!isEditMode) return;
     const newRow = { id: Date.now() };
-    directoryColumns.forEach(col => {
-      const el = document.getElementById(`dField_${col.key}`);
-      newRow[col.key] = el ? el.value.trim() : "";
-    });
+    directoryColumns.forEach(col => { const el = document.getElementById(`dField_${col.key}`); newRow[col.key] = el ? el.value.trim() : ""; });
     directoryList.push(newRow);
     persistDirectory();
     e.target.reset();
     renderDirectoryTable();
     showToast("✅ Registro guardado en Directorio.");
   }
-
-  function deleteDirectoryItem(id) {
-    if (!isEditMode) return;
-    directoryList = directoryList.filter(d => d.id !== id);
-    persistDirectory();
-    renderDirectoryTable();
-    showToast("🗑️ Registro eliminado del Directorio.");
-  }
-
+  function deleteDirectoryItem(id) { if (!isEditMode) return; directoryList = directoryList.filter(d => d.id !== id); persistDirectory(); renderDirectoryTable(); showToast("🗑️ Registro eliminado."); }
   function copyDirectoryRow(id) {
     const d = directoryList.find(x => x.id === id);
     if (!d) return;
-    const text = directoryColumns.map(c => `${c.label}: ${d[c.key] || "-"}`).join(" | ");
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(directoryColumns.map(c => `${c.label}: ${d[c.key] || "-"}`).join(" | "));
     showToast(`📋 Datos de ${d.nombre || "contacto"} copiados.`);
   }
-
   function exportDirectoryExcelCSV() {
-    const rows = [directoryColumns.map(c => c.label)];
-    directoryList.forEach(d => rows.push(directoryColumns.map(c => d[c.key] || "")));
+    const rows = [directoryColumns.map(c => c.label), ...directoryList.map(d => directoryColumns.map(c => d[c.key] || ""))];
     const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "MDZ_Directorio.csv";
-    a.click();
-    showToast("📊 Descargado: MDZ_Directorio.csv");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })); a.download = "MDZ_Directorio.csv"; a.click();
   }
-
-  function exportDirectoryBackupJSON() {
-    downloadJson(directoryList, "MDZ_Directorio_Respaldo.json");
-  }
-
+  function exportDirectoryBackupJSON() { downloadJson(directoryList, "MDZ_Directorio_Respaldo.json"); }
   function importDirectoryBackupJSON(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const imported = JSON.parse(e.target.result);
-        if (!Array.isArray(imported)) throw new Error();
-        directoryList = imported;
-        persistDirectory();
-        renderDirectoryTable();
-        showToast("✅ Directorio restaurado correctamente.");
-      } catch {
-        showToast("⛔ Archivo JSON inválido.");
-      }
-    };
-    reader.readAsText(file);
-    event.target.value = "";
+    reader.onload = e => { try { const imp = JSON.parse(e.target.result); if (!Array.isArray(imp)) throw new Error(); directoryList = imp; persistDirectory(); renderDirectoryTable(); showToast("✅ Directorio restaurado."); } catch { showToast("⛔ JSON inválido."); } };
+    reader.readAsText(file); event.target.value = "";
   }
 
-  // =========================================================================
-  // COMANDOS AT EN VISTA GENERAL
-  // =========================================================================
   function toggleCommandsPanel() {
-    const body = document.getElementById("commandsCollapsibleBody");
-    const btn = document.getElementById("btnToggleCommands");
-    if (!body || !btn) return;
+    const body = document.getElementById("commandsCollapsibleBody"), btn = document.getElementById("btnToggleCommands");
     const isHidden = body.style.display === "none";
     body.style.display = isHidden ? "block" : "none";
     btn.innerHTML = isHidden ? "▲ Ocultar Comandos" : "▼ Desplegar Comandos";
   }
-
   function setCommandModelFilter(model, el) {
     selectedCommandModel = model;
     document.querySelectorAll("#commandModelChips .chip").forEach(c => c.classList.remove("active"));
     el.classList.add("active");
     renderCommandsTable();
   }
-
   function clearCommandsSearch() {
     document.getElementById("commandsSearch").value = "";
     selectedCommandModel = "ALL";
     document.querySelectorAll("#commandModelChips .chip").forEach((c, idx) => c.classList.toggle("active", idx === 0));
     renderCommandsTable();
   }
-
   function renderCommandsForm() {
-    const formEl = document.getElementById("formCommands");
-    const fieldsHtml = commandColumns.map(col => `
-      <div class="field">
-        <label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label>
-        <input type="text" id="cField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} />
-      </div>
-    `).join("");
-
-    formEl.innerHTML = `
-      ${fieldsHtml}
-      <div class="field" style="justify-content: flex-end;">
-        <button type="submit" class="btn-primary">+ Agregar</button>
-      </div>
-    `;
+    document.getElementById("formCommands").innerHTML = commandColumns.map(col => `
+      <div class="field"><label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label><input type="text" id="cField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} /></div>
+    `).join("") + `<div class="field" style="justify-content: flex-end;"><button type="submit" class="btn-primary">+ Agregar</button></div>`;
   }
-
   function renderCommandsTable() {
-    const thead = document.getElementById("commandsTableHead");
-    const tbody = document.getElementById("commandsTableBody");
+    const thead = document.getElementById("commandsTableHead"), tbody = document.getElementById("commandsTableBody");
     const q = normalizeText(document.getElementById("commandsSearch").value);
-
-    const colsTh = commandColumns.map(col => {
-      const delColBtn = (isEditMode && col.custom)
-        ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'commands')" title="Eliminar columna">✕</button>`
-        : "";
-      return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
-    }).join("");
-    thead.innerHTML = `<tr>${colsTh}<th>ACCIONES</th></tr>`;
+    thead.innerHTML = `<tr>${commandColumns.map(col => `<th>${escapeHtml(col.label)}${(isEditMode && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'commands')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
 
     const filtered = commandsList.filter(item => {
-      if (selectedCommandModel !== "ALL" && normalizeText(item.modelo) !== normalizeText(selectedCommandModel)) {
-        return false;
-      }
-      if (!q) return true;
-      const combined = commandColumns.map(c => item[c.key] || "").join(" ");
-      return normalizeText(combined).includes(q);
+      if (selectedCommandModel !== "ALL" && normalizeText(item.modelo) !== normalizeText(selectedCommandModel)) return false;
+      return !q || normalizeText(commandColumns.map(c => item[c.key] || "").join(" ")).includes(q);
     });
-
-    if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="${commandColumns.length + 1}" style="text-align:center; color:var(--text-muted); padding:20px;">No se encontraron comandos para este filtro.</td></tr>`;
-      return;
-    }
+    if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="${commandColumns.length + 1}" style="text-align:center; color:var(--text-muted); padding:20px;">No se encontraron comandos.</td></tr>`; return; }
 
     tbody.innerHTML = filtered.map(item => {
       const cellsHtml = commandColumns.map(col => {
-        const field = col.key;
-        const key = `${item.id}_${field}`;
-        const rawVal = item[field] || "";
-
+        const field = col.key, key = `${item.id}_${field}`, rawVal = item[field] || "";
         if (isEditMode && editingCmdCellKey === key) {
-          return `<td class="${col.mono ? "mono" : ""}">
-            <input
-              type="text"
-              class="inline-input"
-              id="editCmd_${key}"
-              value="${escapeAttr(rawVal)}"
-              onblur="saveCommandCell(${item.id}, '${escapeAttr(field)}', this.value)"
-              onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCmdCellKey=null; renderCommandsTable();}"
-            />
-          </td>`;
+          return `<td class="${col.mono ? "mono" : ""}"><input type="text" class="inline-input" id="editCmd_${key}" value="${escapeAttr(rawVal)}" onblur="saveCommandCell(${item.id}, '${escapeAttr(field)}', this.value)" onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCmdCellKey=null; renderCommandsTable();}" /></td>`;
         }
-
         if (field === "modelo") {
-          const badgeHtml = `<span class="badge-cat">${escapeHtml(rawVal || "GENERAL")}</span>`;
-          if (isEditMode) {
-            return `<td class="mono"><span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${badgeHtml}</span></td>`;
-          }
-          return `<td class="mono">${badgeHtml}</td>`;
+          const b = `<span class="badge-cat">${escapeHtml(rawVal || "GENERAL")}</span>`;
+          return `<td class="mono">${isEditMode ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${b}</span>` : b}</td>`;
         }
-
         if (field === "accion") {
           const isLock = normalizeText(rawVal).includes("bloquear") && !normalizeText(rawVal).includes("desbloquear");
           const isUnlock = normalizeText(rawVal).includes("desbloquear") || normalizeText(rawVal).includes("dezsb");
-          const colorCls = isLock ? "col-activacion" : (isUnlock ? "col-unidad" : "col-detektor");
+          const cls = isLock ? "col-activacion" : (isUnlock ? "col-unidad" : "col-detektor");
           const content = rawVal ? escapeHtml(rawVal) : `<span class="cell-empty">—</span>`;
-          if (isEditMode) {
-            return `<td class="${colorCls}"><span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${content}</span></td>`;
-          }
-          return `<td class="${colorCls}">${content}</td>`;
+          return `<td class="${cls}">${isEditMode ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${content}</span>` : content}</td>`;
         }
-
         if (field === "comando") {
-          const cmdHtml = rawVal
-            ? `<code style="color:#f8fafc; background:rgba(16,185,129,0.1); padding:3px 7px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); user-select:all;">${escapeHtml(rawVal)}</code>`
-            : `<span class="cell-empty">—</span>`;
-          if (isEditMode) {
-            return `<td class="mono"><span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${cmdHtml}</span></td>`;
-          }
-          return `<td class="mono">${cmdHtml}</td>`;
+          const cmdHtml = rawVal ? `<code style="color:#f8fafc; background:rgba(16,185,129,0.1); padding:3px 7px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); user-select:all;">${escapeHtml(rawVal)}</code>` : `<span class="cell-empty">—</span>`;
+          return `<td class="mono">${isEditMode ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${cmdHtml}</span>` : cmdHtml}</td>`;
         }
-
-        const displayContent = rawVal
-          ? escapeHtml(rawVal)
-          : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
-
-        if (isEditMode) {
-          return `<td class="${col.mono ? "mono" : ""}">
-            <span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${displayContent}</span>
-          </td>`;
-        }
-        return `<td class="${col.mono ? "mono" : ""}">${displayContent}</td>`;
+        const displayContent = rawVal ? escapeHtml(rawVal) : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
+        return `<td class="${col.mono ? "mono" : ""}">${isEditMode ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${displayContent}</span>` : displayContent}</td>`;
       }).join("");
-
-      const deleteBtn = isEditMode
-        ? `<button class="btn-danger" onclick="deleteCommandItem(${item.id})">Eliminar</button>`
-        : "";
-
-      return `
-        <tr>
-          ${cellsHtml}
-          <td style="white-space:nowrap;">
-            <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.comando || "")}', 'Comando AT')" title="Copiar comando AT">📋 Copiar AT</button>
-            ${deleteBtn}
-          </td>
-        </tr>
-      `;
+      return `<tr>${cellsHtml}<td style="white-space:nowrap;"><button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.comando || "")}', 'Comando AT')">📋 Copiar AT</button> ${isEditMode ? `<button class="btn-danger" onclick="deleteCommandItem(${item.id})">Eliminar</button>` : ""}</td></tr>`;
     }).join("");
   }
 
@@ -3336,293 +2293,114 @@
     editingCmdCellKey = `${id}_${field}`;
     renderCommandsTable();
     const inp = document.getElementById(`editCmd_${editingCmdCellKey}`);
-    if (inp) {
-      inp.focus();
-      inp.select();
-    }
+    if (inp) { inp.focus(); inp.select(); }
   }
-
   function saveCommandCell(id, field, newValue) {
     const idx = commandsList.findIndex(c => c.id === id);
-    if (idx !== -1) {
-      commandsList[idx][field] = newValue.trim();
-      persistCommands();
-    }
+    if (idx !== -1) { commandsList[idx][field] = newValue.trim(); persistCommands(); }
     editingCmdCellKey = null;
     renderCommandsTable();
   }
-
   function addCommandItem(e) {
     e.preventDefault();
     if (!isEditMode) return;
     const newRow = { id: Date.now() };
-    commandColumns.forEach(col => {
-      const el = document.getElementById(`cField_${col.key}`);
-      newRow[col.key] = el ? el.value.trim() : "";
-    });
+    commandColumns.forEach(col => { const el = document.getElementById(`cField_${col.key}`); newRow[col.key] = el ? el.value.trim() : ""; });
     commandsList.unshift(newRow);
     persistCommands();
     e.target.reset();
     renderCommandsTable();
-    showToast("✅ Comando añadido.");
+    showToast("✅ Comando guardado.");
   }
-
-  function deleteCommandItem(id) {
-    if (!isEditMode) return;
-    commandsList = commandsList.filter(c => c.id !== id);
-    persistCommands();
-    renderCommandsTable();
-    showToast("🗑️ Comando eliminado.");
-  }
-
+  function deleteCommandItem(id) { if (!isEditMode) return; commandsList = commandsList.filter(c => c.id !== id); persistCommands(); renderCommandsTable(); showToast("🗑️ Comando eliminado."); }
   function exportCommandsExcelCSV() {
-    const rows = [commandColumns.map(c => c.label)];
-    commandsList.forEach(c => rows.push(commandColumns.map(col => c[col.key] || "")));
+    const rows = [commandColumns.map(c => c.label), ...commandsList.map(c => commandColumns.map(col => c[col.key] || ""))];
     const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "MDZ_Comandos_AT.csv";
-    a.click();
-    showToast("📊 Descargado: MDZ_Comandos_AT.csv");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })); a.download = "MDZ_Comandos_AT.csv"; a.click();
   }
-
-  function exportCommandsBackupJSON() {
-    downloadJson(commandsList, "MDZ_Comandos_Respaldo.json");
-  }
-
+  function exportCommandsBackupJSON() { downloadJson(commandsList, "MDZ_Comandos_Respaldo.json"); }
   function importCommandsBackupJSON(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const imported = JSON.parse(e.target.result);
-        if (!Array.isArray(imported)) throw new Error();
-        commandsList = imported;
-        persistCommands();
-        renderCommandsTable();
-        showToast("✅ Comandos restaurados correctamente.");
-      } catch {
-        showToast("⛔ Archivo JSON inválido.");
-      }
-    };
-    reader.readAsText(file);
-    event.target.value = "";
+    reader.onload = e => { try { const imp = JSON.parse(e.target.result); if (!Array.isArray(imp)) throw new Error(); commandsList = imp; persistCommands(); renderCommandsTable(); showToast("✅ Comandos restaurados."); } catch { showToast("⛔ JSON inválido."); } };
+    reader.readAsText(file); event.target.value = "";
   }
 
-  // =========================================================================
-  // BUSCADOR INTELIGENTE Y CRUD DE SANCTUARY
-  // =========================================================================
-  function normalizeText(str) {
-    return (str || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-  }
-
+  function normalizeText(str) { return (str || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(); }
   function levenshtein(a, b) {
     if (!a.length) return b.length;
     if (!b.length) return a.length;
-    const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
-    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+    const m = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+    for (let j = 0; j <= a.length; j++) m[0][j] = j;
     for (let i = 1; i <= b.length; i++) {
       for (let j = 1; j <= a.length; j++) {
-        matrix[i][j] = b[i - 1] === a[j - 1]
-          ? matrix[i - 1][j - 1]
-          : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+        m[i][j] = b[i - 1] === a[j - 1] ? m[i - 1][j - 1] : Math.min(m[i - 1][j - 1] + 1, m[i][j - 1] + 1, m[i - 1][j] + 1);
       }
     }
-    return matrix[b.length][a.length];
+    return m[b.length][a.length];
   }
-
   function smartMatch(item, query) {
     if (selectedCategory !== "ALL" && item.categoria !== selectedCategory) return false;
     if (!query) return true;
-    const allValues = sanctuaryColumns.map(c => c.key === "pass" ? "" : (item[c.key] || "")).join(" ");
-    const blob = normalizeText(allValues);
+    const blob = normalizeText(sanctuaryColumns.map(c => c.key === "pass" ? "" : (item[c.key] || "")).join(" "));
     const words = blob.split(/[\s\-_./:@]+/).filter(Boolean);
-    const tokens = normalizeText(query).split(/\s+/).filter(Boolean);
-
-    return tokens.every(tok => {
-      if (blob.includes(tok)) return true;
-      if (tok.length >= 4) {
-        return words.some(w => Math.abs(w.length - tok.length) <= 2 && levenshtein(w, tok) <= 1);
-      }
-      return false;
-    });
+    return normalizeText(query).split(/\s+/).filter(Boolean).every(tok => blob.includes(tok) || (tok.length >= 4 && words.some(w => Math.abs(w.length - tok.length) <= 2 && levenshtein(w, tok) <= 1)));
   }
-
   function highlightMatch(text, query) {
     if (!text) return "";
     const safe = escapeHtml(text);
     if (!query) return safe;
     const tokens = query.trim().split(/\s+/).filter(t => t.length >= 2);
     if (!tokens.length) return safe;
-    const regex = new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
-    return safe.replace(regex, '<mark>$1</mark>');
+    return safe.replace(new RegExp(`(${tokens.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi'), '<mark>$1</mark>');
   }
-
   function setSanctuaryCategory(cat, el) {
     selectedCategory = cat;
     document.querySelectorAll("#categoryChips .chip").forEach(c => c.classList.remove("active"));
     el.classList.add("active");
     renderSanctuaryTable();
   }
-
   function clearSanctuarySearch() {
     document.getElementById("smartSanctuarySearch").value = "";
     selectedCategory = "ALL";
     document.querySelectorAll("#categoryChips .chip").forEach((c, idx) => c.classList.toggle("active", idx === 0));
     renderSanctuaryTable();
   }
-
   function renderSanctuaryForm() {
-    const formEl = document.getElementById("formSanctuary");
-    const fieldsHtml = sanctuaryColumns.map(col => {
-      if (col.key === "categoria") {
-        return `
-          <div class="field">
-            <label>${escapeHtml(col.label)}</label>
-            <select id="sField_categoria">
-              <option value="Sistemas">Sistemas</option>
-              <option value="Accesos Web">Accesos Web</option>
-              <option value="Redes">Redes</option>
-              <option value="Plataformas">Plataformas</option>
-              <option value="Otros">Otros</option>
-            </select>
-          </div>
-        `;
-      }
-      if (col.key === "pass") {
-        return `
-          <div class="field">
-            <label>${escapeHtml(col.label)} *</label>
-            <div style="display:flex; gap:6px;">
-              <input type="text" id="sField_pass" placeholder="Clave de acceso" required style="width:100%;" />
-              <button type="button" class="btn-glass btn-sm" onclick="generateStrongPass()" title="Generar clave aleatoria">🎲</button>
-            </div>
-          </div>
-        `;
-      }
-      return `
-        <div class="field">
-          <label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label>
-          <input type="text" id="sField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} />
-        </div>
-      `;
-    }).join("");
-
-    formEl.innerHTML = `
-      ${fieldsHtml}
-      <div class="field" style="justify-content: flex-end;">
-        <button type="submit" class="btn-primary">+ Guardar</button>
-      </div>
-    `;
+    document.getElementById("formSanctuary").innerHTML = sanctuaryColumns.map(col => {
+      if (col.key === "categoria") return `<div class="field"><label>${escapeHtml(col.label)}</label><select id="sField_categoria"><option value="Sistemas">Sistemas</option><option value="Accesos Web">Accesos Web</option><option value="Redes">Redes</option><option value="Plataformas">Plataformas</option><option value="Otros">Otros</option></select></div>`;
+      if (col.key === "pass") return `<div class="field"><label>${escapeHtml(col.label)} *</label><div style="display:flex; gap:6px;"><input type="text" id="sField_pass" placeholder="Clave de acceso" required style="width:100%;" /><button type="button" class="btn-glass btn-sm" onclick="generateStrongPass()">🎲</button></div></div>`;
+      return `<div class="field"><label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label><input type="text" id="sField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} /></div>`;
+    }).join("") + `<div class="field" style="justify-content: flex-end;"><button type="submit" class="btn-primary">+ Guardar</button></div>`;
   }
-
   function renderSanctuaryTable() {
     if (!isAuthenticated) return;
     const query = document.getElementById("smartSanctuarySearch").value;
-    const thead = document.getElementById("sanctuaryTableHead");
-    const tbody = document.getElementById("sanctuaryTableBody");
-
-    const colsTh = sanctuaryColumns.map(col => {
-      const delColBtn = (isEditMode && col.custom)
-        ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'sanctuary')" title="Eliminar columna">✕</button>`
-        : "";
-      return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
-    }).join("");
-    thead.innerHTML = `<tr>${colsTh}<th>ACCIONES</th></tr>`;
+    const thead = document.getElementById("sanctuaryTableHead"), tbody = document.getElementById("sanctuaryTableBody");
+    thead.innerHTML = `<tr>${sanctuaryColumns.map(col => `<th>${escapeHtml(col.label)}${(isEditMode && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'sanctuary')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
 
     const filtered = sanctuaryList.filter(item => smartMatch(item, query));
-
-    document.getElementById("sanctuarySearchStats").textContent =
-      `Mostrando ${filtered.length} de ${sanctuaryList.length} registros`;
-
-    if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="${sanctuaryColumns.length + 1}" style="text-align:center; color:var(--text-muted); padding:22px;">
-        No se encontraron coincidencias para "${escapeHtml(query)}".
-      </td></tr>`;
-      return;
-    }
+    document.getElementById("sanctuarySearchStats").textContent = `Mostrando ${filtered.length} de ${sanctuaryList.length} registros`;
+    if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="${sanctuaryColumns.length + 1}" style="text-align:center; color:var(--text-muted); padding:22px;">Sin coincidencias.</td></tr>`; return; }
 
     tbody.innerHTML = filtered.map(item => {
       const isShown = revealedIds.has(item.id);
-
       const cellsHtml = sanctuaryColumns.map(col => {
-        const field = col.key;
-        const rawVal = item[field] || "";
-        const cellKey = `${item.id}_${field}`;
-
-        if (field === "categoria") {
-          return `<td><span class="badge-cat">${escapeHtml(rawVal || "Otros")}</span></td>`;
-        }
-
-        if (field === "usuario") {
-          return `<td class="mono">
-            ${highlightMatch(rawVal, query)}
-            <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(rawVal)}', 'Usuario')" title="Copiar usuario">📋</button>
-          </td>`;
-        }
-
-        if (field === "pass") {
-          const passText = isShown ? escapeHtml(rawVal) : "••••••••••••";
-          return `<td class="mono">
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span>${passText}</span>
-              <button class="btn-glass btn-sm" onclick="toggleReveal(${item.id})" title="Ver/Ocultar">${isShown ? "🙈" : "👁️"}</button>
-              <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(rawVal)}', 'Contraseña')" title="Copiar clave">🔑</button>
-            </div>
-          </td>`;
-        }
-
+        const field = col.key, rawVal = item[field] || "", cellKey = `${item.id}_${field}`;
+        if (field === "categoria") return `<td><span class="badge-cat">${escapeHtml(rawVal || "Otros")}</span></td>`;
+        if (field === "usuario") return `<td class="mono">${highlightMatch(rawVal, query)} <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(rawVal)}', 'Usuario')">📋</button></td>`;
+        if (field === "pass") return `<td class="mono"><div style="display:flex; align-items:center; gap:6px;"><span>${isShown ? escapeHtml(rawVal) : "••••••••••••"}</span><button class="btn-glass btn-sm" onclick="toggleReveal(${item.id})">${isShown ? "🙈" : "👁️"}</button><button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(rawVal)}', 'Contraseña')">🔑</button></div></td>`;
         if (isEditMode && editingSancCellKey === cellKey) {
-          return `<td class="${col.mono ? "mono" : ""}">
-            <input
-              type="text"
-              class="inline-input"
-              id="editSanc_${cellKey}"
-              value="${escapeAttr(rawVal)}"
-              onblur="saveSanctuaryCell(${item.id}, '${escapeAttr(field)}', this.value)"
-              onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingSancCellKey=null; renderSanctuaryTable();}"
-            />
-          </td>`;
+          return `<td class="${col.mono ? "mono" : ""}"><input type="text" class="inline-input" id="editSanc_${cellKey}" value="${escapeAttr(rawVal)}" onblur="saveSanctuaryCell(${item.id}, '${escapeAttr(field)}', this.value)" onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingSancCellKey=null; renderSanctuaryTable();}" /></td>`;
         }
-
         if (field === "host" || normalizeHref(rawVal)) {
           const linkRendered = renderSmartLinkHtml(rawVal, query);
-          if (isEditMode) {
-            return `<td class="mono">
-              <div style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                ${linkRendered}
-                <button type="button" class="btn-glass btn-sm" style="padding:2px 6px; font-size:0.7rem;" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')" title="Editar enlace">✏️</button>
-              </div>
-            </td>`;
-          }
-          return `<td class="mono">${linkRendered}</td>`;
+          return `<td class="mono">${isEditMode ? `<div style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;">${linkRendered}<button type="button" class="btn-glass btn-sm" style="padding:2px 6px; font-size:0.7rem;" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')">✏️</button></div>` : linkRendered}</td>`;
         }
-
-        const contentHtml = rawVal
-          ? (field === "servicio" ? `<strong>${highlightMatch(rawVal, query)}</strong>` : highlightMatch(rawVal, query))
-          : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : "-");
-
-        if (isEditMode) {
-          return `<td class="${col.mono ? "mono" : ""}">
-            <span class="cell-editable" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${contentHtml}</span>
-          </td>`;
-        }
-
-        return `<td class="${col.mono ? "mono" : ""}">${contentHtml}</td>`;
+        const contentHtml = rawVal ? (field === "servicio" ? `<strong>${highlightMatch(rawVal, query)}</strong>` : highlightMatch(rawVal, query)) : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : "-");
+        return `<td class="${col.mono ? "mono" : ""}">${isEditMode ? `<span class="cell-editable" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')">${contentHtml}</span>` : contentHtml}</td>`;
       }).join("");
-
-      const deleteBtn = isEditMode
-        ? `<button class="btn-danger" onclick="deleteSanctuaryItem(${item.id})">Eliminar</button>`
-        : `<span style="font-size:0.75rem; color:var(--text-muted);">Solo lectura</span>`;
-
-      return `
-        <tr>
-          ${cellsHtml}
-          <td>${deleteBtn}</td>
-        </tr>
-      `;
+      return `<tr>${cellsHtml}<td>${isEditMode ? `<button class="btn-danger" onclick="deleteSanctuaryItem(${item.id})">Eliminar</button>` : `<span style="font-size:0.75rem; color:var(--text-muted);">Solo lectura</span>`}</td></tr>`;
     }).join("");
   }
 
@@ -3631,57 +2409,31 @@
     editingSancCellKey = `${id}_${field}`;
     renderSanctuaryTable();
     const inp = document.getElementById(`editSanc_${editingSancCellKey}`);
-    if (inp) {
-      inp.focus();
-      inp.select();
-    }
+    if (inp) { inp.focus(); inp.select(); }
   }
-
   function saveSanctuaryCell(id, field, newValue) {
     const idx = sanctuaryList.findIndex(s => s.id === id);
-    if (idx !== -1) {
-      sanctuaryList[idx][field] = newValue.trim();
-      persistSanctuary();
-    }
+    if (idx !== -1) { sanctuaryList[idx][field] = newValue.trim(); persistSanctuary(); }
     editingSancCellKey = null;
     renderSanctuaryTable();
   }
-
   function addSanctuaryItem(e) {
     e.preventDefault();
     if (!isAuthenticated || !isEditMode) return;
     const newItem = { id: Date.now() };
-    sanctuaryColumns.forEach(col => {
-      const el = document.getElementById(`sField_${col.key}`);
-      newItem[col.key] = el ? el.value.trim() : "";
-    });
+    sanctuaryColumns.forEach(col => { const el = document.getElementById(`sField_${col.key}`); newItem[col.key] = el ? el.value.trim() : ""; });
     sanctuaryList.unshift(newItem);
     persistSanctuary();
     e.target.reset();
     renderSanctuaryTable();
-    showToast("✅ Credencial guardada en Sanctuary.");
+    showToast("✅ Credencial guardada en Supabase.");
   }
-
-  function deleteSanctuaryItem(id) {
-    if (!isAuthenticated || !isEditMode) return;
-    sanctuaryList = sanctuaryList.filter(i => i.id !== id);
-    persistSanctuary();
-    renderSanctuaryTable();
-    showToast("🗑️ Registro eliminado de Sanctuary.");
-  }
-
+  function deleteSanctuaryItem(id) { if (!isAuthenticated || !isEditMode) return; sanctuaryList = sanctuaryList.filter(i => i.id !== id); persistSanctuary(); renderSanctuaryTable(); showToast("🗑️ Eliminado."); }
   function toggleReveal(id) {
-    if (revealedIds.has(id)) {
-      revealedIds.delete(id);
-    } else {
-      revealedIds.add(id);
-      setTimeout(() => {
-        if (revealedIds.delete(id) && isAuthenticated) renderSanctuaryTable();
-      }, 15000);
-    }
+    if (revealedIds.has(id)) revealedIds.delete(id);
+    else { revealedIds.add(id); setTimeout(() => { if (revealedIds.delete(id) && isAuthenticated) renderSanctuaryTable(); }, 15000); }
     renderSanctuaryTable();
   }
-
   function generateStrongPass() {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*";
     const arr = new Uint32Array(14);
@@ -3692,94 +2444,52 @@
   }
 
   // =========================================================================
-  // EXPORTACIÓN EXCEL Y RESPALDOS JSON
+  // EXPORTACIONES, TEMPORIZADOR Y UTILIDADES
   // =========================================================================
   function exportToExcelCSV() {
     const inSanctuary = isAuthenticated && document.getElementById("viewSanctuary").classList.contains("active");
-    let rows = [];
-    let filename = "";
-
-    if (inSanctuary) {
-      rows.push(sanctuaryColumns.map(c => c.label));
-      sanctuaryList.forEach(i => rows.push(sanctuaryColumns.map(c => i[c.key] || "")));
-      filename = "MDZ_Sanctuary.csv";
-    } else {
-      rows.push(trackerColumns.map(c => c.label));
-      trackersList.forEach(t => rows.push(trackerColumns.map(c => t[c.key] || "")));
-      filename = "MDZ_Trackers.csv";
-    }
-
+    const cols = inSanctuary ? sanctuaryColumns : trackerColumns;
+    const list = inSanctuary ? sanctuaryList : trackersList;
+    const filename = inSanctuary ? "MDZ_Sanctuary.csv" : "MDZ_Trackers.csv";
+    const rows = [cols.map(c => c.label), ...list.map(i => cols.map(c => i[c.key] || ""))];
     const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
     a.download = filename;
     a.click();
     showToast(`📊 Descargado: ${filename}`);
   }
-
-  function exportTrackersBackupJSON() {
-    downloadJson(trackersList, "MDZ_Trackers_Respaldo.json");
-  }
-
-  function exportSanctuaryBackupJSON() {
-    if (!isAuthenticated) return;
-    downloadJson(sanctuaryList, "MDZ_Sanctuary_Respaldo.json");
-  }
-
+  function exportTrackersBackupJSON() { downloadJson(trackersList, "MDZ_Trackers_Respaldo.json"); }
+  function exportSanctuaryBackupJSON() { if (isAuthenticated) downloadJson(sanctuaryList, "MDZ_Sanctuary_Respaldo.json"); }
   function downloadJson(data, filename) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
     a.download = filename;
     a.click();
     showToast(`💾 Respaldo guardado: ${filename}`);
   }
-
   function importTrackersBackupJSON(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const imported = JSON.parse(e.target.result);
-        if (!Array.isArray(imported)) throw new Error();
-        trackersList = imported;
-        persistTrackers();
-        renderTrackersTable();
-        showToast("✅ Trackers restaurados correctamente.");
-      } catch {
-        showToast("⛔ Archivo JSON inválido.");
-      }
-    };
-    reader.readAsText(file);
-    event.target.value = "";
+    reader.onload = e => { try { const imp = JSON.parse(e.target.result); if (!Array.isArray(imp)) throw new Error(); trackersList = imp; persistTrackers(); renderTrackersTable(); showToast("✅ Trackers restaurados en Supabase."); } catch { showToast("⛔ JSON inválido."); } };
+    reader.readAsText(file); event.target.value = "";
   }
 
-  // =========================================================================
-  // TEMPORIZADOR TOTP EN VIVO (30 SEGUNDOS) Y ATAJOS
-  // =========================================================================
   setInterval(async () => {
     const secLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
     const countdownEl = document.getElementById("modalCountdown");
     const fillEl = document.getElementById("modalTimerFill");
     if (countdownEl) countdownEl.textContent = `${secLeft}s`;
     if (fillEl) fillEl.style.width = `${(secLeft / 30) * 100}%`;
-
-    if (isAuthenticated && document.getElementById("internalQrDrawer").classList.contains("open")) {
+    if (isAuthenticated && getTotpSecret() && document.getElementById("internalQrDrawer").classList.contains("open")) {
       const liveCode = await computeTotpAtOffset(getTotpSecret(), 0);
       document.getElementById("internalTotpLive").textContent = `Código actual: ${liveCode} (${secLeft}s)`;
     }
   }, 500);
 
   document.addEventListener("keydown", e => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-      e.preventDefault();
-      handleSanctuaryAction();
-    } else if (e.key === "Escape") {
-      closeTotpModal();
-      closeAddColumnModal();
-    }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); handleSanctuaryAction(); }
+    else if (e.key === "Escape") { closeTotpModal(); closeAddColumnModal(); }
   });
 
   function updateCounters() {
@@ -3792,11 +2502,7 @@
     if (cmdCounter) cmdCounter.textContent = `${commandsList.length} ${commandsList.length === 1 ? "comando" : "comandos"}`;
   }
 
-  function copyText(text, label) {
-    navigator.clipboard.writeText(text);
-    showToast(`📋 ${label} copiado.`);
-  }
-
+  function copyText(text, label) { navigator.clipboard.writeText(text); showToast(`📋 ${label} copiado.`); }
   function showToast(msg) {
     const t = document.getElementById("toast");
     t.textContent = msg;
@@ -3804,25 +2510,13 @@
     clearTimeout(window._toastTimer);
     window._toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
   }
+  function escapeHtml(str) { return String(str || "").replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+  function escapeAttr(str) { return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
 
-  function escapeHtml(str) {
-    return String(str || "").replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
-  }
-
-  function escapeAttr(str) {
-    return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
-  }
-
-  // Inicialización
-  getTotpSecret();
+  // Inicialización: carga 100% desde Supabase
   updateCounters();
-  renderTrackersForm();
-  renderDirectoryForm();
-  renderCommandsForm();
   updateSecurityUI();
   renderTrackersTable();
-  renderDirectoryTable();
-  renderCommandsTable();
   initSupabaseSync();
 </script>
 </body>
