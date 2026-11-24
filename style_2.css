@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background-color: #000;
   overflow: hidden;
   font-family: sans-serif;
   color: #9DD0E0;
@@ -59,16 +59,7 @@ body {
   display: none !important;
 }
 #kodama-graphic {
-    filter: brightness(1.45) contrast(1.08) saturate(1.2);
-}
-
-/* Ocultar título de tributo y controles para usarlo como fondo limpio */
-#h1, #h2, #mobile-title, .controls {
-  display: none !important;
-}
-#kodama-graphic {
   width: 100vw;
   height: 100vh;
   object-fit: cover;
 }
-
