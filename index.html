@@ -2412,6 +2412,9 @@
   // =========================================================================
   // BYTES ORBITALES Y FLUJO DE DATOS EN EL AURA LATERAL DEL ORBE GRANDE
   // =========================================================================
+// =========================================================================
+  // BYTES ORBITALES + ESPACIO PROFUNDO + METEORITOS COCODRILO
+  // =========================================================================
   (function initLoginSanctuaryScene() {
     const canvas = document.getElementById("loginBgCanvas");
     if (!canvas) return;
@@ -2421,6 +2424,9 @@
     const BYTE_TOKENS = ["01", "10", "0xFF", "1010", "00", "11", "A7", "0x1A", "E4", "0101", "2FA", "0x09", "C3"];
     const auraBytes = [];
     const fireflies = [];
+    const stars = [];
+    const crocMeteors = [];
+    const meteorSparks = [];
 
     function resize() {
       W = canvas.width = window.innerWidth;
@@ -2469,9 +2475,127 @@
       };
     }
 
+    function spawnStar() {
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: 0.6 + Math.random() * 1.4,
+        pulse: Math.random() * Math.PI * 2,
+        speed: 0.01 + Math.random() * 0.03
+      };
+    }
+
+    // Meteorito en forma de cocodrilo cruzando las zonas oscuras
+    function spawnCrocMeteor(randomStart = false) {
+      const fromLeft = Math.random() > 0.5;
+      const speed = 2.6 + Math.random() * 2.8;
+      // Ángulo diagonal suave (cayendo de arriba hacia abajo)
+      const angle = fromLeft
+        ? (0.28 + Math.random() * 0.35)          // Izquierda -> Derecha abajo
+        : (Math.PI - 0.28 - Math.random() * 0.35); // Derecha -> Izquierda abajo
+
+      const startX = randomStart
+        ? Math.random() * W
+        : (fromLeft ? -80 - Math.random() * 220 : W + 80 + Math.random() * 220);
+      const startY = randomStart
+        ? Math.random() * H * 0.8
+        : (-60 + Math.random() * (H * 0.55));
+
+      return {
+        x: startX,
+        y: startY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        angle,
+        scale: 0.65 + Math.random() * 0.55,
+        tailLen: 95 + Math.random() * 85,
+        jawPhase: Math.random() * Math.PI * 2,
+        alpha: 0.55 + Math.random() * 0.35
+      };
+    }
+
+    function drawCrocMeteor(m) {
+      ctx.save();
+      ctx.translate(m.x, m.y);
+      ctx.rotate(m.angle);
+      ctx.globalAlpha = m.alpha;
+
+      // 1. Estela de fuego meteórico (hacia atrás, eje -X)
+      const tailGrad = ctx.createLinearGradient(0, 0, -m.tailLen, 0);
+      tailGrad.addColorStop(0, "rgba(167, 243, 208, 0.85)");
+      tailGrad.addColorStop(0.25, "rgba(16, 185, 129, 0.55)");
+      tailGrad.addColorStop(0.65, "rgba(5, 150, 105, 0.18)");
+      tailGrad.addColorStop(1, "rgba(5, 150, 105, 0)");
+
+      ctx.fillStyle = tailGrad;
+      ctx.beginPath();
+      ctx.moveTo(4 * m.scale, -7 * m.scale);
+      ctx.lineTo(-m.tailLen, 0);
+      ctx.lineTo(4 * m.scale, 7 * m.scale);
+      ctx.closePath();
+      ctx.fill();
+
+      // 2. Cabeza de cocodrilo meteórico (apuntando hacia +X)
+      ctx.scale(m.scale, m.scale);
+      const jaw = 0.12 + Math.abs(Math.sin(m.jawPhase)) * 0.22;
+
+      ctx.shadowColor = "#10b981";
+      ctx.shadowBlur = 14;
+
+      // Mandíbula superior
+      ctx.save();
+      ctx.rotate(-jaw);
+      ctx.fillStyle = "#10b981";
+      ctx.strokeStyle = "#a7f3d0";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(-10, -2);
+      ctx.lineTo(-6, -8);
+      ctx.lineTo(14, -6);
+      ctx.lineTo(18, -1);
+      ctx.lineTo(-10, -1);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Dientes superiores
+      ctx.fillStyle = "#ecfdf5";
+      ctx.beginPath();
+      ctx.moveTo(2, -1); ctx.lineTo(4, 3); ctx.lineTo(6, -1);
+      ctx.moveTo(8, -1); ctx.lineTo(10, 3); ctx.lineTo(12, -1);
+      ctx.fill();
+
+      // Ojo brillante
+      ctx.fillStyle = "#ecfdf5";
+      ctx.beginPath();
+      ctx.arc(-1, -4.5, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Mandíbula inferior
+      ctx.save();
+      ctx.rotate(jaw * 0.85);
+      ctx.fillStyle = "#047857";
+      ctx.strokeStyle = "#6ee7b7";
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(-9, 1);
+      ctx.lineTo(16, 1);
+      ctx.lineTo(13, 6);
+      ctx.lineTo(-6, 6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.restore();
+    }
+
     for (let i = 0; i < 26; i++) auraBytes.push(spawnAuraByte(false));
     for (let i = 0; i < 16; i++) auraBytes.push(spawnAuraByte(true));
     for (let i = 0; i < 14; i++) fireflies.push(spawnFirefly());
+    for (let i = 0; i < 65; i++) stars.push(spawnStar());
+    for (let i = 0; i < 5; i++) crocMeteors.push(spawnCrocMeteor(true));
 
     function loop() {
       requestAnimationFrame(loop);
@@ -2481,6 +2605,61 @@
       const cx = W / 2;
       const cy = H / 2;
 
+      // 1. Estrellas de fondo para rellenar el negro
+      for (const s of stars) {
+        s.pulse += s.speed;
+        ctx.save();
+        ctx.globalAlpha = 0.12 + (Math.sin(s.pulse) * 0.5 + 0.5) * 0.42;
+        ctx.fillStyle = "#a7f3d0";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 2. Meteoritos cocodrilo + chispas
+      for (let i = 0; i < crocMeteors.length; i++) {
+        const m = crocMeteors[i];
+        m.x += m.vx;
+        m.y += m.vy;
+        m.jawPhase += 0.14;
+
+        // Suelta chispas verdes en la estela
+        if (Math.random() < 0.45) {
+          meteorSparks.push({
+            x: m.x - Math.cos(m.angle) * 12,
+            y: m.y - Math.sin(m.angle) * 12,
+            vx: -m.vx * 0.15 + (Math.random() - 0.5) * 0.8,
+            vy: -m.vy * 0.15 + (Math.random() - 0.5) * 0.8,
+            life: 1,
+            r: 1 + Math.random() * 1.8
+          });
+        }
+
+        drawCrocMeteor(m);
+
+        // Si sale de pantalla, reaparece desde un borde
+        if (m.x < -260 || m.x > W + 260 || m.y > H + 200) {
+          crocMeteors[i] = spawnCrocMeteor(false);
+        }
+      }
+
+      for (let i = meteorSparks.length - 1; i >= 0; i--) {
+        const sp = meteorSparks[i];
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.life -= 0.03;
+        if (sp.life <= 0) { meteorSparks.splice(i, 1); continue; }
+        ctx.save();
+        ctx.globalAlpha = sp.life * 0.75;
+        ctx.fillStyle = "#6ee7b7";
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, sp.r * sp.life, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 3. Luciérnagas sutiles
       for (const f of fireflies) {
         f.angle += (Math.random() - 0.5) * 0.06;
         f.pulse += 0.03;
@@ -2500,6 +2679,7 @@
         ctx.restore();
       }
 
+      // 4. Bytes orbitales y flujo lateral
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
 
