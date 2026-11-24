@@ -62,11 +62,12 @@ body {
     filter: brightness(1.45) contrast(1.08) saturate(1.2);
 }
 
-/* ELIMINAR COMPLETAMENTE EL TITULO ORIGINAL */
-#kodama-graphic #h1,
-#kodama-graphic #h2,
-#kodama-graphic #mobile-title {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
+/* Ocultar título de tributo y controles para usarlo como fondo limpio */
+#h1, #h2, #mobile-title, .controls {
+  display: none !important;
+}
+#kodama-graphic {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
 }
