@@ -78,7 +78,6 @@
       gap: 16px;
     }
 
-    /* Header */
     header {
       display: flex;
       flex-wrap: wrap;
@@ -532,10 +531,10 @@
     }
     .modal-backdrop.open { display: grid; }
     .modal-card {
-      width: 100%; max-width: 430px; padding: 24px;
+      width: 100%; max-width: 440px; padding: 24px;
       border: 1px solid var(--accent); box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);
     }
-    .modal-header-croc { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .modal-header-croc { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .totp-input {
       font-family: var(--font-mono); font-size: 1.45rem; letter-spacing: 0.35em;
       text-align: center; padding: 12px; border: 1px solid rgba(16, 185, 129, 0.45);
@@ -706,7 +705,7 @@
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="btnAddColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal()">➕ Añadir Columna</button>
         <button class="btn-glass btn-sm" onclick="exportTrackersBackupJSON()">💾 Respaldo JSON</button>
-        <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+        <label id="lblRestoreTrackers" class="btn-glass btn-sm" style="cursor:pointer; display:none; align-items:center; gap:6px;">
           📂 Restaurar JSON
           <input type="file" accept=".json" style="display:none;" onchange="importTrackersBackupJSON(event)" />
         </label>
@@ -714,7 +713,7 @@
     </div>
 
     <p id="trackersSubtitle" style="font-size:0.82rem; color:var(--text-muted); margin-bottom:14px;">
-      Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.
+      Vista protegida en modo lectura. Inicia sesión con tu usuario y código 2FA.
     </p>
 
     <form id="formTrackers" class="form-grid" onsubmit="addTrackerItem(event)"></form>
@@ -746,7 +745,7 @@
           <button id="btnAddCmdColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('commands')">➕ Añadir Columna</button>
           <button class="btn-glass btn-sm" onclick="exportCommandsExcelCSV()">📊 Exportar Comandos</button>
           <button class="btn-glass btn-sm" onclick="exportCommandsBackupJSON()">💾 Respaldo JSON</button>
-          <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <label id="lblRestoreCommands" class="btn-glass btn-sm" style="cursor:pointer; display:none; align-items:center; gap:6px;">
             📂 Restaurar JSON
             <input type="file" accept=".json" style="display:none;" onchange="importCommandsBackupJSON(event)" />
           </label>
@@ -796,7 +795,7 @@
           <button id="btnAddDirColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('directory')">➕ Añadir Columna</button>
           <button class="btn-glass btn-sm" onclick="exportDirectoryExcelCSV()">📊 Exportar Directorio</button>
           <button class="btn-glass btn-sm" onclick="exportDirectoryBackupJSON()">💾 Respaldo JSON</button>
-          <label class="btn-glass btn-sm" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          <label id="lblRestoreDirectory" class="btn-glass btn-sm" style="cursor:pointer; display:none; align-items:center; gap:6px;">
             📂 Restaurar JSON
             <input type="file" accept=".json" style="display:none;" onchange="importDirectoryBackupJSON(event)" />
           </label>
@@ -827,19 +826,19 @@
     <div class="section-header">
       <div class="section-title">
         <h2>Sanctuary</h2>
-        <span class="autosave-pill"><span class="dot-pulse"></span> Sesión 2FA Verificada</span>
+        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="sanctuaryRoleBadge">Sesión 2FA Verificada</span></span>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="btnAddSanctuaryColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('sanctuary')">➕ Añadir Columna</button>
-        <button class="btn-glass btn-sm" onclick="toggleInternalQrPanel()">📱 Ver / Rotar QR 2FA</button>
+        <button id="btnInternalQrToggle" class="btn-glass btn-sm" style="display:none;" onclick="toggleInternalQrPanel()">📱 Ver / Rotar QR 2FA</button>
         <button class="btn-glass btn-sm" onclick="exportSanctuaryBackupJSON()">💾 Respaldo JSON</button>
-        <button class="btn-danger" onclick="lockSanctuary()">🔒 Cerrar Sanctuary</button>
+        <button class="btn-danger" onclick="lockSanctuary()">🔒 Cerrar Sesión</button>
       </div>
     </div>
 
     <div id="internalQrDrawer" class="qr-drawer">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-        <strong style="font-size:0.88rem; color:var(--accent-secondary);">Configuración de Autenticador (Solo visible dentro de Sanctuary)</strong>
+        <strong style="font-size:0.88rem; color:var(--accent-secondary);">Configuración de Autenticador (Solo Desarrollador)</strong>
         <span id="internalTotpLive" class="mono" style="font-size:0.82rem; color:#6ee7b7;">Código actual: ------</span>
       </div>
       <div class="qr-flex">
@@ -992,31 +991,33 @@
         </div>
 
         <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
-          <strong style="font-size:0.85rem; color:#38bdf8; display:block; margin-bottom:6px;">
-            ⭕ Crear Geocerca Alrededor del Punto
-          </strong>
-          <form onsubmit="saveNewGeofence(event)" style="display:flex; flex-direction:column; gap:8px;">
-            <div style="display:grid; grid-template-columns:1fr 110px; gap:8px;">
-              <div class="field">
-                <label>Nombre Geocerca *</label>
-                <input type="text" id="geoNameInput" placeholder="Ej. Zona Norte / PL004" required />
+          <div id="geofenceCreatorBox">
+            <strong style="font-size:0.85rem; color:#38bdf8; display:block; margin-bottom:6px;">
+              ⭕ Crear Geocerca Alrededor del Punto
+            </strong>
+            <form onsubmit="saveNewGeofence(event)" style="display:flex; flex-direction:column; gap:8px; margin-bottom:10px;">
+              <div style="display:grid; grid-template-columns:1fr 110px; gap:8px;">
+                <div class="field">
+                  <label>Nombre Geocerca *</label>
+                  <input type="text" id="geoNameInput" placeholder="Ej. Zona Norte / PL004" required />
+                </div>
+                <div class="field">
+                  <label>Radio (m) *</label>
+                  <input type="number" id="geoRadiusInput" min="20" max="50000" value="500" oninput="previewGeofenceCircle()" required />
+                </div>
               </div>
               <div class="field">
-                <label>Radio (m) *</label>
-                <input type="number" id="geoRadiusInput" min="20" max="50000" value="500" oninput="previewGeofenceCircle()" required />
+                <label>Datos / Observaciones de Geocerca</label>
+                <input type="text" id="geoNotesInput" placeholder="Ej. Potencia -68 dBm, Unidad Q2, Alerta entrada..." />
               </div>
-            </div>
-            <div class="field">
-              <label>Datos / Observaciones de Geocerca</label>
-              <input type="text" id="geoNotesInput" placeholder="Ej. Potencia -68 dBm, Unidad Q2, Alerta entrada..." />
-            </div>
-            <div style="display:flex; gap:6px;">
-              <button type="submit" class="btn-primary btn-sm" style="flex:1; justify-content:center;">💾 Guardar Geocerca</button>
-              <button type="button" class="btn-glass btn-sm" onclick="previewGeofenceCircle()" title="Previsualizar círculo en el mapa">👁️ Vista previa</button>
-            </div>
-          </form>
+              <div style="display:flex; gap:6px;">
+                <button type="submit" class="btn-primary btn-sm" style="flex:1; justify-content:center;">💾 Guardar Geocerca</button>
+                <button type="button" class="btn-glass btn-sm" onclick="previewGeofenceCircle()" title="Previsualizar círculo en el mapa">👁️ Vista previa</button>
+              </div>
+            </form>
+          </div>
 
-          <div style="margin-top:10px;">
+          <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
               <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">GEOCERCAS GUARDADAS (<span id="geofenceCountSpan">0</span>)</span>
             </div>
@@ -1030,7 +1031,7 @@
   </section>
 </div>
 
-<!-- MODAL DE INGRESO TOTP -->
+<!-- MODAL DE INGRESO (USUARIO + CONTRASEÑA + CÓDIGO TOTP) -->
 <div id="totpModal" class="modal-backdrop" onclick="if(event.target===this) closeTotpModal()">
   <div class="modal-card glass-panel led-border">
     <div class="modal-header-croc croc-chomp">
@@ -1045,15 +1046,26 @@
         </g>
       </svg>
       <div>
-        <h3 style="font-size:1.12rem;">Verificación Sanctuary</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted);">Ingresa el código de 6 dígitos de tu app Authenticator.</p>
+        <h3 style="font-size:1.12rem;">Acceso MDZ™ Sanctuary</h3>
+        <p style="font-size:0.8rem; color:var(--text-muted);">Ingresa tu usuario, contraseña y código de 6 dígitos.</p>
       </div>
     </div>
 
     <form onsubmit="verifyTotpSubmission(event)">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div class="field">
+          <label>Usuario *</label>
+          <input type="text" id="authUserInput" placeholder="MDZDEV / MDZUSER" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label>Contraseña *</label>
+          <input type="password" id="authPassInput" placeholder="••••••••" autocomplete="current-password" required />
+        </div>
+      </div>
+
       <div class="field">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <label>Código TOTP (6 Dígitos)</label>
+          <label>Código TOTP (6 Dígitos) *</label>
           <span id="modalCountdown" class="mono" style="font-size:0.75rem; color:var(--accent-secondary);">30s</span>
         </div>
         <input type="text" id="totpCodeInput" class="totp-input" maxlength="6" inputmode="numeric" placeholder="000000" autocomplete="off" required />
@@ -1066,7 +1078,7 @@
         <button type="button" class="link-subtle" onclick="toggleRecoveryPrompt()">¿Perdiste tu app? Re-vincular</button>
         <div style="display:flex; gap:8px;">
           <button type="button" class="btn-glass" onclick="closeTotpModal()">Cancelar</button>
-          <button type="submit" class="btn-primary">Verificar</button>
+          <button type="submit" class="btn-primary">Ingresar</button>
         </div>
       </div>
     </form>
@@ -1112,8 +1124,8 @@
 <div id="toast" class="toast"></div>
 
 <script>
-// =========================================================================
-  // CONFIGURACIÓN SUPABASE (TABLAS REALES EDITABLES + REALTIME)
+  // =========================================================================
+  // CONFIGURACIÓN SUPABASE (8 TABLAS REALES + REALTIME)
   // =========================================================================
   const SUPABASE_URL = "https://fsiqjdstgqkcsofxwrxu.supabase.co";
   const SUPABASE_KEY = "sb_publishable_KkukdsW-FO4iLaXdAb3MWA_t9UIBnsw";
@@ -1131,12 +1143,15 @@
   let sanctuaryColumns = [];
   let sanctuaryList = [];
   let savedGeofences = [];
+  let usersList = [];
   let totpSecret = "";
   let recoveryMasterKey = "";
   let isCloudLoaded = false;
 
   let isAuthenticated = false;
   let isEditMode = false;
+  let currentUserRole = null; // "dev" o "viewer"
+  let currentUsername = "";
   let pendingAction = null;
   let addColumnTarget = "trackers";
   let selectedCategory = "ALL";
@@ -1162,7 +1177,10 @@
 
   const sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-  // Empaqueta campos extra (columnas dinámicas) en la columna jsonb "extras"
+  function canModify() {
+    return isAuthenticated && currentUserRole === "dev" && isEditMode;
+  }
+
   function packRow(item, baseKeys, idx) {
     const row = { id: Number(item.id), orden: idx + 1, extras: {} };
     baseKeys.forEach(k => { row[k] = item[k] ?? ""; });
@@ -1186,7 +1204,6 @@
     await sbClient.from("mdz_config").upsert({ key, value }, { onConflict: "key" });
   }
 
-  // Alias para que rotateTotpSecret siga funcionando sin cambios
   async function saveToCloud(key, value) { return saveConfig(key, value); }
 
   async function syncTableRows(tableName, items, baseKeys) {
@@ -1196,9 +1213,7 @@
 
     const { data: existing } = await sbClient.from(tableName).select("id");
     const toDelete = (existing || []).map(r => r.id).filter(id => !currentIds.includes(id));
-    if (toDelete.length) {
-      await sbClient.from(tableName).delete().in("id", toDelete);
-    }
+    if (toDelete.length) await sbClient.from(tableName).delete().in("id", toDelete);
     if (packed.length) {
       const { error } = await sbClient.from(tableName).upsert(packed, { onConflict: "id" });
       if (error) { console.error(`Error en ${tableName}:`, error); showToast(`⚠️ Error guardando en ${tableName}.`); }
@@ -1222,14 +1237,15 @@
     const statusEl = document.getElementById("cloudStatusText");
     if (!sbClient) return;
 
-    const [cfgRes, trkRes, cmdRes, dirRes, sncRes, mapRes, geoRes] = await Promise.all([
+    const [cfgRes, trkRes, cmdRes, dirRes, sncRes, mapRes, geoRes, usrRes] = await Promise.all([
       sbClient.from("mdz_config").select("key, value"),
       sbClient.from("mdz_trackers").select("*").order("orden", { ascending: true }),
       sbClient.from("mdz_comandos").select("*").order("orden", { ascending: true }),
       sbClient.from("mdz_directorio").select("*").order("orden", { ascending: true }),
       sbClient.from("mdz_sanctuary").select("*").order("orden", { ascending: true }),
       sbClient.from("mdz_mapa_puntos").select("*").order("num", { ascending: true }),
-      sbClient.from("mdz_geocercas").select("*").order("id", { ascending: false })
+      sbClient.from("mdz_geocercas").select("*").order("id", { ascending: false }),
+      sbClient.from("mdz_usuarios").select("*")
     ]);
 
     if (cfgRes.error || trkRes.error) {
@@ -1256,6 +1272,7 @@
       id: g.id, nombre: g.nombre, lat: g.lat, lon: g.lon,
       radio: g.radio, notas: g.notas || "", puntosDentro: g.puntos_dentro || []
     }));
+    usersList = (usrRes.data || []).filter(u => u.activo !== false);
 
     isCloudLoaded = true;
     renderTrackersForm(); renderTrackersTable();
@@ -1266,7 +1283,7 @@
     if (coverageMap) { renderFixedPointsOnMap(); populateFixedPointSelector(document.getElementById("mapFixedSearch").value); renderSavedGeofences(); }
     updateCounters();
 
-    if (statusEl) statusEl.textContent = "Sincronizado en vivo (Tablas)";
+    if (statusEl) statusEl.textContent = "Sincronizado en vivo (Supabase)";
     if (!silent) showToast("☁️ Tablas sincronizadas con Supabase.");
   }
 
@@ -1275,7 +1292,7 @@
     if (!sbClient) return;
 
     const channel = sbClient.channel("mdz-tables-realtime");
-    ["mdz_trackers", "mdz_comandos", "mdz_directorio", "mdz_sanctuary", "mdz_mapa_puntos", "mdz_geocercas", "mdz_config"].forEach(tbl => {
+    ["mdz_trackers", "mdz_comandos", "mdz_directorio", "mdz_sanctuary", "mdz_mapa_puntos", "mdz_geocercas", "mdz_config", "mdz_usuarios"].forEach(tbl => {
       channel.on("postgres_changes", { event: "*", schema: "public", table: tbl }, () => {
         loadAllFromSupabase(true);
       });
@@ -1294,7 +1311,7 @@
   function persistGeofences() { syncGeofencesTable(); }
 
   // =========================================================================
-  // AUTENTICACIÓN TOTP (RFC 6238 HMAC-SHA1) DESDE SUPABASE
+  // AUTENTICACIÓN POR ROLES + TOTP (RFC 6238 HMAC-SHA1)
   // =========================================================================
   function getTotpSecret() { return totpSecret; }
 
@@ -1373,24 +1390,34 @@
   }
 
   function handleEditToggle() {
-    if (!isAuthenticated) { pendingAction = "edit"; openTotpModal(); return; }
+    if (!isAuthenticated) {
+      pendingAction = "edit";
+      openTotpModal();
+      return;
+    }
+    if (currentUserRole !== "dev") {
+      showToast(`👁️ Tu usuario (${currentUsername}) es de solo lectura.`);
+      return;
+    }
     isEditMode = !isEditMode;
     editingCellKey = editingDirCellKey = editingCmdCellKey = editingSancCellKey = null;
     updateSecurityUI();
     renderTrackersTable();
     renderDirectoryTable();
     renderCommandsTable();
-    if (isAuthenticated) renderSanctuaryTable();
+    renderSanctuaryTable();
     showToast(isEditMode ? "🔓 Modo Edición activado." : "⏸️ Modo Edición pausado.");
   }
 
   function openTotpModal() {
     document.getElementById("totpErrorMsg").textContent = "";
+    document.getElementById("authUserInput").value = "";
+    document.getElementById("authPassInput").value = "";
     document.getElementById("totpCodeInput").value = "";
     document.getElementById("recoveryBox").style.display = "none";
     document.getElementById("modalQrRevealArea").style.display = "none";
     document.getElementById("totpModal").classList.add("open");
-    setTimeout(() => document.getElementById("totpCodeInput").focus(), 70);
+    setTimeout(() => document.getElementById("authUserInput").focus(), 70);
   }
 
   function closeTotpModal() { document.getElementById("totpModal").classList.remove("open"); }
@@ -1413,17 +1440,30 @@
 
   async function verifyTotpSubmission(e) {
     e.preventDefault();
+    const userIn = document.getElementById("authUserInput").value.trim();
+    const passIn = document.getElementById("authPassInput").value.trim();
     const code = document.getElementById("totpCodeInput").value.replace(/\s+/g, "");
     const errEl = document.getElementById("totpErrorMsg");
     const secret = getTotpSecret();
-    if (!secret) {
-      errEl.textContent = "⏳ Esperando llave 2FA desde Supabase...";
+
+    if (!secret || !usersList.length) {
+      errEl.textContent = "⏳ Esperando datos de autenticación desde Supabase...";
       return;
     }
+
+    const matchedUser = usersList.find(
+      u => String(u.usuario || "").toUpperCase() === userIn.toUpperCase() && u.pass === passIn
+    );
+    if (!matchedUser) {
+      errEl.textContent = "⛔ Usuario o contraseña incorrectos.";
+      return;
+    }
+
     if (!/^\d{6}$/.test(code)) {
       errEl.textContent = "Ingresa un código numérico de 6 dígitos.";
       return;
     }
+
     const validCodes = await Promise.all([
       computeTotpAtOffset(secret, -1),
       computeTotpAtOffset(secret, 0),
@@ -1437,7 +1477,10 @@
     }
 
     isAuthenticated = true;
-    isEditMode = true;
+    currentUserRole = matchedUser.rol; // "dev" o "viewer"
+    currentUsername = matchedUser.usuario;
+    isEditMode = (currentUserRole === "dev");
+
     closeTotpModal();
     updateSecurityUI();
     renderTrackersTable();
@@ -1445,6 +1488,7 @@
     renderCommandsTable();
     renderSanctuaryForm();
     renderSanctuaryTable();
+    renderSavedGeofences();
 
     if (pendingAction === "sanctuary") {
       switchTab("sanctuary");
@@ -1453,12 +1497,19 @@
       switchTab("map");
     }
     pendingAction = null;
-    showToast("🔓 Doble factor verificado. Sanctuary, Mapa y Modo Edición habilitados.");
+
+    showToast(
+      currentUserRole === "dev"
+        ? `🔓 Bienvenido ${currentUsername} (Desarrollador - Edición total).`
+        : `👁️ Bienvenido ${currentUsername} (Acceso completo - Solo lectura).`
+    );
   }
 
   function lockSanctuary() {
     isAuthenticated = false;
     isEditMode = false;
+    currentUserRole = null;
+    currentUsername = "";
     editingCellKey = editingDirCellKey = editingCmdCellKey = editingSancCellKey = null;
     revealedIds.clear();
     document.getElementById("internalQrDrawer").classList.remove("open");
@@ -1467,7 +1518,7 @@
     renderTrackersTable();
     renderDirectoryTable();
     renderCommandsTable();
-    showToast("🔒 Sesión cerrada. Capas privadas y edición bloqueadas.");
+    showToast("🔒 Sesión cerrada.");
   }
 
   function switchTab(tabName) {
@@ -1497,45 +1548,67 @@
     const btnSanc = document.getElementById("btnSanctuaryTrigger");
     const sancText = document.getElementById("sanctuaryBtnText");
     const subtitle = document.getElementById("trackersSubtitle");
+    const roleBadge = document.getElementById("sanctuaryRoleBadge");
 
     tabsWrap.classList.toggle("visible", isAuthenticated);
 
     if (!isAuthenticated) {
       btnEdit.className = "btn-lock-icon btn-edit-locked";
       btnEdit.innerHTML = "🔒";
-      btnEdit.title = "Bloqueado (Clic para autenticar)";
+      btnEdit.title = "Bloqueado (Clic para iniciar sesión)";
       btnSanc.className = "croc-habitat-btn btn-sanctuary-closed";
       sancText.textContent = "Sanctuary";
-      subtitle.textContent = "Vista protegida en modo lectura. Valida tu código de 6 dígitos para habilitar edición y pestañas.";
+      subtitle.textContent = "Vista protegida en modo lectura. Inicia sesión con tu usuario y código 2FA.";
+    } else if (currentUserRole === "viewer") {
+      btnEdit.className = "btn-lock-icon btn-edit-paused";
+      btnEdit.innerHTML = "👁️";
+      btnEdit.title = `${currentUsername} (Solo lectura)`;
+      btnSanc.className = "croc-habitat-btn btn-sanctuary-open";
+      sancText.textContent = "Cerrar Sesión";
+      subtitle.textContent = `Sesión iniciada como ${currentUsername} (Solo lectura). Acceso visual completo a Trackers, Sanctuary y Mapa.`;
+      if (roleBadge) roleBadge.textContent = `${currentUsername} · Solo Lectura`;
     } else if (isEditMode) {
       btnEdit.className = "btn-lock-icon btn-edit-active";
       btnEdit.innerHTML = "🔓";
-      btnEdit.title = "Desbloqueado (Edición activa)";
+      btnEdit.title = `${currentUsername} (Desarrollador - Edición activa)`;
       btnSanc.className = "croc-habitat-btn btn-sanctuary-open";
-      sancText.textContent = "Cerrar Sanctuary";
-      subtitle.textContent = "Modo edición activo: haz clic en cualquier celda para editar, arrastra filas para reordenar o añade columnas.";
+      sancText.textContent = "Cerrar Sesión";
+      subtitle.textContent = `Modo desarrollador (${currentUsername}): edición total habilitada.`;
+      if (roleBadge) roleBadge.textContent = `${currentUsername} · Desarrollador 2FA`;
     } else {
       btnEdit.className = "btn-lock-icon btn-edit-paused";
       btnEdit.innerHTML = "🔓";
-      btnEdit.title = "Desbloqueado (Edición pausada)";
+      btnEdit.title = `${currentUsername} (Edición pausada)`;
       btnSanc.className = "croc-habitat-btn btn-sanctuary-open";
-      sancText.textContent = "Cerrar Sanctuary";
+      sancText.textContent = "Cerrar Sesión";
       subtitle.textContent = "Edición pausada (modo lectura). Pulsa el candado para volver a modificar.";
+      if (roleBadge) roleBadge.textContent = `${currentUsername} · Edición Pausada`;
     }
 
-    document.getElementById("formTrackers").classList.toggle("editable-open", isEditMode);
-    document.getElementById("formDirectory").classList.toggle("editable-open", isEditMode);
-    document.getElementById("formCommands").classList.toggle("editable-open", isEditMode);
-    document.getElementById("formSanctuary").classList.toggle("editable-open", isAuthenticated && isEditMode);
+    const editable = canModify();
+    const isDev = isAuthenticated && currentUserRole === "dev";
 
-    document.getElementById("btnAddColumn").style.display = isEditMode ? "inline-flex" : "none";
-    document.getElementById("btnAddDirColumn").style.display = isEditMode ? "inline-flex" : "none";
-    document.getElementById("btnAddCmdColumn").style.display = isEditMode ? "inline-flex" : "none";
-    document.getElementById("btnAddSanctuaryColumn").style.display = (isAuthenticated && isEditMode) ? "inline-flex" : "none";
+    document.getElementById("formTrackers").classList.toggle("editable-open", editable);
+    document.getElementById("formDirectory").classList.toggle("editable-open", editable);
+    document.getElementById("formCommands").classList.toggle("editable-open", editable);
+    document.getElementById("formSanctuary").classList.toggle("editable-open", editable);
+
+    document.getElementById("btnAddColumn").style.display = editable ? "inline-flex" : "none";
+    document.getElementById("btnAddDirColumn").style.display = editable ? "inline-flex" : "none";
+    document.getElementById("btnAddCmdColumn").style.display = editable ? "inline-flex" : "none";
+    document.getElementById("btnAddSanctuaryColumn").style.display = editable ? "inline-flex" : "none";
+
+    document.getElementById("lblRestoreTrackers").style.display = editable ? "inline-flex" : "none";
+    document.getElementById("lblRestoreCommands").style.display = editable ? "inline-flex" : "none";
+    document.getElementById("lblRestoreDirectory").style.display = editable ? "inline-flex" : "none";
+
+    document.getElementById("btnInternalQrToggle").style.display = isDev ? "inline-flex" : "none";
+    const geoCreator = document.getElementById("geofenceCreatorBox");
+    if (geoCreator) geoCreator.style.display = isDev ? "block" : "none";
   }
 
   // =========================================================================
-  // MAPA DE COBERTURA Y POTENCIA (ALIMENTADO 100% DESDE SUPABASE)
+  // MAPA DE COBERTURA Y POTENCIA
   // =========================================================================
   function getTechColor(tech) {
     const t = String(tech || "").toUpperCase();
@@ -1838,6 +1911,7 @@
 
   function saveNewGeofence(e) {
     e.preventDefault();
+    if (currentUserRole !== "dev") { showToast("🔒 Solo lectura: no puedes crear geocercas."); return; }
     const lat = parseFloat(document.getElementById("gpsLatInput").value);
     const lon = parseFloat(document.getElementById("gpsLonInput").value);
     const radius = parseFloat(document.getElementById("geoRadiusInput").value);
@@ -1872,11 +1946,12 @@
 
     if (!listEl) return;
     if (!savedGeofences.length) { listEl.innerHTML = `<p style="font-size:0.75rem; color:var(--text-muted);">Aún no hay geocercas guardadas.</p>`; return; }
+    const isDev = isAuthenticated && currentUserRole === "dev";
     listEl.innerHTML = savedGeofences.map(g => `
       <div class="nearest-card" onclick="focusGeofence(${g.id})">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
           <strong style="color:#38bdf8;">⭕ ${escapeHtml(g.nombre)}</strong>
-          <button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="event.stopPropagation(); deleteGeofence(${g.id})">✕</button>
+          ${isDev ? `<button type="button" class="btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="event.stopPropagation(); deleteGeofence(${g.id})">✕</button>` : ""}
         </div>
         <div style="font-size:0.73rem; color:var(--text-muted); margin-top:2px;">Radio: ${g.radio} m · ${(g.puntosDentro || []).length} puntos dentro</div>
         ${g.notas ? `<div style="font-size:0.72rem; color:#cbd5e1; margin-top:2px;">${escapeHtml(g.notas)}</div>` : ""}
@@ -1891,6 +1966,7 @@
   }
 
   function deleteGeofence(id) {
+    if (currentUserRole !== "dev") { showToast("🔒 Solo lectura: no puedes eliminar geocercas."); return; }
     savedGeofences = savedGeofences.filter(g => g.id !== id);
     persistGeofences();
     renderSavedGeofences();
@@ -1922,10 +1998,10 @@
   }
 
   // =========================================================================
-  // COLUMNAS DINÁMICAS
+  // COLUMNAS DINÁMICAS Y QR 2FA (SOLO DESARROLLADOR)
   // =========================================================================
   function openAddColumnModal(target = "trackers") {
-    if (!isEditMode) return;
+    if (!canModify()) return;
     addColumnTarget = target;
     const titles = { trackers: "➕ Nueva Columna en Trackers", directory: "➕ Nueva Columna en Directorio", commands: "➕ Nueva Columna en Comandos", sanctuary: "➕ Nueva Columna en Sanctuary" };
     document.getElementById("addColumnModalTitle").textContent = titles[target] || "➕ Nueva Columna";
@@ -1938,7 +2014,7 @@
 
   function confirmAddColumn(e) {
     e.preventDefault();
-    if (!isEditMode) return;
+    if (!canModify()) return;
     const rawLabel = document.getElementById("newColumnNameInput").value.trim().toUpperCase();
     if (!rawLabel) return;
     const slug = "col_" + rawLabel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_") + "_" + Date.now().toString().slice(-4);
@@ -1954,7 +2030,7 @@
   }
 
   function removeCustomColumn(colKey, target = "trackers") {
-    if (!isEditMode) return;
+    if (!canModify()) return;
     const map = {
       directory: [() => directoryColumns, v => { directoryColumns = v; persistDirectoryColumns(); renderDirectoryForm(); renderDirectoryTable(); }],
       commands:  [() => commandColumns,   v => { commandColumns = v; persistCommandColumns(); renderCommandsForm(); renderCommandsTable(); }],
@@ -1969,7 +2045,7 @@
   }
 
   function toggleInternalQrPanel() {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || currentUserRole !== "dev") return;
     const drawer = document.getElementById("internalQrDrawer");
     const willOpen = !drawer.classList.contains("open");
     drawer.classList.toggle("open", willOpen);
@@ -1982,6 +2058,7 @@
   function copyTotpSecret() { navigator.clipboard.writeText(getTotpSecret()); showToast("📋 Clave Base32 copiada."); }
 
   function rotateTotpSecret() {
+    if (!isAuthenticated || currentUserRole !== "dev") return;
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
     const rand = new Uint8Array(24);
     crypto.getRandomValues(rand);
@@ -2006,7 +2083,7 @@
   }
 
   function moveTrackerRow(id, direction) {
-    if (!isEditMode) return;
+    if (!canModify()) return;
     const idx = trackersList.findIndex(t => t.id === id);
     const targetIdx = idx + direction;
     if (idx === -1 || targetIdx < 0 || targetIdx >= trackersList.length) return;
@@ -2016,13 +2093,13 @@
     renderTrackersTable();
   }
 
-  function onTrackerDragStart(e, id) { if (!isEditMode) return; draggedTrackerId = id; e.dataTransfer.effectAllowed = "move"; }
-  function onTrackerDragOver(e) { if (!isEditMode) return; e.preventDefault(); e.currentTarget.classList.add("drag-over"); }
+  function onTrackerDragStart(e, id) { if (!canModify()) return; draggedTrackerId = id; e.dataTransfer.effectAllowed = "move"; }
+  function onTrackerDragOver(e) { if (!canModify()) return; e.preventDefault(); e.currentTarget.classList.add("drag-over"); }
   function onTrackerDragLeave(e) { e.currentTarget.classList.remove("drag-over"); }
   function onTrackerDrop(e, targetId) {
     e.preventDefault();
     e.currentTarget.classList.remove("drag-over");
-    if (!isEditMode || draggedTrackerId === null || draggedTrackerId === targetId) return;
+    if (!canModify() || draggedTrackerId === null || draggedTrackerId === targetId) return;
     const fromIdx = trackersList.findIndex(t => t.id === draggedTrackerId);
     const toIdx = trackersList.findIndex(t => t.id === targetId);
     if (fromIdx === -1 || toIdx === -1) return;
@@ -2048,27 +2125,28 @@
     const thead = document.getElementById("trackersTableHead");
     const tbody = document.getElementById("trackersTableBody");
     const q = normalizeText(document.getElementById("trackersSearch").value);
+    const editable = canModify();
 
-    const moveTh = isEditMode ? `<th style="width:76px;">ORDEN</th>` : "";
+    const moveTh = editable ? `<th style="width:76px;">ORDEN</th>` : "";
     const colsTh = trackerColumns.map(col => {
-      const delColBtn = (isEditMode && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}')" title="Eliminar columna">✕</button>` : "";
+      const delColBtn = (editable && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}')" title="Eliminar columna">✕</button>` : "";
       return `<th>${escapeHtml(col.label)}${delColBtn}</th>`;
     }).join("");
     thead.innerHTML = `<tr>${moveTh}${colsTh}<th>ACCIONES</th></tr>`;
 
     if (!isCloudLoaded) {
-      tbody.innerHTML = `<tr><td colspan="${Math.max(trackerColumns.length + 1, 2)}" style="text-align:center; color:var(--text-muted); padding:22px;">${sbClient ? "⏳ Cargando datos desde Supabase..." : "⚠️ Configura SUPABASE_URL en el código para conectar."}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${Math.max(trackerColumns.length + 1, 2)}" style="text-align:center; color:var(--text-muted); padding:22px;">⏳ Cargando datos desde Supabase...</td></tr>`;
       return;
     }
 
     const filtered = trackersList.filter(item => normalizeText(trackerColumns.map(c => item[c.key] || "").join(" ")).includes(q));
     if (!filtered.length) {
-      tbody.innerHTML = `<tr><td colspan="${trackerColumns.length + (isEditMode ? 2 : 1)}" style="text-align:center; color:var(--text-muted); padding:22px;">No se encontraron registros en Trackers.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="${trackerColumns.length + (editable ? 2 : 1)}" style="text-align:center; color:var(--text-muted); padding:22px;">No se encontraron registros en Trackers.</td></tr>`;
       return;
     }
 
     tbody.innerHTML = filtered.map((item, visibleIdx) => {
-      const orderCell = isEditMode ? `
+      const orderCell = editable ? `
         <td style="white-space:nowrap;">
           <span class="drag-handle" title="Arrastra para mover fila">⋮⋮</span>
           <button type="button" class="btn-glass btn-sm" onclick="moveTrackerRow(${item.id}, -1)" ${visibleIdx === 0 ? "disabled style='opacity:0.35'" : ""} title="Subir">↑</button>
@@ -2077,24 +2155,24 @@
 
       const cellsHtml = trackerColumns.map(col => {
         const field = col.key, key = `${item.id}_${field}`, rawVal = item[field] || "", styleCls = getColumnStyleClass(field);
-        if (isEditMode && editingCellKey === key) {
+        if (editable && editingCellKey === key) {
           return `<td class="${styleCls}"><input type="text" class="inline-input" id="edit_${key}" value="${escapeAttr(rawVal)}" onblur="saveTrackerCell(${item.id}, '${escapeAttr(field)}', this.value)" onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCellKey=null; renderTrackersTable();}" /></td>`;
         }
-        const displayContent = rawVal ? escapeHtml(rawVal) : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
-        return isEditMode
+        const displayContent = rawVal ? escapeHtml(rawVal) : (editable ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
+        return editable
           ? `<td class="${styleCls}"><span class="cell-editable" onclick="activateTrackerCell(${item.id}, '${escapeAttr(field)}')" title="Clic para editar">${displayContent}</span></td>`
           : `<td class="${styleCls}"><span class="cell-readonly">${displayContent}</span></td>`;
       }).join("");
 
-      const deleteBtn = isEditMode ? `<button class="btn-danger" onclick="deleteTrackerItem(${item.id})">Eliminar</button>` : "";
-      const dragAttrs = isEditMode ? `draggable="true" ondragstart="onTrackerDragStart(event, ${item.id})" ondragover="onTrackerDragOver(event)" ondragleave="onTrackerDragLeave(event)" ondrop="onTrackerDrop(event, ${item.id})"` : "";
+      const deleteBtn = editable ? `<button class="btn-danger" onclick="deleteTrackerItem(${item.id})">Eliminar</button>` : "";
+      const dragAttrs = editable ? `draggable="true" ondragstart="onTrackerDragStart(event, ${item.id})" ondragover="onTrackerDragOver(event)" ondragleave="onTrackerDragLeave(event)" ondrop="onTrackerDrop(event, ${item.id})"` : "";
 
       return `<tr ${dragAttrs}>${orderCell}${cellsHtml}<td style="white-space:nowrap;"><button class="btn-glass btn-sm" onclick="copyTrackerRow(${item.id})">Copiar</button> ${deleteBtn}</td></tr>`;
     }).join("");
   }
 
   function activateTrackerCell(id, field) {
-    if (!isEditMode) return;
+    if (!canModify()) return;
     editingCellKey = `${id}_${field}`;
     renderTrackersTable();
     const inp = document.getElementById(`edit_${editingCellKey}`);
@@ -2102,6 +2180,7 @@
   }
 
   function saveTrackerCell(id, field, newValue) {
+    if (!canModify()) return;
     const idx = trackersList.findIndex(t => t.id === id);
     if (idx !== -1) { trackersList[idx][field] = newValue.trim(); persistTrackers(); }
     editingCellKey = null;
@@ -2110,7 +2189,7 @@
 
   function addTrackerItem(e) {
     e.preventDefault();
-    if (!isEditMode) return;
+    if (!canModify()) return;
     const newRow = { id: Date.now() };
     trackerColumns.forEach(col => { const el = document.getElementById(`tField_${col.key}`); newRow[col.key] = el ? el.value.trim() : ""; });
     trackersList.push(newRow);
@@ -2121,7 +2200,7 @@
   }
 
   function deleteTrackerItem(id) {
-    if (!isEditMode) return;
+    if (!canModify()) return;
     trackersList = trackersList.filter(t => t.id !== id);
     persistTrackers();
     renderTrackersTable();
@@ -2171,7 +2250,9 @@
   function renderDirectoryTable() {
     const thead = document.getElementById("directoryTableHead"), tbody = document.getElementById("directoryTableBody");
     const q = normalizeText(document.getElementById("directorySearch").value);
-    thead.innerHTML = `<tr>${directoryColumns.map(col => `<th>${escapeHtml(col.label)}${(isEditMode && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'directory')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
+    const editable = canModify();
+
+    thead.innerHTML = `<tr>${directoryColumns.map(col => `<th>${escapeHtml(col.label)}${(editable && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'directory')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
 
     const filtered = directoryList.filter(item => normalizeText(directoryColumns.map(c => item[c.key] || "").join(" ")).includes(q));
     if (!filtered.length) {
@@ -2182,28 +2263,29 @@
     tbody.innerHTML = filtered.map(item => {
       const cellsHtml = directoryColumns.map(col => {
         const field = col.key, key = `${item.id}_${field}`, rawVal = item[field] || "", styleCls = col.mono ? "mono" : (field === "nombre" ? "col-unidad" : "");
-        if (isEditMode && editingDirCellKey === key) {
+        if (editable && editingDirCellKey === key) {
           return `<td class="${styleCls}"><input type="text" class="inline-input" id="editDir_${key}" value="${escapeAttr(rawVal)}" onblur="saveDirectoryCell(${item.id}, '${escapeAttr(field)}', this.value)" onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingDirCellKey=null; renderDirectoryTable();}" /></td>`;
         }
         const isLinkVal = normalizeHref(rawVal);
-        const displayContent = rawVal ? (isLinkVal ? renderSmartLinkHtml(rawVal) : escapeHtml(rawVal)) : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
-        if (isEditMode) {
+        const displayContent = rawVal ? (isLinkVal ? renderSmartLinkHtml(rawVal) : escapeHtml(rawVal)) : (editable ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
+        if (editable) {
           return `<td class="${styleCls}"><div style="display:inline-flex; align-items:center; gap:6px;"><span class="cell-editable" onclick="activateDirectoryCell(${item.id}, '${escapeAttr(field)}')">${rawVal ? escapeHtml(rawVal) : '<span class="cell-empty">— AGREGAR —</span>'}</span>${isLinkVal ? `<a href="${escapeAttr(isLinkVal)}" target="_blank" rel="noopener noreferrer" class="btn-glass btn-sm" style="text-decoration:none; padding:3px 7px;">↗</a>` : ""}</div></td>`;
         }
         return `<td class="${styleCls}"><span class="cell-readonly">${displayContent}</span></td>`;
       }).join("");
-      return `<tr>${cellsHtml}<td style="white-space:nowrap;"><button class="btn-glass btn-sm" onclick="copyDirectoryRow(${item.id})">Copiar</button> ${isEditMode ? `<button class="btn-danger" onclick="deleteDirectoryItem(${item.id})">Eliminar</button>` : ""}</td></tr>`;
+      return `<tr>${cellsHtml}<td style="white-space:nowrap;"><button class="btn-glass btn-sm" onclick="copyDirectoryRow(${item.id})">Copiar</button> ${editable ? `<button class="btn-danger" onclick="deleteDirectoryItem(${item.id})">Eliminar</button>` : ""}</td></tr>`;
     }).join("");
   }
 
   function activateDirectoryCell(id, field) {
-    if (!isEditMode) return;
+    if (!canModify()) return;
     editingDirCellKey = `${id}_${field}`;
     renderDirectoryTable();
     const inp = document.getElementById(`editDir_${editingDirCellKey}`);
     if (inp) { inp.focus(); inp.select(); }
   }
   function saveDirectoryCell(id, field, newValue) {
+    if (!canModify()) return;
     const idx = directoryList.findIndex(d => d.id === id);
     if (idx !== -1) { directoryList[idx][field] = newValue.trim(); persistDirectory(); }
     editingDirCellKey = null;
@@ -2211,7 +2293,7 @@
   }
   function addDirectoryItem(e) {
     e.preventDefault();
-    if (!isEditMode) return;
+    if (!canModify()) return;
     const newRow = { id: Date.now() };
     directoryColumns.forEach(col => { const el = document.getElementById(`dField_${col.key}`); newRow[col.key] = el ? el.value.trim() : ""; });
     directoryList.push(newRow);
@@ -2220,7 +2302,7 @@
     renderDirectoryTable();
     showToast("✅ Registro guardado en Directorio.");
   }
-  function deleteDirectoryItem(id) { if (!isEditMode) return; directoryList = directoryList.filter(d => d.id !== id); persistDirectory(); renderDirectoryTable(); showToast("🗑️ Registro eliminado."); }
+  function deleteDirectoryItem(id) { if (!canModify()) return; directoryList = directoryList.filter(d => d.id !== id); persistDirectory(); renderDirectoryTable(); showToast("🗑️ Registro eliminado."); }
   function copyDirectoryRow(id) {
     const d = directoryList.find(x => x.id === id);
     if (!d) return;
@@ -2234,6 +2316,7 @@
   }
   function exportDirectoryBackupJSON() { downloadJson(directoryList, "MDZ_Directorio_Respaldo.json"); }
   function importDirectoryBackupJSON(event) {
+    if (!canModify()) { showToast("🔒 Solo lectura."); event.target.value = ""; return; }
     const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = e => { try { const imp = JSON.parse(e.target.result); if (!Array.isArray(imp)) throw new Error(); directoryList = imp; persistDirectory(); renderDirectoryTable(); showToast("✅ Directorio restaurado."); } catch { showToast("⛔ JSON inválido."); } };
@@ -2266,7 +2349,9 @@
   function renderCommandsTable() {
     const thead = document.getElementById("commandsTableHead"), tbody = document.getElementById("commandsTableBody");
     const q = normalizeText(document.getElementById("commandsSearch").value);
-    thead.innerHTML = `<tr>${commandColumns.map(col => `<th>${escapeHtml(col.label)}${(isEditMode && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'commands')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
+    const editable = canModify();
+
+    thead.innerHTML = `<tr>${commandColumns.map(col => `<th>${escapeHtml(col.label)}${(editable && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'commands')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
 
     const filtered = commandsList.filter(item => {
       if (selectedCommandModel !== "ALL" && normalizeText(item.modelo) !== normalizeText(selectedCommandModel)) return false;
@@ -2277,39 +2362,40 @@
     tbody.innerHTML = filtered.map(item => {
       const cellsHtml = commandColumns.map(col => {
         const field = col.key, key = `${item.id}_${field}`, rawVal = item[field] || "";
-        if (isEditMode && editingCmdCellKey === key) {
+        if (editable && editingCmdCellKey === key) {
           return `<td class="${col.mono ? "mono" : ""}"><input type="text" class="inline-input" id="editCmd_${key}" value="${escapeAttr(rawVal)}" onblur="saveCommandCell(${item.id}, '${escapeAttr(field)}', this.value)" onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingCmdCellKey=null; renderCommandsTable();}" /></td>`;
         }
         if (field === "modelo") {
           const b = `<span class="badge-cat">${escapeHtml(rawVal || "GENERAL")}</span>`;
-          return `<td class="mono">${isEditMode ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${b}</span>` : b}</td>`;
+          return `<td class="mono">${editable ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${b}</span>` : b}</td>`;
         }
         if (field === "accion") {
           const isLock = normalizeText(rawVal).includes("bloquear") && !normalizeText(rawVal).includes("desbloquear");
           const isUnlock = normalizeText(rawVal).includes("desbloquear") || normalizeText(rawVal).includes("dezsb");
           const cls = isLock ? "col-activacion" : (isUnlock ? "col-unidad" : "col-detektor");
           const content = rawVal ? escapeHtml(rawVal) : `<span class="cell-empty">—</span>`;
-          return `<td class="${cls}">${isEditMode ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${content}</span>` : content}</td>`;
+          return `<td class="${cls}">${editable ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${content}</span>` : content}</td>`;
         }
         if (field === "comando") {
           const cmdHtml = rawVal ? `<code style="color:#f8fafc; background:rgba(16,185,129,0.1); padding:3px 7px; border-radius:6px; border:1px solid rgba(16,185,129,0.25); user-select:all;">${escapeHtml(rawVal)}</code>` : `<span class="cell-empty">—</span>`;
-          return `<td class="mono">${isEditMode ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${cmdHtml}</span>` : cmdHtml}</td>`;
+          return `<td class="mono">${editable ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${cmdHtml}</span>` : cmdHtml}</td>`;
         }
-        const displayContent = rawVal ? escapeHtml(rawVal) : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
-        return `<td class="${col.mono ? "mono" : ""}">${isEditMode ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${displayContent}</span>` : displayContent}</td>`;
+        const displayContent = rawVal ? escapeHtml(rawVal) : (editable ? `<span class="cell-empty">— AGREGAR —</span>` : `<span class="cell-empty">—</span>`);
+        return `<td class="${col.mono ? "mono" : ""}">${editable ? `<span class="cell-editable" onclick="activateCommandCell(${item.id}, '${escapeAttr(field)}')">${displayContent}</span>` : displayContent}</td>`;
       }).join("");
-      return `<tr>${cellsHtml}<td style="white-space:nowrap;"><button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.comando || "")}', 'Comando AT')">📋 Copiar AT</button> ${isEditMode ? `<button class="btn-danger" onclick="deleteCommandItem(${item.id})">Eliminar</button>` : ""}</td></tr>`;
+      return `<tr>${cellsHtml}<td style="white-space:nowrap;"><button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(item.comando || "")}', 'Comando AT')">📋 Copiar AT</button> ${editable ? `<button class="btn-danger" onclick="deleteCommandItem(${item.id})">Eliminar</button>` : ""}</td></tr>`;
     }).join("");
   }
 
   function activateCommandCell(id, field) {
-    if (!isEditMode) return;
+    if (!canModify()) return;
     editingCmdCellKey = `${id}_${field}`;
     renderCommandsTable();
     const inp = document.getElementById(`editCmd_${editingCmdCellKey}`);
     if (inp) { inp.focus(); inp.select(); }
   }
   function saveCommandCell(id, field, newValue) {
+    if (!canModify()) return;
     const idx = commandsList.findIndex(c => c.id === id);
     if (idx !== -1) { commandsList[idx][field] = newValue.trim(); persistCommands(); }
     editingCmdCellKey = null;
@@ -2317,7 +2403,7 @@
   }
   function addCommandItem(e) {
     e.preventDefault();
-    if (!isEditMode) return;
+    if (!canModify()) return;
     const newRow = { id: Date.now() };
     commandColumns.forEach(col => { const el = document.getElementById(`cField_${col.key}`); newRow[col.key] = el ? el.value.trim() : ""; });
     commandsList.unshift(newRow);
@@ -2326,7 +2412,7 @@
     renderCommandsTable();
     showToast("✅ Comando guardado.");
   }
-  function deleteCommandItem(id) { if (!isEditMode) return; commandsList = commandsList.filter(c => c.id !== id); persistCommands(); renderCommandsTable(); showToast("🗑️ Comando eliminado."); }
+  function deleteCommandItem(id) { if (!canModify()) return; commandsList = commandsList.filter(c => c.id !== id); persistCommands(); renderCommandsTable(); showToast("🗑️ Comando eliminado."); }
   function exportCommandsExcelCSV() {
     const rows = [commandColumns.map(c => c.label), ...commandsList.map(c => commandColumns.map(col => c[col.key] || ""))];
     const csv = "\uFEFF" + rows.map(r => r.map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(";")).join("\n");
@@ -2334,6 +2420,7 @@
   }
   function exportCommandsBackupJSON() { downloadJson(commandsList, "MDZ_Comandos_Respaldo.json"); }
   function importCommandsBackupJSON(event) {
+    if (!canModify()) { showToast("🔒 Solo lectura."); event.target.value = ""; return; }
     const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = e => { try { const imp = JSON.parse(e.target.result); if (!Array.isArray(imp)) throw new Error(); commandsList = imp; persistCommands(); renderCommandsTable(); showToast("✅ Comandos restaurados."); } catch { showToast("⛔ JSON inválido."); } };
@@ -2391,7 +2478,9 @@
     if (!isAuthenticated) return;
     const query = document.getElementById("smartSanctuarySearch").value;
     const thead = document.getElementById("sanctuaryTableHead"), tbody = document.getElementById("sanctuaryTableBody");
-    thead.innerHTML = `<tr>${sanctuaryColumns.map(col => `<th>${escapeHtml(col.label)}${(isEditMode && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'sanctuary')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
+    const editable = canModify();
+
+    thead.innerHTML = `<tr>${sanctuaryColumns.map(col => `<th>${escapeHtml(col.label)}${(editable && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}', 'sanctuary')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
 
     const filtered = sanctuaryList.filter(item => smartMatch(item, query));
     document.getElementById("sanctuarySearchStats").textContent = `Mostrando ${filtered.length} de ${sanctuaryList.length} registros`;
@@ -2404,28 +2493,29 @@
         if (field === "categoria") return `<td><span class="badge-cat">${escapeHtml(rawVal || "Otros")}</span></td>`;
         if (field === "usuario") return `<td class="mono">${highlightMatch(rawVal, query)} <button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(rawVal)}', 'Usuario')">📋</button></td>`;
         if (field === "pass") return `<td class="mono"><div style="display:flex; align-items:center; gap:6px;"><span>${isShown ? escapeHtml(rawVal) : "••••••••••••"}</span><button class="btn-glass btn-sm" onclick="toggleReveal(${item.id})">${isShown ? "🙈" : "👁️"}</button><button class="btn-glass btn-sm" onclick="copyText('${escapeAttr(rawVal)}', 'Contraseña')">🔑</button></div></td>`;
-        if (isEditMode && editingSancCellKey === cellKey) {
+        if (editable && editingSancCellKey === cellKey) {
           return `<td class="${col.mono ? "mono" : ""}"><input type="text" class="inline-input" id="editSanc_${cellKey}" value="${escapeAttr(rawVal)}" onblur="saveSanctuaryCell(${item.id}, '${escapeAttr(field)}', this.value)" onkeydown="if(event.key==='Enter'){this.blur();} else if(event.key==='Escape'){editingSancCellKey=null; renderSanctuaryTable();}" /></td>`;
         }
         if (field === "host" || normalizeHref(rawVal)) {
           const linkRendered = renderSmartLinkHtml(rawVal, query);
-          return `<td class="mono">${isEditMode ? `<div style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;">${linkRendered}<button type="button" class="btn-glass btn-sm" style="padding:2px 6px; font-size:0.7rem;" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')">✏️</button></div>` : linkRendered}</td>`;
+          return `<td class="mono">${editable ? `<div style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;">${linkRendered}<button type="button" class="btn-glass btn-sm" style="padding:2px 6px; font-size:0.7rem;" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')">✏️</button></div>` : linkRendered}</td>`;
         }
-        const contentHtml = rawVal ? (field === "servicio" ? `<strong>${highlightMatch(rawVal, query)}</strong>` : highlightMatch(rawVal, query)) : (isEditMode ? `<span class="cell-empty">— AGREGAR —</span>` : "-");
-        return `<td class="${col.mono ? "mono" : ""}">${isEditMode ? `<span class="cell-editable" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')">${contentHtml}</span>` : contentHtml}</td>`;
+        const contentHtml = rawVal ? (field === "servicio" ? `<strong>${highlightMatch(rawVal, query)}</strong>` : highlightMatch(rawVal, query)) : (editable ? `<span class="cell-empty">— AGREGAR —</span>` : "-");
+        return `<td class="${col.mono ? "mono" : ""}">${editable ? `<span class="cell-editable" onclick="activateSanctuaryCell(${item.id}, '${escapeAttr(field)}')">${contentHtml}</span>` : contentHtml}</td>`;
       }).join("");
-      return `<tr>${cellsHtml}<td>${isEditMode ? `<button class="btn-danger" onclick="deleteSanctuaryItem(${item.id})">Eliminar</button>` : `<span style="font-size:0.75rem; color:var(--text-muted);">Solo lectura</span>`}</td></tr>`;
+      return `<tr>${cellsHtml}<td>${editable ? `<button class="btn-danger" onclick="deleteSanctuaryItem(${item.id})">Eliminar</button>` : `<span style="font-size:0.75rem; color:var(--text-muted);">Solo lectura</span>`}</td></tr>`;
     }).join("");
   }
 
   function activateSanctuaryCell(id, field) {
-    if (!isAuthenticated || !isEditMode) return;
+    if (!canModify()) return;
     editingSancCellKey = `${id}_${field}`;
     renderSanctuaryTable();
     const inp = document.getElementById(`editSanc_${editingSancCellKey}`);
     if (inp) { inp.focus(); inp.select(); }
   }
   function saveSanctuaryCell(id, field, newValue) {
+    if (!canModify()) return;
     const idx = sanctuaryList.findIndex(s => s.id === id);
     if (idx !== -1) { sanctuaryList[idx][field] = newValue.trim(); persistSanctuary(); }
     editingSancCellKey = null;
@@ -2433,7 +2523,7 @@
   }
   function addSanctuaryItem(e) {
     e.preventDefault();
-    if (!isAuthenticated || !isEditMode) return;
+    if (!canModify()) return;
     const newItem = { id: Date.now() };
     sanctuaryColumns.forEach(col => { const el = document.getElementById(`sField_${col.key}`); newItem[col.key] = el ? el.value.trim() : ""; });
     sanctuaryList.unshift(newItem);
@@ -2442,7 +2532,7 @@
     renderSanctuaryTable();
     showToast("✅ Credencial guardada en Supabase.");
   }
-  function deleteSanctuaryItem(id) { if (!isAuthenticated || !isEditMode) return; sanctuaryList = sanctuaryList.filter(i => i.id !== id); persistSanctuary(); renderSanctuaryTable(); showToast("🗑️ Eliminado."); }
+  function deleteSanctuaryItem(id) { if (!canModify()) return; sanctuaryList = sanctuaryList.filter(i => i.id !== id); persistSanctuary(); renderSanctuaryTable(); showToast("🗑️ Eliminado."); }
   function toggleReveal(id) {
     if (revealedIds.has(id)) revealedIds.delete(id);
     else { revealedIds.add(id); setTimeout(() => { if (revealedIds.delete(id) && isAuthenticated) renderSanctuaryTable(); }, 15000); }
@@ -2483,6 +2573,7 @@
     showToast(`💾 Respaldo guardado: ${filename}`);
   }
   function importTrackersBackupJSON(event) {
+    if (!canModify()) { showToast("🔒 Solo lectura."); event.target.value = ""; return; }
     const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = e => { try { const imp = JSON.parse(e.target.result); if (!Array.isArray(imp)) throw new Error(); trackersList = imp; persistTrackers(); renderTrackersTable(); showToast("✅ Trackers restaurados en Supabase."); } catch { showToast("⛔ JSON inválido."); } };
@@ -2495,7 +2586,7 @@
     const fillEl = document.getElementById("modalTimerFill");
     if (countdownEl) countdownEl.textContent = `${secLeft}s`;
     if (fillEl) fillEl.style.width = `${(secLeft / 30) * 100}%`;
-    if (isAuthenticated && getTotpSecret() && document.getElementById("internalQrDrawer").classList.contains("open")) {
+    if (isAuthenticated && currentUserRole === "dev" && getTotpSecret() && document.getElementById("internalQrDrawer").classList.contains("open")) {
       const liveCode = await computeTotpAtOffset(getTotpSecret(), 0);
       document.getElementById("internalTotpLive").textContent = `Código actual: ${liveCode} (${secLeft}s)`;
     }
@@ -2527,7 +2618,7 @@
   function escapeHtml(str) { return String(str || "").replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
   function escapeAttr(str) { return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
 
-  // Inicialización: carga 100% desde Supabase
+  // Inicialización: carga 100% desde las tablas reales de Supabase
   updateCounters();
   updateSecurityUI();
   renderTrackersTable();
