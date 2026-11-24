@@ -1498,7 +1498,16 @@
     }
 
     const { data: { session: finalSession } } = await sbClient.auth.getSession();
-    await bootAuthenticatedSession(finalSession || authData.session);
+    const activeSession = finalSession || authData.session;
+
+    // Registrar acceso permanente en mdz_accesos (solo al iniciar sesión, no al recargar F5)
+    await sbClient.from("mdz_accesos").insert({
+      usuario: activeSession.user.email,
+      rol: activeSession.user.app_metadata?.role || "viewer",
+      dispositivo: navigator.userAgent.slice(0, 150)
+    });
+
+    await bootAuthenticatedSession(activeSession);
   }
 
   async function bootAuthenticatedSession(session) {
