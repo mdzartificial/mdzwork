@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background-color: #000;
+  background: rgba(0, 0, 0, 0.3);
   overflow: hidden;
   font-family: sans-serif;
   color: #9DD0E0;
@@ -59,7 +59,5 @@ body {
   display: none !important;
 }
 #kodama-graphic {
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
+    filter: brightness(1.45) contrast(1.08) saturate(1.2);
 }
