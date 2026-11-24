@@ -1616,6 +1616,16 @@ async function verifyTotpSubmission(e) {
       return;
     }
 
+    // Verificar que la sesión realmente tenga el 2FA completado (aal2)
+    const { data: aalData } = await sbClient.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (!aalData || aalData.currentLevel !== "aal2") {
+      // Si recargó antes de terminar el 2FA, destruir esa sesión incompleta
+      await sbClient.auth.signOut();
+      document.body.classList.add("locked-screen");
+      openTotpModal();
+      return;
+    }
+
     await bootAuthenticatedSession(session);
   }
 
