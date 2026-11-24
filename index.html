@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MDZ™ Sanctuary | KROKY </title>
+  <title>MDZ™ WORK | Panel de Control & Sanctuary</title>
   <link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=2" />
   <link rel="apple-touch-icon" href="favicon.png?v=2" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,6 +13,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://kam.software/plugins/holo-orb.cdn.js" defer></script>
   <style>
     :root {
       --bg-dark: #050a08;
@@ -359,9 +360,8 @@
     @keyframes gpsCoreBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
     @keyframes gpsRadarPulse { 0% { transform: scale(0.7); opacity: 0.95; } 75% { transform: scale(2.8); opacity: 0; } 100% { transform: scale(2.8); opacity: 0; } }
 
-    /* Pantalla de Login obligatoria + Fondo animado de cocodrilos comiendo bytes */
-/* =========================================================================
-       PANTALLA DE LOGIN SANCTUARY (BOSQUE PARALLAX + GLASSMORPHISM ROBUSTO)
+    /* =========================================================================
+       PANTALLA DE LOGIN SANCTUARY (HOLO-ORB VERDE EN BLUR + LIQUID GLASS)
        ========================================================================= */
     body.locked-screen { overflow: hidden; padding: 0; }
     body.locked-screen .container { display: none !important; }
@@ -369,114 +369,25 @@
     body:not(.locked-screen) #loginBgCanvas { display: none !important; }
 
     body.locked-screen #totpModal {
-      background: radial-gradient(circle at 50% 35%, #07201a 0%, #030a08 65%, #010403 100%);
+      background: radial-gradient(900px 700px at 50% 50%, #051812 0%, #020806 62%, #010403 100%);
       overflow: hidden;
       padding: 20px;
     }
 
-    /* Escena de Bosque Parallax (Referencia Miyazaki adaptada) */
-    #loginForestFrame {
+    /* Fondo HoloOrb en Blur para el Login */
+    #loginOrbBg {
       position: fixed;
       inset: 0;
       width: 100vw;
       height: 100vh;
-      border: none;
       z-index: 0;
       pointer-events: none;
-      filter: saturate(1.15) brightness(0.92);
+      filter: blur(10px) saturate(1.25);
+      transform: scale(1.06);
+      opacity: 0.92;
     }
-    body:not(.locked-screen) #loginForestFrame {
+    body:not(.locked-screen) #loginOrbBg {
       display: none !important;
-    }
-    .forest-layer {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      will-change: transform;
-    }
-    .forest-sunrays {
-      position: absolute;
-      inset: -20%;
-      background: repeating-linear-gradient(
-        -28deg,
-        transparent 0%,
-        rgba(56, 189, 248, 0.04) 4%,
-        transparent 9%,
-        rgba(16, 185, 129, 0.055) 14%,
-        transparent 22%
-      );
-      opacity: 0.55;
-      animation: rayPulse 9s ease-in-out infinite alternate;
-    }
-    @keyframes rayPulse {
-      0% { opacity: 0.35; transform: translateX(-1.5%); }
-      100% { opacity: 0.72; transform: translateX(1.5%); }
-    }
-    .forest-mist {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 20% 85%, rgba(16, 185, 129, 0.14), transparent 55%),
-        radial-gradient(ellipse at 82% 20%, rgba(14, 165, 233, 0.10), transparent 50%),
-        linear-gradient(to top, rgba(2, 8, 6, 0.92) 0%, transparent 40%);
-    }
-    .vine-sway {
-      transform-origin: top center;
-      animation: vineSwing 6.5s ease-in-out infinite alternate;
-    }
-    .vine-sway.slow { animation-duration: 8.5s; animation-delay: -2s; }
-    .vine-sway.fast { animation-duration: 5.2s; animation-delay: -1s; }
-    @keyframes vineSwing {
-      0% { transform: rotate(-3.2deg); }
-      100% { transform: rotate(3.2deg); }
-    }
-    .bio-glow {
-      animation: bioPulse 4.5s ease-in-out infinite alternate;
-    }
-    @keyframes bioPulse {
-      0% { opacity: 0.35; }
-      100% { opacity: 0.9; }
-    }
-    /* Animaciones del Pantano (Ondas, Juncos, Hongos y Burbujas) */
-    .swamp-wave {
-      animation: swampDrift 10s linear infinite;
-    }
-    .swamp-wave.slow { animation-duration: 15s; animation-direction: reverse; }
-    .swamp-wave.fast { animation-duration: 7.5s; }
-    @keyframes swampDrift {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-120px); }
-    }
-
-    .reed-sway {
-      transform-origin: bottom center;
-      animation: reedWind 5.5s ease-in-out infinite alternate;
-    }
-    .reed-sway.slow { animation-duration: 7.2s; animation-delay: -1.5s; }
-    .reed-sway.fast { animation-duration: 4.3s; animation-delay: -0.8s; }
-    @keyframes reedWind {
-      0% { transform: rotate(-2.5deg); }
-      100% { transform: rotate(2.8deg); }
-    }
-
-    .shroom-glow {
-      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.75));
-      animation: bioPulse 3.8s ease-in-out infinite alternate;
-    }
-
-    .swamp-bubble {
-      opacity: 0;
-      animation: bubbleRise 6s ease-in infinite;
-    }
-    .swamp-bubble.b2 { animation-duration: 7.5s; animation-delay: 1.5s; }
-    .swamp-bubble.b3 { animation-duration: 5.5s; animation-delay: 2.8s; }
-    .swamp-bubble.b4 { animation-duration: 8s; animation-delay: 4s; }
-    @keyframes bubbleRise {
-      0%   { transform: translateY(0) scale(0.6); opacity: 0; }
-      20%  { opacity: 0.65; }
-      85%  { opacity: 0.4; }
-      100% { transform: translateY(-95px) scale(1.25); opacity: 0; }
     }
 
     #loginBgCanvas {
@@ -800,9 +711,6 @@
       box-shadow: 0 8px 24px rgba(16,185,129,0.30), inset 0 1px 0 rgba(255,255,255,0.45);
     }
   </style>
-
-
-
 </head>
 <body class="locked-screen">
 
@@ -1213,20 +1121,18 @@
   </section>
 </div>
 
-<!-- PANTALLA DE LOGIN OBLIGATORIA: BOSQUE SANCTUARY PARALLAX + COCODRILOS COMIENDO BYTES -->
+<!-- PANTALLA DE LOGIN OBLIGATORIA: HOLO-ORB VERDE EN BLUR + LIQUID GLASS -->
 <div id="totpModal" class="modal-backdrop open">
-  <!-- Fondo multicapa con Parallax inspirado en bosque nocturno -->
-<!-- Fondo multicapa con Parallax: Hábitat de Pantano & Bosque de Manglar -->
-<!-- Fondo real del bosque (Miyazaki SVG + GSAP) -->
-  <iframe id="loginForestFrame" src="index_2.html?v=4" aria-hidden="true"></iframe>
+  <!-- Fondo animado HoloOrb en Blur -->
+  <div id="loginOrbBg" aria-hidden="true"></div>
 
-  <!-- Canvas: Luciérnagas bioluminiscentes + Cocodrilos cazando bytes -->
+  <!-- Canvas: Luciérnagas bioluminiscentes -->
   <canvas id="loginBgCanvas"></canvas>
 
   <!-- Tarjeta principal de acceso -->
   <div id="loginModalCard" class="modal-card glass-panel led-border">
     <div class="login-top-meta">
-      <span style="color: var(--text-muted); letter-spacing: 0.8px;">MDZ™ INDUSTRIES</span>
+      <span style="color: var(--text-muted); letter-spacing: 0.8px;">MDZ™ SECURE GATEWAY</span>
       <span id="loginCloudBadge" class="login-status-badge is-loading">
         <span class="login-status-dot"></span>
         <span id="loginCloudText">Conectando nube...</span>
@@ -1249,7 +1155,7 @@
       </div>
       <div>
         <h3>MDZ™ <span>Sanctuary</span></h3>
-        <p>Premium</p>
+        <p>Autenticación de doble factor (Usuario + TOTP 2FA)</p>
       </div>
     </div>
 
@@ -1259,7 +1165,7 @@
           <label for="authUserInput">Usuario *</label>
           <div class="login-input-group">
             <span class="login-input-icon">👤</span>
-            <input type="text" id="authUserInput" placeholder="MDZ" autocomplete="username" required />
+            <input type="text" id="authUserInput" placeholder="MDZDEV / MDZUSER" autocomplete="username" required />
           </div>
         </div>
 
@@ -1291,7 +1197,7 @@
 
       <div class="login-footer-row">
         <button type="button" class="link-subtle" onclick="toggleRecoveryPrompt()">¿Perdiste tu app? Re-vincular 2FA</button>
-        <span class="mono" style="opacity:0.7;">SKYNET · 30s</span>
+        <span class="mono" style="opacity:0.7;">SHA-1 · 30s</span>
       </div>
     </form>
 
@@ -2315,7 +2221,7 @@
   function escapeHtml(str) { return String(str || "").replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
   function escapeAttr(str) { return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
 
-// =========================================================================
+  // =========================================================================
   // MEJORAS UX DEL LOGIN (OJO DE CONTRASEÑA, CAPS LOCK, TOTP Y ESTADO NUBE)
   // =========================================================================
   function toggleLoginPasswordVisibility() {
@@ -2347,7 +2253,6 @@
       });
     }
 
-    // Sincroniza automáticamente el badge de estado del login con #cloudStatusText
     const cloudSource = document.getElementById("cloudStatusText");
     const badge = document.getElementById("loginCloudBadge");
     const badgeText = document.getElementById("loginCloudText");
@@ -2356,7 +2261,7 @@
         const txt = cloudSource.textContent || "";
         badge.classList.remove("is-loading", "is-error");
         if (txt.includes("Sincronizado")) {
-          badgeText.textContent = "Activo";
+          badgeText.textContent = "Supabase Activo";
         } else if (txt.includes("Error")) {
           badge.classList.add("is-error");
           badgeText.textContent = "Error de conexión";
@@ -2370,21 +2275,47 @@
     }
   })();
 
-// =========================================================================
-  // PARALLAX BOSQUE SANCTUARY + LUCIÉRNAGAS + MECHA-CROCS (NADADORES + CAMINANTES)
+  // =========================================================================
+  // FONDO HOLO-ORB VERDE PARA LOGIN
+  // =========================================================================
+  (function initLoginHoloOrb() {
+    let mounted = false;
+    function mountOrb() {
+      if (mounted || typeof HoloOrb === "undefined") return;
+      mounted = true;
+      const orb = new HoloOrb({
+        container: "#loginOrbBg",
+        preset: "minimal",        // 'jarvis' | 'kamai' | 'minimal'
+        density: 1.15,
+        glow: 1.5,
+        speed: 1,
+        seed: 7,
+        color: "#10b981",         // Verde esmeralda principal
+        hot: "#a7f3d0",           // Destellos verde menta
+        coreColor: "#059669",     // Núcleo verde profundo
+        brightness: 1.15,
+        interactive: true,
+        autoRotate: true,
+        maxDpr: 2
+      });
+      if (!orb.ok) console.warn("WebGL2 no disponible para HoloOrb.");
+    }
+
+    document.addEventListener("DOMContentLoaded", mountOrb);
+    window.addEventListener("load", mountOrb);
+    mountOrb();
+  })();
+
+  // =========================================================================
+  // LUCIÉRNAGAS BIOLUMINISCENTES EN CANVAS
   // =========================================================================
   (function initLoginSanctuaryScene() {
     const canvas = document.getElementById("loginBgCanvas");
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    const layers = Array.from(document.querySelectorAll("#loginScene .forest-layer"));
 
     let W = 0, H = 0;
-    let mouseX = 0, mouseY = 0, curX = 0, curY = 0;
-    let bytesDevoured = 0;
-
-    const BYTE_LABELS = ["01", "10", "0xFF", "1010", "00", "11", "A7", "0x1A", "110", "0101", "F0", "0x09"];
-    const bytes = [], crocs = [], sparks = [], fireflies = [];
+    const fireflies = [];
 
     function resize() {
       W = canvas.width = window.innerWidth;
@@ -2392,47 +2323,6 @@
     }
     window.addEventListener("resize", resize);
     resize();
-
-    window.addEventListener("mousemove", e => {
-      const f = document.getElementById("loginForestFrame");
-      if (f && f.contentWindow) f.contentWindow.postMessage({ type: "parallaxMouse", x: e.clientX, y: e.clientY }, "*");
-      if (!document.body.classList.contains("locked-screen")) return;
-      mouseX = (e.clientX / W - 0.5) * 2;
-      mouseY = (e.clientY / H - 0.5) * 2;
-    }, { passive: true });
-
-    function spawnByte(low = false) {
-      return {
-        x: Math.random() * W,
-        y: low ? (H - 55 - Math.random() * 65) : (40 + Math.random() * (H - 120)),
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
-        text: BYTE_LABELS[Math.floor(Math.random() * BYTE_LABELS.length)],
-        alpha: 0.45 + Math.random() * 0.5
-      };
-    }
-
-    function spawnCroc(isWalker = false) {
-      const scale = isWalker ? (0.85 + Math.random() * 0.35) : (0.62 + Math.random() * 0.65);
-      const dir = Math.random() > 0.5 ? 1 : -1;
-      const baseSpeed = isWalker ? (1.1 + Math.random() * 0.9) : (1.1 + Math.random() * 1.6);
-      const startY = isWalker ? (H - 54 - Math.random() * 14) : (70 + Math.random() * (H - 220));
-      return {
-        isWalker,
-        x: Math.random() * W,
-        y: startY,
-        vx: dir * baseSpeed,
-        vy: 0,
-        baseSpeed,
-        dir,
-        scale,
-        phase: Math.random() * Math.PI * 2,
-        jawPhase: Math.random() * Math.PI * 2,
-        chompBoost: 0,
-        huntBoost: 0,
-        alpha: isWalker ? 0.82 : (0.38 + Math.random() * 0.44)
-      };
-    }
 
     function spawnFirefly() {
       const warm = Math.random() > 0.55;
@@ -2444,210 +2334,19 @@
         drift: 0.008 + Math.random() * 0.015,
         speed: 0.25 + Math.random() * 0.55,
         pulse: Math.random() * Math.PI * 2,
-        colorCore: warm ? "#fde68a" : "#7dd3fc",
-        colorGlow: warm ? "rgba(245, 158, 11, 0.55)" : "rgba(56, 189, 248, 0.55)"
+        colorCore: warm ? "#a7f3d0" : "#6ee7b7",
+        colorGlow: warm ? "rgba(16, 185, 129, 0.55)" : "rgba(52, 211, 153, 0.45)"
       };
     }
 
     for (let i = 0; i < 24; i++) fireflies.push(spawnFirefly());
 
-    function drawMechaCroc(c) {
-      ctx.save();
-      ctx.translate(c.x, c.y);
-      ctx.scale(c.dir * c.scale, c.scale);
-      ctx.globalAlpha = c.alpha;
-
-      const jawAngle = (0.14 + Math.abs(Math.sin(c.jawPhase)) * 0.24) + c.chompBoost * 0.42;
-      const stride = Math.sin(c.phase);
-
-      // 1. SEGMENTOS ARTICULADOS DEL CUERPO (6 módulos + púas + patas mecánicas)
-      const segCount = 6;
-      let prevX = -16;
-      for (let i = 0; i < segCount; i++) {
-        const ratio = 1 - i * 0.12;
-        const w = 18 * ratio;
-        const h = 19 * ratio;
-        const x = prevX - w * 0.88;
-        const waveY = c.isWalker
-          ? Math.sin(c.phase * 2 - i * 0.55) * 1.4
-          : Math.sin(c.phase - i * 0.7) * (2.6 + i * 0.55);
-
-        // Patas articuladas en los segmentos 1 y 4
-        if (i === 1 || i === 4) {
-          const legPhase = i === 1 ? stride : -stride;
-          ctx.strokeStyle = "#10b981";
-          ctx.lineWidth = 2;
-          ctx.lineCap = "round";
-
-          if (c.isWalker) {
-            // Caminata real sobre el suelo (2 articulaciones)
-            const kneeX = x + w * 0.5 + legPhase * 7;
-            const kneeY = waveY + h * 0.45 + 7;
-            const footX = kneeX + legPhase * 6;
-            const footY = waveY + h * 0.45 + 15 - Math.max(0, -legPhase * 5);
-            ctx.beginPath();
-            ctx.moveTo(x + w * 0.5, waveY + h * 0.4);
-            ctx.lineTo(kneeX, kneeY);
-            ctx.lineTo(footX, footY);
-            ctx.stroke();
-
-            // Pata trasera (más tenue para profundidad)
-            ctx.save();
-            ctx.globalAlpha *= 0.45;
-            const bKneeX = x + w * 0.5 - legPhase * 7;
-            const bFootX = bKneeX - legPhase * 6;
-            const bFootY = waveY + h * 0.45 + 15 - Math.max(0, legPhase * 5);
-            ctx.beginPath();
-            ctx.moveTo(x + w * 0.5, waveY + h * 0.4);
-            ctx.lineTo(bKneeX, kneeY);
-            ctx.lineTo(bFootX, bFootY);
-            ctx.stroke();
-            ctx.restore();
-          } else {
-            // Aletas/patas robóticas tipo antena (como la referencia)
-            ctx.beginPath();
-            ctx.moveTo(x + w * 0.5, waveY - h * 0.5);
-            ctx.lineTo(x + w * 0.5 + legPhase * 6, waveY - h * 0.5 - 8);
-            ctx.moveTo(x + w * 0.5, waveY + h * 0.5);
-            ctx.lineTo(x + w * 0.5 - legPhase * 6, waveY + h * 0.5 + 8);
-            ctx.stroke();
-          }
-        }
-
-        // Cuerpo del segmento (estilo placa blindada)
-        ctx.fillStyle = "rgba(6, 42, 30, 0.88)";
-        ctx.strokeStyle = "#10b981";
-        ctx.lineWidth = 1.4;
-        ctx.beginPath();
-        ctx.roundRect(x, waveY - h / 2, w, h, 4);
-        ctx.fill();
-        ctx.stroke();
-
-        // Línea LED central del segmento
-        ctx.strokeStyle = "#34d399";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(x + w * 0.25, waveY);
-        ctx.lineTo(x + w * 0.75, waveY);
-        ctx.stroke();
-
-        // Púa dorsal triangular
-        ctx.fillStyle = "#10b981";
-        ctx.beginPath();
-        ctx.moveTo(x + w * 0.28, waveY - h / 2);
-        ctx.lineTo(x + w * 0.5, waveY - h / 2 - 5.5 * ratio);
-        ctx.lineTo(x + w * 0.72, waveY - h / 2);
-        ctx.closePath();
-        ctx.fill();
-
-        prevX = x;
-      }
-
-      // 2. COLA TRIANGULAR AFILADA
-      const tailWave = Math.sin(c.phase - segCount * 0.7) * (c.isWalker ? 1.5 : 5);
-      ctx.fillStyle = "rgba(16, 185, 129, 0.35)";
-      ctx.strokeStyle = "#34d399";
-      ctx.lineWidth = 1.3;
-      ctx.beginPath();
-      ctx.moveTo(prevX - 2, tailWave - 3.5);
-      ctx.lineTo(prevX - 26, tailWave);
-      ctx.lineTo(prevX - 2, tailWave + 3.5);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      // 3. CUELLO / MÓDULO CRANEAL
-      ctx.fillStyle = "rgba(5, 34, 24, 0.92)";
-      ctx.strokeStyle = "#10b981";
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.roundRect(-14, -10, 18, 20, 5);
-      ctx.fill();
-      ctx.stroke();
-
-      // 4. MANDÍBULA SUPERIOR + DIENTES SALVAJES + OJO ROJO SENSOR
-      ctx.save();
-      ctx.translate(2, -2);
-      ctx.rotate(-jawAngle);
-
-      ctx.fillStyle = "#065f46";
-      ctx.strokeStyle = "#34d399";
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.roundRect(0, -9, 28, 10, [2, 8, 2, 2]);
-      ctx.fill();
-      ctx.stroke();
-
-      // Dientes superiores en zig-zag
-      ctx.fillStyle = "#e2e8f0";
-      ctx.beginPath();
-      for (let t = 5; t <= 23; t += 4.5) {
-        ctx.moveTo(t, 1);
-        ctx.lineTo(t + 2.2, 5.5);
-        ctx.lineTo(t + 4.4, 1);
-      }
-      ctx.fill();
-
-      // Ojo rojo brillante (sensor)
-      ctx.save();
-      ctx.shadowColor = "#ef4444";
-      ctx.shadowBlur = 10;
-      ctx.fillStyle = "#ef4444";
-      ctx.beginPath();
-      ctx.arc(8, -4.5, 2.7, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#fecaca";
-      ctx.beginPath();
-      ctx.arc(8.6, -5, 0.9, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      ctx.restore();
-
-      // 5. MANDÍBULA INFERIOR + DIENTES
-      ctx.save();
-      ctx.translate(2, 3);
-      ctx.rotate(jawAngle * 0.85);
-
-      ctx.fillStyle = "#044e3b";
-      ctx.strokeStyle = "#10b981";
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.roundRect(0, 0, 26, 7.5, [2, 2, 7, 2]);
-      ctx.fill();
-      ctx.stroke();
-
-      // Dientes inferiores
-      ctx.fillStyle = "#cbd5e1";
-      ctx.beginPath();
-      for (let t = 6; t <= 22; t += 4.5) {
-        ctx.moveTo(t, 0);
-        ctx.lineTo(t + 2, -4);
-        ctx.lineTo(t + 4, 0);
-      }
-      ctx.fill();
-
-      ctx.restore();
-      ctx.restore();
-    }
-
     function loop() {
       requestAnimationFrame(loop);
       if (!document.body.classList.contains("locked-screen")) return;
 
-      // Inercia suave para el Parallax del bosque
-      curX += (mouseX - curX) * 0.05;
-      curY += (mouseY - curY) * 0.05;
-      layers.forEach(layer => {
-        const depth = parseFloat(layer.dataset.depth || "0.2");
-        const tx = (-curX * 32 * depth).toFixed(2);
-        const ty = (-curY * 22 * depth).toFixed(2);
-        layer.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
-      });
-
       ctx.clearRect(0, 0, W, H);
 
-      // Luciérnagas orgánicas
       for (let i = 0; i < fireflies.length; i++) {
         const f = fireflies[i];
         f.angle += (Math.random() - 0.5) * 0.08;
