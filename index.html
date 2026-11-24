@@ -418,23 +418,19 @@
     }
 
     /* Contenedor 3D sin caja rectangular */
-    #loginModalCard {
-      position: relative;
-      z-index: 3;
-      width: 100%;
-      max-width: 420px;
-      padding: 24px 20px;
-      background: transparent !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      border: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      overflow: visible !important;
-      transform-style: preserve-3d;
-      transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
-      transition: transform 0.14s ease-out;
-      will-change: transform;
+    #loginModalCard > :not(.hud-curved-text) { position: relative; z-index: 2; }
+
+    /* Arco SVG curvo alrededor del núcleo (siempre absoluto para no empujar el login) */
+    #loginModalCard .hud-curved-text {
+      position: absolute !important;
+      top: 50%;
+      left: 50%;
+      width: 600px;
+      height: 600px;
+      transform: translate(-50%, -50%) translateZ(14px);
+      pointer-events: none;
+      z-index: 1 !important;
+      overflow: visible;
     }
 
     /* Anillo HUD exterior giratorio (620px) */
@@ -483,11 +479,11 @@
       to   { transform: translate(-50%, -50%) rotate(0deg); }
     }
 
-    #loginModalCard > :not(.hud-curved-text) { position: relative; z-index: 2; }
+    #loginModalCard > * { position: relative; z-index: 2; }
 
-    /* Arco SVG curvo alrededor del núcleo (siempre absoluto para no empujar el login) */
-    #loginModalCard .hud-curved-text {
-      position: absolute !important;
+    /* Arco SVG curvo alrededor del núcleo */
+    .hud-curved-text {
+      position: absolute;
       top: 50%;
       left: 50%;
       width: 600px;
@@ -1214,8 +1210,8 @@
     <!-- Textos curvos SVG abrazando el borde circular -->
     <svg class="hud-curved-text" viewBox="0 0 600 600" aria-hidden="true">
       <defs>
-        <path id="hudTopArc" d="M 75,300 A 225,225 0 0,1 525,300" />
-        <path id="hudBottomArc" d="M 62,300 A 238,238 0 0,0 538,300" />
+        <path id="hudTopArc" d="M 34,300 A 266,266 0 0,1 566,300" />
+        <path id="hudBottomArc" d="M 22,300 A 278,278 0 0,0 578,300" />
       </defs>
       <text class="hud-arc-label">
         <textPath href="#hudTopArc" startOffset="50%" text-anchor="middle">
