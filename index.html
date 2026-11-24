@@ -483,11 +483,11 @@
       to   { transform: translate(-50%, -50%) rotate(0deg); }
     }
 
-    #loginModalCard > * { position: relative; z-index: 2; }
+    #loginModalCard > :not(.hud-curved-text) { position: relative; z-index: 2; }
 
-    /* Arco SVG curvo alrededor del núcleo */
-    .hud-curved-text {
-      position: absolute;
+    /* Arco SVG curvo alrededor del núcleo (siempre absoluto para no empujar el login) */
+    #loginModalCard .hud-curved-text {
+      position: absolute !important;
       top: 50%;
       left: 50%;
       width: 600px;
@@ -1215,7 +1215,7 @@
     <svg class="hud-curved-text" viewBox="0 0 600 600" aria-hidden="true">
       <defs>
         <path id="hudTopArc" d="M 75,300 A 225,225 0 0,1 525,300" />
-        <path id="hudBottomArc" d="M 525,300 A 225,225 0 0,1 75,300" />
+        <path id="hudBottomArc" d="M 62,300 A 238,238 0 0,0 538,300" />
       </defs>
       <text class="hud-arc-label">
         <textPath href="#hudTopArc" startOffset="50%" text-anchor="middle">
