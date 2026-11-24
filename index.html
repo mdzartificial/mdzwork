@@ -1476,7 +1476,7 @@ async function verifyTotpSubmission(e) {
     // SI NO TIENE 2FA VINCULADO: OBLIGARLO A CONFIGURARLO AHORA MISMO
     if (!totpFactor) {
       errEl.textContent = "";
-      await startForcedLoginMfaSetup(factors?.totp || []);
+      await startForcedLoginMfaSetup(factors?.all || []);
       return;
     }
 
@@ -1515,14 +1515,21 @@ async function verifyTotpSubmission(e) {
   }
 
   async function startForcedLoginMfaSetup(existingFactors) {
-    // Limpiar intentos previos sin verificar para evitar conflictos
+    // Limpiar cualquier intento previo sin verificar
     for (const f of existingFactors) {
-      if (f.status !== "verified") await sbClient.auth.mfa.unenroll({ factorId: f.id });
+      if (f.status !== "verified") {
+        await sbClient.auth.mfa.unenroll({ factorId: f.id });
+      }
     }
 
-    const { data, error } = await sbClient.auth.mfa.enroll({ factorType: "totp" });
+    const { data, error } = await sbClient.auth.mfa.enroll({
+      factorType: "totp",
+      friendlyName: `MDZ_${Date.now()}`
+    });
+
     if (error) {
-      document.getElementById("totpErrorMsg").textContent = "⛔ Error generando QR 2FA.";
+      console.error("Error MFA enroll:", error);
+      document.getElementById("totpErrorMsg").textContent = `⛔ Error QR 2FA: ${error.message}`;
       await sbClient.auth.signOut();
       return;
     }
