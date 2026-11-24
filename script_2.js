@@ -463,3 +463,6 @@ function random(min, max) {
 function map(value, sourceMin, sourceMax, destinationMin, destinationMax) {
   return destinationMin + (destinationMax - destinationMin) * ((value - sourceMin) / (sourceMax - sourceMin)) || 0;
 }
+
+// Arranque explícito de la escena (antes dependía del script externo de CodePen)
+o.init();
