@@ -71,3 +71,18 @@ body {
   height: 100vh;
   object-fit: cover;
 }
+/* AMPLIAR ANIMACIÓN DEL FONDO */
+#header {
+    overflow: hidden;
+    position: relative;
+}
+
+#kodama-graphic {
+    position: absolute;
+    width: 125vw !important;
+    height: 125vh !important;
+    max-width: none !important;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
