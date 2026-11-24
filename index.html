@@ -1249,7 +1249,7 @@
       </div>
       <div>
         <h3>MDZ™ <span>Sanctuary</span></h3>
-        <p>Autenticación de doble factor (Usuario + TOTP 2FA)</p>
+        <p>Premium</p>
       </div>
     </div>
 
@@ -1259,7 +1259,7 @@
           <label for="authUserInput">Usuario *</label>
           <div class="login-input-group">
             <span class="login-input-icon">👤</span>
-            <input type="text" id="authUserInput" placeholder="MDZDEV / MDZUSER" autocomplete="username" required />
+            <input type="text" id="authUserInput" placeholder="MDZ" autocomplete="username" required />
           </div>
         </div>
 
@@ -2356,7 +2356,7 @@
         const txt = cloudSource.textContent || "";
         badge.classList.remove("is-loading", "is-error");
         if (txt.includes("Sincronizado")) {
-          badgeText.textContent = "Supabase Activo";
+          badgeText.textContent = "Activo";
         } else if (txt.includes("Error")) {
           badge.classList.add("is-error");
           badgeText.textContent = "Error de conexión";
