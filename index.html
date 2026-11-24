@@ -1112,26 +1112,15 @@
 <div id="toast" class="toast"></div>
 
 <script>
+// =========================================================================
+  // CONFIGURACIÓN SUPABASE (TABLAS REALES EDITABLES + REALTIME)
   // =========================================================================
-  // CONFIGURACIÓN SUPABASE (100% DE LOS DATOS VIVEN EN LA NUBE)
-  // =========================================================================
-  const SUPABASE_URL = "https://fsiqjdstgqkcsofxwrxu.supabase.co"; // <-- PEGA AQUÍ TU PROJECT URL DE SUPABASE
+  const SUPABASE_URL = "https://fsiqjdstgqkcsofxwrxu.supabase.co";
   const SUPABASE_KEY = "sb_publishable_KkukdsW-FO4iLaXdAb3MWA_t9UIBnsw";
 
-  const STORAGE_TOTP_SECRET = "mdz_totp_secret_v1";
-  const STORAGE_RECOVERY_KEY = "mdz_recovery_key_v1";
-  const STORAGE_MAP_POINTS = "mdz_map_points_v1";
-  const STORAGE_TRACKERS = "mdz_trackers_v1";
-  const STORAGE_TRACKER_COLS = "mdz_tracker_cols_v1";
-  const STORAGE_DIRECTORY = "mdz_directory_v1";
-  const STORAGE_DIRECTORY_COLS = "mdz_directory_cols_v1";
-  const STORAGE_COMMANDS = "mdz_commands_v1";
-  const STORAGE_COMMAND_COLS = "mdz_command_cols_v1";
-  const STORAGE_SANCTUARY = "mdz_vault_data_v1";
-  const STORAGE_SANCTUARY_COLS = "mdz_sanctuary_cols_v1";
-  const STORAGE_GEOFENCES = "mdz_geofences_v1";
+  const STORAGE_TOTP_SECRET = "totp_secret";
+  const STORAGE_RECOVERY_KEY = "recovery_key";
 
-  // Estado inicial vacío: nada hardcodeado en el HTML
   let FIXED_78_POINTS = [];
   let trackerColumns = [];
   let trackersList = [];
@@ -1171,113 +1160,138 @@
   let activeMapTechFilter = "ALL";
   let lastEvaluatedGps = null;
 
-  const sbClient = (window.supabase && !SUPABASE_URL.includes("TU_PROYECTO"))
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-    : null;
+  const sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-  async function saveToCloud(key, value) {
-    if (!sbClient) {
-      showToast("⛔ Configura SUPABASE_URL para guardar en la nube.");
-      return;
+  // Empaqueta campos extra (columnas dinámicas) en la columna jsonb "extras"
+  function packRow(item, baseKeys, idx) {
+    const row = { id: Number(item.id), orden: idx + 1, extras: {} };
+    baseKeys.forEach(k => { row[k] = item[k] ?? ""; });
+    Object.keys(item).forEach(k => {
+      if (k !== "id" && k !== "orden" && k !== "extras" && !baseKeys.includes(k)) {
+        row.extras[k] = item[k];
+      }
+    });
+    return row;
+  }
+
+  function unpackRows(rows) {
+    return (rows || []).map(r => {
+      const { extras, ...rest } = r;
+      return { ...rest, ...(extras && typeof extras === "object" ? extras : {}) };
+    });
+  }
+
+  async function saveConfig(key, value) {
+    if (!sbClient) return;
+    await sbClient.from("mdz_config").upsert({ key, value }, { onConflict: "key" });
+  }
+
+  // Alias para que rotateTotpSecret siga funcionando sin cambios
+  async function saveToCloud(key, value) { return saveConfig(key, value); }
+
+  async function syncTableRows(tableName, items, baseKeys) {
+    if (!sbClient) return;
+    const packed = items.map((item, idx) => packRow(item, baseKeys, idx));
+    const currentIds = packed.map(r => r.id);
+
+    const { data: existing } = await sbClient.from(tableName).select("id");
+    const toDelete = (existing || []).map(r => r.id).filter(id => !currentIds.includes(id));
+    if (toDelete.length) {
+      await sbClient.from(tableName).delete().in("id", toDelete);
     }
-    const { error } = await sbClient
-      .from("mdz_workspace_data")
-      .upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: "key" });
-    if (error) {
-      console.error("Error guardando en Supabase:", error);
-      showToast("⚠️ Error al sincronizar con Supabase.");
+    if (packed.length) {
+      const { error } = await sbClient.from(tableName).upsert(packed, { onConflict: "id" });
+      if (error) { console.error(`Error en ${tableName}:`, error); showToast(`⚠️ Error guardando en ${tableName}.`); }
     }
   }
 
-  function applyCloudKey(key, val) {
-    if (key === STORAGE_TRACKERS && Array.isArray(val)) {
-      trackersList = val;
-      renderTrackersTable();
-    } else if (key === STORAGE_TRACKER_COLS && Array.isArray(val)) {
-      trackerColumns = val;
-      renderTrackersForm();
-      renderTrackersTable();
-    } else if (key === STORAGE_DIRECTORY && Array.isArray(val)) {
-      directoryList = val;
-      renderDirectoryTable();
-    } else if (key === STORAGE_DIRECTORY_COLS && Array.isArray(val)) {
-      directoryColumns = val;
-      renderDirectoryForm();
-      renderDirectoryTable();
-    } else if (key === STORAGE_COMMANDS && Array.isArray(val)) {
-      commandsList = val;
-      renderCommandsTable();
-    } else if (key === STORAGE_COMMAND_COLS && Array.isArray(val)) {
-      commandColumns = val;
-      renderCommandsForm();
-      renderCommandsTable();
-    } else if (key === STORAGE_SANCTUARY && Array.isArray(val)) {
-      sanctuaryList = val;
-      if (isAuthenticated) renderSanctuaryTable();
-    } else if (key === STORAGE_SANCTUARY_COLS && Array.isArray(val)) {
-      sanctuaryColumns = val;
-      if (isAuthenticated) { renderSanctuaryForm(); renderSanctuaryTable(); }
-    } else if (key === STORAGE_GEOFENCES && Array.isArray(val)) {
-      savedGeofences = val;
-      renderSavedGeofences();
-    } else if (key === STORAGE_MAP_POINTS && Array.isArray(val)) {
-      FIXED_78_POINTS = val;
-      updateMapTechStats();
-      if (coverageMap) {
-        renderFixedPointsOnMap();
-        populateFixedPointSelector(document.getElementById("mapFixedSearch").value);
-      }
-    } else if (key === STORAGE_TOTP_SECRET && typeof val === "string") {
-      totpSecret = val;
-    } else if (key === STORAGE_RECOVERY_KEY && typeof val === "string") {
-      recoveryMasterKey = val;
+  async function syncGeofencesTable() {
+    if (!sbClient) return;
+    const packed = savedGeofences.map(g => ({
+      id: Number(g.id), nombre: g.nombre, lat: g.lat, lon: g.lon,
+      radio: g.radio, notas: g.notas || "", puntos_dentro: g.puntosDentro || []
+    }));
+    const currentIds = packed.map(r => r.id);
+    const { data: existing } = await sbClient.from("mdz_geocercas").select("id");
+    const toDelete = (existing || []).map(r => r.id).filter(id => !currentIds.includes(id));
+    if (toDelete.length) await sbClient.from("mdz_geocercas").delete().in("id", toDelete);
+    if (packed.length) await sbClient.from("mdz_geocercas").upsert(packed, { onConflict: "id" });
+  }
+
+  async function loadAllFromSupabase(silent = false) {
+    const statusEl = document.getElementById("cloudStatusText");
+    if (!sbClient) return;
+
+    const [cfgRes, trkRes, cmdRes, dirRes, sncRes, mapRes, geoRes] = await Promise.all([
+      sbClient.from("mdz_config").select("key, value"),
+      sbClient.from("mdz_trackers").select("*").order("orden", { ascending: true }),
+      sbClient.from("mdz_comandos").select("*").order("orden", { ascending: true }),
+      sbClient.from("mdz_directorio").select("*").order("orden", { ascending: true }),
+      sbClient.from("mdz_sanctuary").select("*").order("orden", { ascending: true }),
+      sbClient.from("mdz_mapa_puntos").select("*").order("num", { ascending: true }),
+      sbClient.from("mdz_geocercas").select("*").order("id", { ascending: false })
+    ]);
+
+    if (cfgRes.error || trkRes.error) {
+      console.error("Error cargando tablas:", cfgRes.error || trkRes.error);
+      if (statusEl) statusEl.textContent = "Error de conexión Supabase";
+      return;
     }
+
+    (cfgRes.data || []).forEach(row => {
+      if (row.key === "totp_secret") totpSecret = row.value;
+      else if (row.key === "recovery_key") recoveryMasterKey = row.value;
+      else if (row.key === "tracker_cols") trackerColumns = row.value;
+      else if (row.key === "command_cols") commandColumns = row.value;
+      else if (row.key === "directory_cols") directoryColumns = row.value;
+      else if (row.key === "sanctuary_cols") sanctuaryColumns = row.value;
+    });
+
+    trackersList = unpackRows(trkRes.data);
+    commandsList = unpackRows(cmdRes.data);
+    directoryList = unpackRows(dirRes.data);
+    sanctuaryList = unpackRows(sncRes.data);
+    FIXED_78_POINTS = mapRes.data || [];
+    savedGeofences = (geoRes.data || []).map(g => ({
+      id: g.id, nombre: g.nombre, lat: g.lat, lon: g.lon,
+      radio: g.radio, notas: g.notas || "", puntosDentro: g.puntos_dentro || []
+    }));
+
+    isCloudLoaded = true;
+    renderTrackersForm(); renderTrackersTable();
+    renderCommandsForm(); renderCommandsTable();
+    renderDirectoryForm(); renderDirectoryTable();
+    if (isAuthenticated) { renderSanctuaryForm(); renderSanctuaryTable(); }
+    updateMapTechStats();
+    if (coverageMap) { renderFixedPointsOnMap(); populateFixedPointSelector(document.getElementById("mapFixedSearch").value); renderSavedGeofences(); }
     updateCounters();
+
+    if (statusEl) statusEl.textContent = "Sincronizado en vivo (Tablas)";
+    if (!silent) showToast("☁️ Tablas sincronizadas con Supabase.");
   }
 
   async function initSupabaseSync() {
-    const statusEl = document.getElementById("cloudStatusText");
-    if (!sbClient) {
-      if (statusEl) statusEl.textContent = "Falta configurar SUPABASE_URL";
-      renderTrackersTable();
-      return;
-    }
+    await loadAllFromSupabase(false);
+    if (!sbClient) return;
 
-    const { data, error } = await sbClient.from("mdz_workspace_data").select("key, value");
-    if (error) {
-      console.error("Error cargando Supabase:", error);
-      if (statusEl) statusEl.textContent = "Error de conexión Supabase";
-      showToast("⛔ No se pudo conectar con Supabase.");
-      return;
-    }
-
-    isCloudLoaded = true;
-    if (Array.isArray(data)) {
-      data.forEach(row => applyCloudKey(row.key, row.value));
-    }
-    if (statusEl) statusEl.textContent = "Sincronizado en vivo (Supabase)";
-    showToast("☁️ Datos cargados desde Supabase.");
-
-    // Escuchar cambios en tiempo real desde cualquier dispositivo
-    sbClient
-      .channel("mdz-realtime-sync")
-      .on("postgres_changes", { event: "*", schema: "public", table: "mdz_workspace_data" }, payload => {
-        if (payload.new && payload.new.key) {
-          applyCloudKey(payload.new.key, payload.new.value);
-        }
-      })
-      .subscribe();
+    const channel = sbClient.channel("mdz-tables-realtime");
+    ["mdz_trackers", "mdz_comandos", "mdz_directorio", "mdz_sanctuary", "mdz_mapa_puntos", "mdz_geocercas", "mdz_config"].forEach(tbl => {
+      channel.on("postgres_changes", { event: "*", schema: "public", table: tbl }, () => {
+        loadAllFromSupabase(true);
+      });
+    });
+    channel.subscribe();
   }
 
-  function persistTrackers() { saveToCloud(STORAGE_TRACKERS, trackersList); updateCounters(); }
-  function persistTrackerColumns() { saveToCloud(STORAGE_TRACKER_COLS, trackerColumns); }
-  function persistDirectory() { saveToCloud(STORAGE_DIRECTORY, directoryList); updateCounters(); }
-  function persistDirectoryColumns() { saveToCloud(STORAGE_DIRECTORY_COLS, directoryColumns); }
-  function persistCommands() { saveToCloud(STORAGE_COMMANDS, commandsList); updateCounters(); }
-  function persistCommandColumns() { saveToCloud(STORAGE_COMMAND_COLS, commandColumns); }
-  function persistSanctuary() { saveToCloud(STORAGE_SANCTUARY, sanctuaryList); updateCounters(); }
-  function persistSanctuaryColumns() { saveToCloud(STORAGE_SANCTUARY_COLS, sanctuaryColumns); }
-  function persistGeofences() { saveToCloud(STORAGE_GEOFENCES, savedGeofences); }
+  function persistTrackers() { syncTableRows("mdz_trackers", trackersList, ["unidad","placa","gps","detektor","activacion","respuesta","detalles","operador","zona"]); updateCounters(); }
+  function persistTrackerColumns() { saveConfig("tracker_cols", trackerColumns); }
+  function persistDirectory() { syncTableRows("mdz_directorio", directoryList, ["nombre","area","telefono","correo","notas"]); updateCounters(); }
+  function persistDirectoryColumns() { saveConfig("directory_cols", directoryColumns); }
+  function persistCommands() { syncTableRows("mdz_comandos", commandsList, ["modelo","tipo","accion","comando","detalle"]); updateCounters(); }
+  function persistCommandColumns() { saveConfig("command_cols", commandColumns); }
+  function persistSanctuary() { syncTableRows("mdz_sanctuary", sanctuaryList, ["servicio","categoria","usuario","pass","host","notas"]); updateCounters(); }
+  function persistSanctuaryColumns() { saveConfig("sanctuary_cols", sanctuaryColumns); }
+  function persistGeofences() { syncGeofencesTable(); }
 
   // =========================================================================
   // AUTENTICACIÓN TOTP (RFC 6238 HMAC-SHA1) DESDE SUPABASE
