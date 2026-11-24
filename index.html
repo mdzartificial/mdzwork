@@ -345,7 +345,11 @@
     body.locked-screen .container { display: none !important; }
     body:not(.locked-screen) #loginBgCanvas,
     body:not(.locked-screen) #loginOrbBg,
-    body:not(.locked-screen) #loginCoreGlow { display: none !important; }
+    body:not(.locked-screen) #loginCoreGlow {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+    }
 
     body.locked-screen #totpModal {
       background: radial-gradient(900px 700px at 50% 50%, #051812 0%, #020806 62%, #010403 100%);
@@ -1271,6 +1275,7 @@
   let activeMapTechFilter = "ALL";
   let lastEvaluatedGps = null;
   let pendingMfaFactorId = null;
+  let holoOrbInstance = null;
 
   const sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
@@ -1447,7 +1452,7 @@
 
   function closeTotpModal() { if (!isAuthenticated) return; document.getElementById("totpModal").classList.remove("open"); }
 
-async function verifyTotpSubmission(e) {
+  async function verifyTotpSubmission(e) {
     e.preventDefault();
     if (!sbClient) return;
 
@@ -1505,17 +1510,17 @@ async function verifyTotpSubmission(e) {
     const { data: { session: finalSession } } = await sbClient.auth.getSession();
     const activeSession = finalSession || authData.session;
 
-    await sbClient.from("mdz_accesos").insert({
+    const { error: logErr } = await sbClient.from("mdz_accesos").insert({
       usuario: activeSession.user.email,
       rol: activeSession.user.app_metadata?.role || "viewer",
       dispositivo: navigator.userAgent.slice(0, 150)
     });
+    if (logErr) console.error("Error mdz_accesos:", logErr);
 
     await bootAuthenticatedSession(activeSession);
   }
 
   async function startForcedLoginMfaSetup(existingFactors) {
-    // Limpiar cualquier intento previo sin verificar
     for (const f of existingFactors) {
       if (f.status !== "verified") {
         await sbClient.auth.mfa.unenroll({ factorId: f.id });
@@ -1576,11 +1581,12 @@ async function verifyTotpSubmission(e) {
     document.querySelector("#loginModalCard form").style.display = "block";
 
     const { data: { session } } = await sbClient.auth.getSession();
-    await sbClient.from("mdz_accesos").insert({
+    const { error: logErr } = await sbClient.from("mdz_accesos").insert({
       usuario: session.user.email,
       rol: session.user.app_metadata?.role || "viewer",
       dispositivo: navigator.userAgent.slice(0, 150)
     });
+    if (logErr) console.error("Error mdz_accesos:", logErr);
 
     await bootAuthenticatedSession(session);
   }
@@ -1616,10 +1622,8 @@ async function verifyTotpSubmission(e) {
       return;
     }
 
-    // Verificar que la sesión realmente tenga el 2FA completado (aal2)
     const { data: aalData } = await sbClient.auth.mfa.getAuthenticatorAssuranceLevel();
     if (!aalData || aalData.currentLevel !== "aal2") {
-      // Si recargó antes de terminar el 2FA, destruir esa sesión incompleta
       await sbClient.auth.signOut();
       document.body.classList.add("locked-screen");
       openTotpModal();
@@ -1627,6 +1631,35 @@ async function verifyTotpSubmission(e) {
     }
 
     await bootAuthenticatedSession(session);
+  }
+
+  function refreshHoloOrbOnLock() {
+    const orbContainer = document.getElementById("loginOrbBg");
+    if (!orbContainer || typeof HoloOrb === "undefined") return;
+
+    if (holoOrbInstance && typeof holoOrbInstance.resize === "function") {
+      holoOrbInstance.resize();
+    }
+    if (holoOrbInstance && typeof holoOrbInstance.start === "function") {
+      holoOrbInstance.start();
+    } else {
+      orbContainer.innerHTML = "";
+      holoOrbInstance = new HoloOrb({
+        container: "#loginOrbBg",
+        preset: "minimal",
+        density: 1.15,
+        glow: 1.5,
+        speed: 1,
+        seed: 7,
+        color: "#10b981",
+        hot: "#a7f3d0",
+        coreColor: "#059669",
+        brightness: 1.15,
+        interactive: true,
+        autoRotate: true,
+        maxDpr: 2
+      });
+    }
   }
 
   async function lockSanctuary() {
@@ -1656,6 +1689,7 @@ async function verifyTotpSubmission(e) {
     renderTrackersTable();
     document.body.classList.add("locked-screen");
     openTotpModal();
+    refreshHoloOrbOnLock();
     showToast("🔒 Sesión cerrada y memoria limpiada.");
   }
 
@@ -2402,7 +2436,7 @@ async function verifyTotpSubmission(e) {
     function mountOrb() {
       if (mounted || typeof HoloOrb === "undefined") return;
       mounted = true;
-      const orb = new HoloOrb({
+      holoOrbInstance = new HoloOrb({
         container: "#loginOrbBg",
         preset: "minimal",
         density: 1.15,
@@ -2417,7 +2451,7 @@ async function verifyTotpSubmission(e) {
         autoRotate: true,
         maxDpr: 2
       });
-      if (!orb.ok) console.warn("WebGL2 no disponible para HoloOrb.");
+      if (!holoOrbInstance.ok) console.warn("WebGL2 no disponible para HoloOrb.");
     }
 
     document.addEventListener("DOMContentLoaded", mountOrb);
