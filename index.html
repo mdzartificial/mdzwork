@@ -375,12 +375,18 @@
     }
 
     /* Escena de Bosque Parallax (Referencia Miyazaki adaptada) */
-    #loginScene {
+    #loginForestFrame {
       position: fixed;
-      inset: -40px;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
       z-index: 0;
       pointer-events: none;
-      overflow: hidden;
+      filter: saturate(1.15) brightness(0.92);
+    }
+    body:not(.locked-screen) #loginForestFrame {
+      display: none !important;
     }
     .forest-layer {
       position: absolute;
@@ -1150,150 +1156,8 @@
 <div id="totpModal" class="modal-backdrop open">
   <!-- Fondo multicapa con Parallax inspirado en bosque nocturno -->
 <!-- Fondo multicapa con Parallax: Hábitat de Pantano & Bosque de Manglar -->
-  <div id="loginScene" aria-hidden="true">
-    <!-- CAPA 1 (Fondo lejano): Siluetas de árboles altos y niebla de pantano -->
-    <svg class="forest-layer" data-depth="0.12" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="swampSky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#04191e"/>
-          <stop offset="45%" stop-color="#051410"/>
-          <stop offset="80%" stop-color="#030d0a"/>
-          <stop offset="100%" stop-color="#020705"/>
-        </linearGradient>
-        <linearGradient id="bgTrunk" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#07272c"/>
-          <stop offset="65%" stop-color="#051713"/>
-          <stop offset="100%" stop-color="#020a08"/>
-        </linearGradient>
-      </defs>
-      <rect width="1600" height="900" fill="url(#swampSky)"/>
-      <!-- Árboles lejanos ligeramente inclinados -->
-      <path d="M160 820 C175 620, 150 320, 130 0 L215 0 C225 300, 240 600, 265 820 Z" fill="url(#bgTrunk)" opacity="0.5"/>
-      <path d="M410 820 C425 560, 445 280, 465 0 L525 0 C515 290, 500 570, 520 820 Z" fill="url(#bgTrunk)" opacity="0.38"/>
-      <path d="M680 820 C670 550, 690 260, 665 0 L710 0 C725 270, 715 560, 735 820 Z" fill="url(#bgTrunk)" opacity="0.28"/>
-      <path d="M1040 820 C1050 540, 1085 260, 1110 0 L1165 0 C1145 280, 1125 560, 1140 820 Z" fill="url(#bgTrunk)" opacity="0.35"/>
-      <path d="M1320 820 C1340 580, 1310 290, 1280 0 L1390 0 C1405 310, 1420 590, 1455 820 Z" fill="url(#bgTrunk)" opacity="0.52"/>
-    </svg>
-
-    <!-- CAPA 2 (Atmósfera): Rayos de luz filtrados y neblina húmeda -->
-    <div class="forest-layer" data-depth="0.25">
-      <div class="forest-sunrays"></div>
-      <div class="forest-mist"></div>
-    </div>
-
-    <!-- CAPA 3 (Árboles de manglar, raíces retorcidas, ramas y lianas) -->
-    <svg class="forest-layer" data-depth="0.45" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="mangroveLeft" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#062c2d"/>
-          <stop offset="45%" stop-color="#041814"/>
-          <stop offset="100%" stop-color="#010705"/>
-        </linearGradient>
-        <linearGradient id="mangroveRight" x1="1" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#062c2d"/>
-          <stop offset="45%" stop-color="#041814"/>
-          <stop offset="100%" stop-color="#010705"/>
-        </linearGradient>
-        <radialGradient id="bioCyan" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.72"/>
-          <stop offset="55%" stop-color="#10b981" stop-opacity="0.24"/>
-          <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="shroomCap" cx="50%" cy="20%" r="75%">
-          <stop offset="0%" stop-color="#6ee7b7"/>
-          <stop offset="45%" stop-color="#0f766e"/>
-          <stop offset="100%" stop-color="#042f2e"/>
-        </radialGradient>
-      </defs>
-
-      <!-- Gran árbol izquierdo con raíces de pantano -->
-      <path d="M-30 -20 L210 -20 C190 120, 230 220, 410 175 C520 148, 610 95, 730 115 C590 145, 480 215, 310 235 C205 248, 175 340, 170 490 C166 610, 210 690, 320 790 L245 815 C190 745, 165 695, 145 645 C135 710, 155 760, 195 825 L110 835 C95 765, 85 710, 75 660 C55 725, 25 780, -30 835 Z" fill="url(#mangroveLeft)"/>
-
-      <!-- Gran árbol derecho con raíces de manglar -->
-      <path d="M1630 -20 L1370 -20 C1395 140, 1340 230, 1170 185 C1050 155, 960 110, 840 130 C980 165, 1100 230, 1270 255 C1380 272, 1410 365, 1415 510 C1420 625, 1375 700, 1265 795 L1340 820 C1395 750, 1425 700, 1445 650 C1455 715, 1435 765, 1395 830 L1485 840 C1500 770, 1510 715, 1520 665 C1545 730, 1575 785, 1630 840 Z" fill="url(#mangroveRight)"/>
-
-      <!-- Lianas colgantes con movimiento orgánico -->
-      <g stroke="#03140f" fill="none" stroke-linecap="round">
-        <path class="vine-sway" stroke-width="3.2" d="M260 225 Q 242 350, 268 470 T 250 640"/>
-        <path class="vine-sway slow" stroke-width="1.8" d="M295 220 Q 312 325, 288 430 T 306 565"/>
-        <path class="vine-sway fast" stroke-width="2.4" d="M465 170 Q 450 285, 474 395 T 458 525"/>
-        <path class="vine-sway slow" stroke-width="2.6" d="M1130 180 Q 1148 295, 1122 405 T 1140 545"/>
-        <path class="vine-sway" stroke-width="3.4" d="M1315 245 Q 1296 370, 1326 490 T 1305 660"/>
-        <path class="vine-sway fast" stroke-width="1.7" d="M1355 250 Q 1372 345, 1348 450 T 1365 570"/>
-      </g>
-
-      <!-- Hongos bioluminiscentes en las raíces (guiño al bosque de Miyazaki) -->
-      <g class="shroom-glow">
-        <ellipse cx="218" cy="738" rx="16" ry="7" fill="url(#shroomCap)"/>
-        <ellipse cx="242" cy="748" rx="11" ry="5" fill="url(#shroomCap)"/>
-        <ellipse cx="200" cy="750" rx="9" ry="4" fill="url(#shroomCap)"/>
-        <ellipse cx="1368" cy="744" rx="17" ry="7.5" fill="url(#shroomCap)"/>
-        <ellipse cx="1342" cy="754" rx="12" ry="5" fill="url(#shroomCap)"/>
-        <ellipse cx="1392" cy="755" rx="9" ry="4" fill="url(#shroomCap)"/>
-      </g>
-
-      <!-- Focos bioluminiscentes en el musgo -->
-      <ellipse class="bio-glow" cx="235" cy="745" rx="75" ry="26" fill="url(#bioCyan)"/>
-      <ellipse class="bio-glow" cx="1365" cy="750" rx="85" ry="28" fill="url(#bioCyan)" style="animation-delay:-2s"/>
-      <ellipse class="bio-glow" cx="380" cy="195" rx="70" ry="22" fill="url(#bioCyan)" style="animation-delay:-1.2s"/>
-      <ellipse class="bio-glow" cx="1210" cy="210" rx="78" ry="24" fill="url(#bioCyan)" style="animation-delay:-3s"/>
-    </svg>
-
-    <!-- CAPA 4 (Primer plano): Agua del pantano, nenúfares, juncos y burbujas -->
-    <svg class="forest-layer" data-depth="0.65" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="swampWaterGrad" x1="0" y1="740" x2="0" y2="900" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#07352c" stop-opacity="0.58"/>
-          <stop offset="35%" stop-color="#04201b" stop-opacity="0.82"/>
-          <stop offset="100%" stop-color="#010806" stop-opacity="0.96"/>
-        </linearGradient>
-        <linearGradient id="waterShimmer" x1="0" y1="0" x2="1600" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#10b981" stop-opacity="0"/>
-          <stop offset="25%" stop-color="#34d399" stop-opacity="0.45"/>
-          <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.55"/>
-          <stop offset="75%" stop-color="#34d399" stop-opacity="0.45"/>
-          <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-
-      <!-- Cuerpo de agua del pantano -->
-      <path d="M0 760 Q 400 742, 800 758 T 1600 752 L 1600 900 L 0 900 Z" fill="url(#swampWaterGrad)"/>
-
-      <!-- Ondas y reflejos en la superficie del agua -->
-      <path class="swamp-wave" d="M-40 765 Q 80 756, 200 765 T 440 765 T 680 765 T 920 765 T 1160 765 T 1400 765 T 1640 765" stroke="url(#waterShimmer)" stroke-width="2" fill="none"/>
-      <path class="swamp-wave slow" d="M-40 792 Q 110 785, 260 792 T 560 792 T 860 792 T 1160 792 T 1460 792 T 1760 792" stroke="url(#waterShimmer)" stroke-width="1.3" fill="none" opacity="0.55"/>
-      <path class="swamp-wave fast" d="M-40 828 Q 95 822, 230 828 T 500 828 T 770 828 T 1040 828 T 1310 828 T 1640 828" stroke="url(#waterShimmer)" stroke-width="1" fill="none" opacity="0.35"/>
-
-      <!-- Nenúfares flotando en el pantano -->
-      <g fill="#063b2b" stroke="#10b981" stroke-width="1.1" opacity="0.72">
-        <path d="M360 785 A 28 9 0 1 1 352 778 L 360 785 Z"/>
-        <path d="M415 796 A 20 6.5 0 1 1 409 791 L 415 796 Z"/>
-        <path d="M1180 788 A 30 9.5 0 1 1 1171 781 L 1180 788 Z"/>
-        <path d="M1238 800 A 18 6 0 1 1 1232 795 L 1238 800 Z"/>
-      </g>
-
-      <!-- Juncos / Totoras en las orillas izquierda y derecha -->
-      <g stroke="#031610" fill="none" stroke-linecap="round">
-        <path class="reed-sway" stroke-width="4" d="M45 900 Q 52 800, 32 695"/>
-        <path class="reed-sway slow" stroke-width="3" d="M72 900 Q 86 815, 104 715"/>
-        <path class="reed-sway fast" stroke-width="3.5" d="M105 900 Q 98 825, 122 735"/>
-        <path class="reed-sway" stroke-width="2.5" d="M148 900 Q 158 835, 142 758"/>
-
-        <path class="reed-sway slow" stroke-width="4" d="M1555 900 Q 1545 800, 1568 690"/>
-        <path class="reed-sway" stroke-width="3.2" d="M1522 900 Q 1506 815, 1488 712"/>
-        <path class="reed-sway fast" stroke-width="3.5" d="M1488 900 Q 1498 830, 1472 740"/>
-        <path class="reed-sway" stroke-width="2.5" d="M1445 900 Q 1435 835, 1455 760"/>
-      </g>
-
-      <!-- Burbujas subiendo desde el fondo del pantano -->
-      <g fill="none" stroke="#6ee7b7" stroke-width="1.2">
-        <circle class="swamp-bubble" cx="310" cy="860" r="3.5"/>
-        <circle class="swamp-bubble b2" cx="540" cy="880" r="2.5"/>
-        <circle class="swamp-bubble b3" cx="1050" cy="870" r="4"/>
-        <circle class="swamp-bubble b4" cx="1280" cy="885" r="2.8"/>
-      </g>
-    </svg>
-  </div>
+<!-- Fondo real del bosque (Miyazaki SVG + GSAP) -->
+  <iframe id="loginForestFrame" src="index_2.html" aria-hidden="true"></iframe>
 
   <!-- Canvas: Luciérnagas bioluminiscentes + Cocodrilos cazando bytes -->
   <canvas id="loginBgCanvas"></canvas>
@@ -2469,6 +2333,8 @@
     resize();
 
     window.addEventListener("mousemove", e => {
+      const f = document.getElementById("loginForestFrame");
+      if (f && f.contentWindow) f.contentWindow.postMessage({ type: "parallaxMouse", x: e.clientX, y: e.clientY }, "*");
       if (!document.body.classList.contains("locked-screen")) return;
       mouseX = (e.clientX / W - 0.5) * 2;
       mouseY = (e.clientY / H - 0.5) * 2;
