@@ -104,11 +104,9 @@
       transition: all 0.25s ease;
     }
 
-    /* Variantes de expresión del cocodrilo principal (siempre verde esmeralda) */
     .brand-icon .croc-variant { display: none; }
     .brand-icon:not(.role-dev):not(.role-user) .croc-variant-user { display: block; }
 
-    /* DEV: Cocodrilo sádico / feroz en verde intenso */
     .brand-icon.role-dev {
       border-color: #10b981;
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.30), rgba(3, 46, 33, 0.78));
@@ -118,7 +116,6 @@
     .brand-icon.role-dev .croc-upper { transform-origin: 10px 18px; animation: crocDevUpper 1.5s ease-in-out infinite; }
     .brand-icon.role-dev .croc-lower { transform-origin: 10px 22px; animation: crocDevLower 1.5s ease-in-out infinite; }
 
-    /* USER: Cocodrilo tranquilo / relajado en verde suave */
     .brand-icon.role-user {
       border-color: #34d399;
       background: linear-gradient(135deg, rgba(52, 211, 153, 0.20), rgba(6, 78, 59, 0.48));
@@ -291,6 +288,7 @@
     .qr-drawer.open { display: block; animation: fadeIn 0.2s ease; }
     .qr-flex { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 10px; }
     .qr-box { background: #ffffff; padding: 10px; border-radius: 10px; display: inline-flex; box-shadow: 0 0 18px rgba(16, 185, 129, 0.25); }
+    .qr-box img { width: 160px; height: 160px; display: block; }
     .secret-code-pill { font-family: var(--font-mono); font-size: 0.82rem; background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.35); color: #6ee7b7; padding: 6px 10px; border-radius: 8px; word-break: break-all; }
 
     .modal-backdrop { position: fixed; inset: 0; background: rgba(2, 6, 5, 0.85); backdrop-filter: blur(8px); display: none; place-items: center; z-index: 999; padding: 16px; }
@@ -300,8 +298,6 @@
     .totp-timer-bar { height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 99px; overflow: hidden; margin-top: 8px; }
     .totp-timer-fill { height: 100%; background: var(--accent); width: 100%; transition: width 0.5s linear; }
     .error-msg { color: #fca5a5; font-size: 0.8rem; margin-top: 8px; min-height: 18px; text-align: center; }
-    .link-subtle { background: none; border: none; color: var(--text-muted); font-size: 0.76rem; padding: 0; text-decoration: underline; cursor: pointer; }
-    .link-subtle:hover { color: var(--accent-secondary); }
 
     .toast {
       position: fixed; bottom: 20px; right: 20px; background: #06281e; border: 1px solid var(--accent);
@@ -358,7 +354,6 @@
       perspective: 950px;
     }
 
-    /* Orbe HoloOrb ampliado para envolver toda la interfaz */
     #loginOrbBg {
       position: fixed;
       top: 50%;
@@ -383,7 +378,6 @@
       pointer-events: none;
     }
 
-    /* Núcleo oscuro radial + domo de cristal 3D sutil */
     #loginCoreGlow {
       position: fixed;
       top: 50%;
@@ -416,7 +410,7 @@
       );
       pointer-events: none;
     }
-    /* Contenedor 3D sin caja rectangular */
+
     #loginModalCard {
       position: relative;
       z-index: 3;
@@ -436,7 +430,6 @@
       will-change: transform;
     }
 
-    /* Anillo HUD exterior giratorio (620px) */
     #loginModalCard.led-border::before {
       content: "";
       position: absolute;
@@ -454,7 +447,6 @@
       z-index: 0;
     }
 
-    /* Anillo HUD interior con arcos luminosos (575px) */
     #loginModalCard::after {
       content: "";
       position: absolute;
@@ -484,7 +476,6 @@
 
     #loginModalCard > :not(.hud-curved-text) { position: relative; z-index: 2; }
 
-    /* Arco SVG curvo alrededor del núcleo (siempre absoluto para no empujar el login) */
     #loginModalCard .hud-curved-text {
       position: absolute !important;
       top: 50%;
@@ -598,29 +589,12 @@
       text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
     }
 
-    #loginModalCard .login-cred-grid {
-      transform-style: preserve-3d;
-    }
-    #loginModalCard .login-cred-grid .field:first-child {
-      transform: translateZ(34px) rotateY(8deg);
-    }
-    #loginModalCard .login-cred-grid .field:last-child {
-      transform: translateZ(34px) rotateY(-8deg);
-    }
+    #loginModalCard .login-cred-grid { transform-style: preserve-3d; }
+    #loginModalCard .login-cred-grid .field:first-child { transform: translateZ(34px) rotateY(8deg); }
+    #loginModalCard .login-cred-grid .field:last-child { transform: translateZ(34px) rotateY(-8deg); }
 
-    .login-input-group {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .login-input-icon {
-      position: absolute;
-      left: 12px;
-      font-size: 0.88rem;
-      color: var(--accent-secondary);
-      opacity: 0.85;
-      pointer-events: none;
-    }
+    .login-input-group { position: relative; display: flex; align-items: center; }
+    .login-input-icon { position: absolute; left: 12px; font-size: 0.88rem; color: var(--accent-secondary); opacity: 0.85; pointer-events: none; }
     #loginModalCard .login-input-group input {
       width: 100%;
       padding: 10px 36px 10px 34px;
@@ -640,27 +614,14 @@
       box-shadow: 0 0 18px rgba(16, 185, 129, 0.35), inset 0 0 10px rgba(16, 185, 129, 0.14);
     }
     .btn-eye-toggle {
-      position: absolute;
-      right: 8px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 4px 6px;
-      font-size: 0.9rem;
-      border-radius: 6px;
+      position: absolute; right: 8px; background: transparent; border: none;
+      color: var(--text-muted); padding: 4px 6px; font-size: 0.9rem; border-radius: 6px;
     }
     .btn-eye-toggle:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.06); }
 
-    .caps-warning {
-      display: none;
-      font-size: 0.72rem;
-      color: #fcd34d;
-      margin-top: 5px;
-      font-family: var(--font-mono);
-    }
+    .caps-warning { display: none; font-size: 0.72rem; color: #fcd34d; margin-top: 5px; font-family: var(--font-mono); }
     .caps-warning.visible { display: block; }
 
-    /* El TOTP sobresale al centro como el ecuador de la esfera 3D */
     #loginModalCard .totp-panel {
       margin-top: 14px;
       padding: 13px 16px;
@@ -688,19 +649,8 @@
       border-color: #34d399;
       box-shadow: 0 0 18px rgba(16, 185, 129, 0.35);
     }
-    .totp-timer-bar {
-      height: 5px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 99px;
-      overflow: hidden;
-      margin-top: 9px;
-    }
-    .totp-timer-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #059669, #34d399, #38bdf8);
-      width: 100%;
-      transition: width 0.5s linear;
-    }
+    .totp-timer-bar { height: 5px; background: rgba(255, 255, 255, 0.08); border-radius: 99px; overflow: hidden; margin-top: 9px; }
+    .totp-timer-fill { height: 100%; background: linear-gradient(90deg, #059669, #34d399, #38bdf8); width: 100%; transition: width 0.5s linear; }
 
     #loginModalCard .btn-login-submit {
       width: 78%;
@@ -724,18 +674,6 @@
       transform: translateZ(36px) rotateX(-6deg) scale(1.02);
     }
 
-    #loginModalCard .login-footer-row {
-      width: 68%;
-      margin: 12px auto 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      transform: translateZ(16px) rotateX(-13deg);
-    }
-
-    /* Estado Molesto del Cocodrilo en Login (Anillos rojos + Temblor + Bytes escupidos) */
     #loginModalCard.croc-angry {
       border: none !important;
       box-shadow: none !important;
@@ -795,41 +733,30 @@
   <header class="glass-panel led-border">
     <div class="brand">
       <div id="brandLogoBox" class="brand-icon" title="MDZ™ WORK">
-        <!-- COCODRILO DEV: SÁDICO / FEROZ (SIEMPRE VERDE) -->
+        <!-- COCODRILO DEV -->
         <svg class="croc-svg croc-variant croc-variant-dev" width="52" height="46" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g class="croc-upper">
-            <!-- Crestas afiladas sádicas -->
             <path d="M9 11L12 6L15 10L18.5 5.5L22 10L25.5 6.5L28.5 10.5" stroke="#6EE7B7" stroke-width="1.3" stroke-linejoin="round" fill="#065F46"/>
-            <!-- Hocico superior anguloso -->
             <path d="M5 18.5C5.5 12 11 9.5 19 9.5H39.5C42 9.5 43.5 11.2 43.5 13.5L41.5 18H13L5 18.5Z" fill="#10B981" stroke="#A7F3D0" stroke-width="1.4"/>
-            <!-- Ceja fruncida + ojo rasgado de depredador -->
             <path d="M12.5 12.2L20 14.8" stroke="#022C22" stroke-width="2.2" stroke-linecap="round"/>
             <ellipse cx="16.2" cy="14.2" rx="2.7" ry="1.8" fill="#021A12" stroke="#A7F3D0" stroke-width="0.9"/>
             <path d="M16.2 12.6L16.6 15.8" stroke="#34D399" stroke-width="1.2" stroke-linecap="round"/>
-            <!-- Cicatriz sutil en el hocico -->
             <path d="M27 12L25.2 16" stroke="#064E3B" stroke-width="1.2" stroke-linecap="round"/>
-            <!-- Colmillos largos tipo sierra -->
             <path d="M20 18L22.2 23.5L24.4 18M26 18L28.4 24.2L30.8 18M32.2 18L34.4 23.2L36.6 18M37.6 18L39.5 22.5L41.2 18" fill="#ECFDF5" stroke="#ECFDF5" stroke-width="0.9" stroke-linejoin="round"/>
           </g>
           <g class="croc-lower">
             <path d="M6.5 23H41C40.5 26.8 37.8 29.2 33.8 29.2H14C9.8 29.2 6.8 26.5 6.5 23Z" fill="#047857" stroke="#6EE7B7" stroke-width="1.4"/>
-            <!-- Colmillos inferiores filosos -->
             <path d="M22.5 23L24.7 18.5L26.9 23M29 23L31.4 18L33.8 23M35.5 23L37.4 19L39.3 23" fill="#D1FAE5" stroke="#D1FAE5" stroke-width="0.9" stroke-linejoin="round"/>
           </g>
         </svg>
 
-        <!-- COCODRILO USER: TRANQUILO / RELAJADO (SIEMPRE VERDE) -->
+        <!-- COCODRILO USER -->
         <svg class="croc-svg croc-variant croc-variant-user" width="50" height="44" viewBox="0 0 46 38" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g class="croc-calm-body">
-            <!-- Silueta redondeada y amigable -->
             <path d="M7 20C7 13.5 12.2 9.5 19.5 9.5H36.5C39.8 9.5 42 11.8 42 15C42 18.2 39.8 20.5 36.5 20.5H38.5C39.2 24.2 36.5 27.2 32.5 27.2H15.5C10.5 27.2 7 24.2 7 20Z" fill="#10B981" stroke="#A7F3D0" stroke-width="1.4"/>
-            <!-- Mejilla / panza suave -->
             <path d="M12 24.5H34C32.5 26.2 30 27 27 27H16C14 27 12.8 26 12 24.5Z" fill="#059669"/>
-            <!-- Ojo tranquilo feliz (arco cerrado relajado) -->
             <path d="M13.5 15.2C14.6 13.5 17.4 13.5 18.5 15.2" stroke="#042F2E" stroke-width="1.9" stroke-linecap="round"/>
-            <!-- Fosa nasal sutil -->
             <circle cx="37.5" cy="14" r="1.1" fill="#064E3B"/>
-            <!-- Sonrisa serena con 2 dientecitos suaves -->
             <path d="M19 20.5C24 22.4 31 22.2 37.5 19.8" stroke="#042F2E" stroke-width="1.5" stroke-linecap="round"/>
             <path d="M24.5 21.6L25.8 23.4L27.1 21.7M31.5 21.4L32.8 23.1L34.1 21.1" fill="#ECFDF5" stroke="#ECFDF5" stroke-width="0.9" stroke-linejoin="round"/>
           </g>
@@ -867,7 +794,7 @@
     <div class="section-header">
       <div class="section-title">
         <h2>Trackers</h2>
-        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="cloudStatusText">Conectando a Supabase...</span></span>
+        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="cloudStatusText">Protegido (Requiere Login)</span></span>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="btnAddColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal()">➕ Añadir Columna</button>
@@ -993,34 +920,23 @@
     <div class="section-header">
       <div class="section-title">
         <h2>Sanctuary</h2>
-        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="sanctuaryRoleBadge">Sesión 2FA Verificada</span></span>
+        <span class="autosave-pill"><span class="dot-pulse"></span> <span id="sanctuaryRoleBadge">Sesión Verificada</span></span>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="btnAddSanctuaryColumn" class="btn-glass btn-sm" style="display:none;" onclick="openAddColumnModal('sanctuary')">➕ Añadir Columna</button>
-        <button id="btnInternalQrToggle" class="btn-glass btn-sm" style="display:none;" onclick="toggleInternalQrPanel()">📱 Ver / Rotar QR 2FA</button>
+        <button id="btnInternalQrToggle" class="btn-glass btn-sm" style="display:none;" onclick="toggleInternalQrPanel()">📱 Configurar 2FA Nativo</button>
         <button class="btn-glass btn-sm" onclick="exportSanctuaryBackupJSON()">💾 Respaldo JSON</button>
         <button class="btn-danger" onclick="lockSanctuary()">🔒 Cerrar Sesión</button>
       </div>
     </div>
 
+    <!-- PANEL MFA NATIVO DE SUPABASE -->
     <div id="internalQrDrawer" class="qr-drawer">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-        <strong style="font-size:0.88rem; color:var(--accent-secondary);">Configuración de Autenticador (Solo Desarrollador)</strong>
-        <span id="internalTotpLive" class="mono" style="font-size:0.82rem; color:#6ee7b7;">Código actual: ------</span>
+        <strong style="font-size:0.88rem; color:var(--accent-secondary);">Autenticación 2FA Nativa (Servidor Supabase)</strong>
+        <span id="mfaStatusLabel" class="mono" style="font-size:0.8rem; color:#6ee7b7;">Verificando estado...</span>
       </div>
-      <div class="qr-flex">
-        <div id="internalQrBox" class="qr-box"></div>
-        <div style="flex:1; min-width:220px;">
-          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">
-            Si necesitas vincular otro celular, escanea este código QR o copia la clave Base32:
-          </p>
-          <div id="internalSecretDisplay" class="secret-code-pill"></div>
-          <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-            <button type="button" class="btn-glass btn-sm" onclick="copyTotpSecret()">📋 Copiar Clave Base32</button>
-            <button type="button" class="btn-danger" onclick="rotateTotpSecret()">🔄 Generar Nueva Llave</button>
-          </div>
-        </div>
-      </div>
+      <div id="mfaEnrollmentArea" style="margin-top:12px;"></div>
     </div>
 
     <div class="smart-search-box" style="margin-top:14px;">
@@ -1200,18 +1116,11 @@
 
 <!-- PANTALLA DE LOGIN OBLIGATORIA: FUSIONADA EN 3D ESFÉRICO DENTRO DEL HOLO-ORB -->
 <div id="totpModal" class="modal-backdrop open">
-  <!-- Fondo animado HoloOrb en Blur -->
   <div id="loginOrbBg" aria-hidden="true"></div>
-
-  <!-- Canvas: Bytes orbitales y flujo en aura lateral -->
   <canvas id="loginBgCanvas"></canvas>
-
-  <!-- Núcleo oscuro radial + domo de cristal 3D -->
   <div id="loginCoreGlow" aria-hidden="true"></div>
 
-  <!-- Formulario HUD 3D integrado dentro del orbe -->
   <div id="loginModalCard" class="modal-card glass-panel led-border">
-    <!-- Textos curvos SVG abrazando el borde circular -->
     <svg class="hud-curved-text" viewBox="0 0 600 600" aria-hidden="true">
       <defs>
         <path id="hudTopArc" d="M 34,300 A 266,266 0 0,1 566,300" />
@@ -1224,15 +1133,15 @@
       </text>
       <text class="hud-arc-label hud-arc-bottom">
         <textPath href="#hudBottomArc" startOffset="50%" text-anchor="middle">
-          ENCRYPTED SKYNET • 30S
+          ENCRYPTED RLS AUTH • 30S
         </textPath>
       </text>
     </svg>
 
     <div class="login-top-meta">
-      <span id="loginCloudBadge" class="login-status-badge is-loading">
+      <span id="loginCloudBadge" class="login-status-badge">
         <span class="login-status-dot"></span>
-        <span id="loginCloudText">Conectando nube...</span>
+        <span id="loginCloudText">Auth RLS Activo</span>
       </span>
     </div>
 
@@ -1280,10 +1189,10 @@
       <div class="totp-panel">
         <div class="field">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label for="totpCodeInput">🛡️ Código TOTP (6 Dígitos) *</label>
+            <label for="totpCodeInput">🛡️ Código TOTP (6 Dígitos)</label>
             <span id="modalCountdown" class="mono" style="font-size:0.78rem; color:var(--accent-secondary); font-weight:700;">30s</span>
           </div>
-          <input type="text" id="totpCodeInput" class="totp-input" maxlength="6" inputmode="numeric" placeholder="000000" autocomplete="one-time-code" required />
+          <input type="text" id="totpCodeInput" class="totp-input" maxlength="6" inputmode="numeric" placeholder="000000" autocomplete="one-time-code" />
           <div class="totp-timer-bar"><div id="modalTimerFill" class="totp-timer-fill"></div></div>
         </div>
       </div>
@@ -1291,27 +1200,7 @@
       <div id="totpErrorMsg" class="error-msg" role="alert"></div>
 
       <button type="submit" class="btn-login-submit">🔓 Validar e Ingresar</button>
-
-      <div class="login-footer-row">
-        <button type="button" class="link-subtle" onclick="toggleRecoveryPrompt()">¿Perdiste tu app? Re-vincular 2FA</button>
-      </div>
     </form>
-
-    <div id="recoveryBox" style="display:none; margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
-      <div style="display:flex; gap:8px;">
-        <input type="password" id="recoveryKeyInput" placeholder="Clave maestra de recuperación..." style="flex:1;" />
-        <button type="button" class="btn-glass btn-sm" onclick="unlockRecoveryQr()">Mostrar QR</button>
-      </div>
-      <div id="modalQrRevealArea" style="display:none; margin-top:12px;">
-        <div class="qr-flex">
-          <div id="modalQrBox" class="qr-box"></div>
-          <div style="flex:1; min-width:160px;">
-            <p style="font-size:0.76rem; color:var(--text-muted); margin-bottom:6px;">Escanea o copia la clave Base32:</p>
-            <div id="modalSecretText" class="secret-code-pill"></div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1339,13 +1228,10 @@
 
 <script>
   // =========================================================================
-  // CONFIGURACIÓN SUPABASE (8 TABLAS REALES + REALTIME)
+  // CONFIGURACIÓN SUPABASE (PROTEGIDO CON AUTH + RLS + MFA NATIVO)
   // =========================================================================
   const SUPABASE_URL = "https://fsiqjdstgqkcsofxwrxu.supabase.co";
   const SUPABASE_KEY = "sb_publishable_KkukdsW-FO4iLaXdAb3MWA_t9UIBnsw";
-
-  const STORAGE_TOTP_SECRET = "totp_secret";
-  const STORAGE_RECOVERY_KEY = "recovery_key";
 
   let FIXED_78_POINTS = [];
   let trackerColumns = [];
@@ -1357,9 +1243,6 @@
   let sanctuaryColumns = [];
   let sanctuaryList = [];
   let savedGeofences = [];
-  let usersList = [];
-  let totpSecret = "";
-  let recoveryMasterKey = "";
   let isCloudLoaded = false;
 
   let isAuthenticated = false;
@@ -1387,6 +1270,7 @@
   let fixedMarkerByNum = {};
   let activeMapTechFilter = "ALL";
   let lastEvaluatedGps = null;
+  let pendingMfaFactorId = null;
 
   const sbClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
@@ -1409,13 +1293,12 @@
   }
 
   async function saveConfig(key, value) {
-    if (!sbClient) return;
+    if (!sbClient || !canModify()) return;
     await sbClient.from("mdz_config").upsert({ key, value }, { onConflict: "key" });
   }
-  async function saveToCloud(key, value) { return saveConfig(key, value); }
 
   async function syncTableRows(tableName, items, baseKeys) {
-    if (!sbClient) return;
+    if (!sbClient || !canModify()) return;
     const packed = items.map((item, idx) => packRow(item, baseKeys, idx));
     const currentIds = packed.map(r => r.id);
     const { data: existing } = await sbClient.from(tableName).select("id");
@@ -1423,12 +1306,12 @@
     if (toDelete.length) await sbClient.from(tableName).delete().in("id", toDelete);
     if (packed.length) {
       const { error } = await sbClient.from(tableName).upsert(packed, { onConflict: "id" });
-      if (error) { console.error(`Error en ${tableName}:`, error); showToast(`⚠️ Error guardando en ${tableName}.`); }
+      if (error) { console.error(`Error en ${tableName}:`, error); showToast(`⚠️ Error guardando en ${tableName} (RLS).`); }
     }
   }
 
   async function syncGeofencesTable() {
-    if (!sbClient) return;
+    if (!sbClient || currentUserRole !== "dev") return;
     const packed = savedGeofences.map(g => ({
       id: Number(g.id), nombre: g.nombre, lat: g.lat, lon: g.lon,
       radio: g.radio, notas: g.notas || "", puntos_dentro: g.puntosDentro || []
@@ -1442,17 +1325,16 @@
 
   async function loadAllFromSupabase(silent = false) {
     const statusEl = document.getElementById("cloudStatusText");
-    if (!sbClient) return;
+    if (!sbClient || !isAuthenticated) return;
 
-    const [cfgRes, trkRes, cmdRes, dirRes, sncRes, mapRes, geoRes, usrRes] = await Promise.all([
+    const [cfgRes, trkRes, cmdRes, dirRes, sncRes, mapRes, geoRes] = await Promise.all([
       sbClient.from("mdz_config").select("key, value"),
       sbClient.from("mdz_trackers").select("*").order("orden", { ascending: true }),
       sbClient.from("mdz_comandos").select("*").order("orden", { ascending: true }),
       sbClient.from("mdz_directorio").select("*").order("orden", { ascending: true }),
       sbClient.from("mdz_sanctuary").select("*").order("orden", { ascending: true }),
       sbClient.from("mdz_mapa_puntos").select("*").order("num", { ascending: true }),
-      sbClient.from("mdz_geocercas").select("*").order("id", { ascending: false }),
-      sbClient.from("mdz_usuarios").select("*")
+      sbClient.from("mdz_geocercas").select("*").order("id", { ascending: false })
     ]);
 
     if (cfgRes.error || trkRes.error) {
@@ -1462,9 +1344,7 @@
     }
 
     (cfgRes.data || []).forEach(row => {
-      if (row.key === "totp_secret") totpSecret = row.value;
-      else if (row.key === "recovery_key") recoveryMasterKey = row.value;
-      else if (row.key === "tracker_cols") trackerColumns = row.value;
+      if (row.key === "tracker_cols") trackerColumns = row.value;
       else if (row.key === "command_cols") commandColumns = row.value;
       else if (row.key === "directory_cols") directoryColumns = row.value;
       else if (row.key === "sanctuary_cols") sanctuaryColumns = row.value;
@@ -1479,27 +1359,27 @@
       id: g.id, nombre: g.nombre, lat: g.lat, lon: g.lon,
       radio: g.radio, notas: g.notas || "", puntosDentro: g.puntos_dentro || []
     }));
-    usersList = (usrRes.data || []).filter(u => u.activo !== false);
 
     isCloudLoaded = true;
     renderTrackersForm(); renderTrackersTable();
     renderCommandsForm(); renderCommandsTable();
     renderDirectoryForm(); renderDirectoryTable();
-    if (isAuthenticated) { renderSanctuaryForm(); renderSanctuaryTable(); }
+    renderSanctuaryForm(); renderSanctuaryTable();
     updateMapTechStats();
     if (coverageMap) { renderFixedPointsOnMap(); populateFixedPointSelector(document.getElementById("mapFixedSearch").value); renderSavedGeofences(); }
     updateCounters();
 
-    if (statusEl) statusEl.textContent = "Sincronizado en vivo (Supabase)";
-    if (!silent && isAuthenticated) showToast("☁️ Tablas sincronizadas con Supabase.");
+    if (statusEl) statusEl.textContent = "Sincronizado en vivo (Supabase RLS)";
+    if (!silent) showToast("☁️ Tablas sincronizadas con Supabase.");
   }
 
   async function initSupabaseSync() {
+    if (!sbClient || !isAuthenticated) return;
     await loadAllFromSupabase(true);
-    if (!sbClient) return;
 
+    sbClient.removeAllChannels();
     const channel = sbClient.channel("mdz-tables-realtime");
-    ["mdz_trackers", "mdz_comandos", "mdz_directorio", "mdz_sanctuary", "mdz_mapa_puntos", "mdz_geocercas", "mdz_config", "mdz_usuarios"].forEach(tbl => {
+    ["mdz_trackers", "mdz_comandos", "mdz_directorio", "mdz_sanctuary", "mdz_mapa_puntos", "mdz_geocercas", "mdz_config"].forEach(tbl => {
       channel.on("postgres_changes", { event: "*", schema: "public", table: tbl }, () => { loadAllFromSupabase(true); });
     });
     channel.subscribe();
@@ -1516,60 +1396,8 @@
   function persistGeofences() { syncGeofencesTable(); }
 
   // =========================================================================
-  // AUTENTICACIÓN POR ROLES + TOTP + COCODRILO FURIOSO ESCUPIENDO BYTES
+  // AUTENTICACIÓN SEGURA CON SUPABASE AUTH + MFA NATIVO (TOTP EN SERVIDOR)
   // =========================================================================
-  function getTotpSecret() { return totpSecret; }
-  function buildOtpAuthUri() { return `otpauth://totp/MDZ_WORK:Sanctuary?secret=${encodeURIComponent(getTotpSecret())}&issuer=MDZ_WORK&algorithm=SHA1&digits=6&period=30`; }
-
-  function base32ToBytes(base32) {
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-    const cleaned = String(base32 || "").toUpperCase().replace(/[^A-Z2-7]/g, "");
-    let bits = "";
-    for (let i = 0; i < cleaned.length; i++) {
-      const val = alphabet.indexOf(cleaned[i]);
-      if (val >= 0) bits += val.toString(2).padStart(5, "0");
-    }
-    const bytes = new Uint8Array(Math.floor(bits.length / 8));
-    for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(bits.slice(i * 8, i * 8 + 8), 2);
-    return bytes;
-  }
-
-  async function computeTotpAtOffset(secretBase32, windowOffset = 0) {
-    const keyBytes = base32ToBytes(secretBase32);
-    const counter = Math.floor(Date.now() / 1000 / 30) + windowOffset;
-    const counterBuf = new ArrayBuffer(8);
-    const view = new DataView(counterBuf);
-    view.setUint32(0, Math.floor(counter / 0x100000000));
-    view.setUint32(4, counter >>> 0);
-    const cryptoKey = await crypto.subtle.importKey("raw", keyBytes, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
-    const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBuf));
-    const offset = hmac[hmac.length - 1] & 0x0f;
-    const code = (((hmac[offset] & 0x7f) << 24) | ((hmac[offset + 1] & 0xff) << 16) | ((hmac[offset + 2] & 0xff) << 8) | (hmac[offset + 3] & 0xff)) % 1000000;
-    return String(code).padStart(6, "0");
-  }
-
-  function renderSimpleMatrixQR(container, text) {
-    if (!container) return;
-    let hash = 2166136261;
-    for (let i = 0; i < text.length; i++) { hash ^= text.charCodeAt(i); hash = Math.imul(hash, 16777619); }
-    const size = 21, cell = 6;
-    let rects = "";
-    const isFinder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        let dark = false;
-        if (isFinder(r, c)) {
-          const lr = r >= size - 7 ? r - (size - 7) : r, lc = c >= size - 7 ? c - (size - 7) : c;
-          dark = lr === 0 || lr === 6 || lc === 0 || lc === 6 || (lr >= 2 && lr <= 4 && lc >= 2 && lc <= 4);
-        } else {
-          dark = (Math.abs(Math.imul(hash ^ (r * 31 + c * 17), 2654435761)) & 1) === 1;
-        }
-        if (dark) rects += `<rect x="${c * cell}" y="${r * cell}" width="${cell}" height="${cell}" fill="#041510"/>`;
-      }
-    }
-    container.innerHTML = `<svg width="${size * cell}" height="${size * cell}" viewBox="0 0 ${size * cell} ${size * cell}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
-  }
-
   function triggerAngryCroc() {
     const card = document.getElementById("loginModalCard");
     const wrap = document.getElementById("loginCrocWrap");
@@ -1613,77 +1441,212 @@
     document.getElementById("authUserInput").value = "";
     document.getElementById("authPassInput").value = "";
     document.getElementById("totpCodeInput").value = "";
-    document.getElementById("recoveryBox").style.display = "none";
-    document.getElementById("modalQrRevealArea").style.display = "none";
     document.getElementById("totpModal").classList.add("open");
     setTimeout(() => document.getElementById("authUserInput").focus(), 70);
   }
 
   function closeTotpModal() { if (!isAuthenticated) return; document.getElementById("totpModal").classList.remove("open"); }
-  function toggleRecoveryPrompt() { const box = document.getElementById("recoveryBox"); box.style.display = box.style.display === "none" ? "block" : "none"; }
-
-  function unlockRecoveryQr() {
-    const val = document.getElementById("recoveryKeyInput").value.trim();
-    if (!recoveryMasterKey || val !== recoveryMasterKey) {
-      document.getElementById("totpErrorMsg").textContent = "⛔ Clave maestra de recuperación incorrecta.";
-      triggerAngryCroc();
-      return;
-    }
-    document.getElementById("totpErrorMsg").textContent = "";
-    document.getElementById("modalQrRevealArea").style.display = "block";
-    document.getElementById("modalSecretText").textContent = getTotpSecret();
-    renderSimpleMatrixQR(document.getElementById("modalQrBox"), buildOtpAuthUri());
-  }
 
   async function verifyTotpSubmission(e) {
     e.preventDefault();
-    const userIn = document.getElementById("authUserInput").value.trim();
+    if (!sbClient) return;
+
+    let userIn = document.getElementById("authUserInput").value.trim();
     const passIn = document.getElementById("authPassInput").value.trim();
     const code = document.getElementById("totpCodeInput").value.replace(/\s+/g, "");
     const errEl = document.getElementById("totpErrorMsg");
-    const secret = getTotpSecret();
 
-    if (!secret || !usersList.length) { errEl.textContent = "⏳ Esperando datos de autenticación desde Supabase..."; return; }
+    if (!userIn.includes("@")) userIn = `${userIn.toLowerCase()}@mdz.local`;
+    errEl.textContent = "⏳ Verificando credenciales en servidor...";
 
-    const matchedUser = usersList.find(u => String(u.usuario || "").toUpperCase() === userIn.toUpperCase() && u.pass === passIn);
-    if (!matchedUser) { errEl.textContent = "⛔ Usuario o contraseña incorrectos."; triggerAngryCroc(); return; }
+    const { data: authData, error: authErr } = await sbClient.auth.signInWithPassword({
+      email: userIn,
+      password: passIn
+    });
 
-    if (!/^\d{6}$/.test(code)) { errEl.textContent = "Ingresa un código numérico de 6 dígitos."; triggerAngryCroc(); return; }
-
-    const validCodes = await Promise.all([computeTotpAtOffset(secret, -1), computeTotpAtOffset(secret, 0), computeTotpAtOffset(secret, 1)]);
-    if (!validCodes.includes(code)) {
-      errEl.textContent = "⛔ Código TOTP incorrecto o expirado.";
+    if (authErr || !authData.session) {
+      errEl.textContent = "⛔ Usuario o contraseña incorrectos.";
       triggerAngryCroc();
-      document.getElementById("totpCodeInput").value = "";
-      document.getElementById("totpCodeInput").focus();
       return;
     }
 
+    // Verificar si el usuario tiene 2FA (TOTP) activo en Supabase
+    const { data: factors } = await sbClient.auth.mfa.listFactors();
+    const totpFactor = factors?.totp?.find(f => f.status === "verified");
+
+    if (totpFactor) {
+      if (!/^\d{6}$/.test(code)) {
+        errEl.textContent = "⛔ Ingresa tu código 2FA de 6 dígitos.";
+        triggerAngryCroc();
+        await sbClient.auth.signOut();
+        return;
+      }
+
+      const { error: mfaErr } = await sbClient.auth.mfa.challengeAndVerify({
+        factorId: totpFactor.id,
+        code: code
+      });
+
+      if (mfaErr) {
+        errEl.textContent = "⛔ Código TOTP incorrecto o expirado.";
+        triggerAngryCroc();
+        await sbClient.auth.signOut();
+        document.getElementById("totpCodeInput").value = "";
+        document.getElementById("totpCodeInput").focus();
+        return;
+      }
+    }
+
+    const { data: { session: finalSession } } = await sbClient.auth.getSession();
+    await bootAuthenticatedSession(finalSession || authData.session);
+  }
+
+  async function bootAuthenticatedSession(session) {
+    currentUserRole = session.user.app_metadata?.role || "viewer";
+    currentUsername = session.user.email.replace("@mdz.local", "").toUpperCase();
     isAuthenticated = true;
-    currentUserRole = matchedUser.rol;
-    currentUsername = matchedUser.usuario;
     isEditMode = (currentUserRole === "dev");
 
     closeTotpModal();
     document.body.classList.remove("locked-screen");
     updateSecurityUI();
-    renderTrackersTable(); renderDirectoryTable(); renderCommandsTable();
-    renderSanctuaryForm(); renderSanctuaryTable(); renderSavedGeofences();
 
-    showToast(currentUserRole === "dev" ? `🔓 Bienvenido ${currentUsername} (Desarrollador - Edición total).` : `👁️ Bienvenido ${currentUsername} (Acceso completo - Solo lectura).`);
+    await initSupabaseSync();
+
+    showToast(
+      currentUserRole === "dev"
+        ? `🔓 Bienvenido ${currentUsername} (Desarrollador - Edición total).`
+        : `👁️ Bienvenido ${currentUsername} (Acceso completo - Solo lectura).`
+    );
   }
 
-  function lockSanctuary() {
-    isAuthenticated = false; isEditMode = false; currentUserRole = null; currentUsername = "";
+  async function checkSessionAndBoot() {
+    if (!sbClient) return;
+    const { data: { session } } = await sbClient.auth.getSession();
+
+    if (!session) {
+      document.body.classList.add("locked-screen");
+      const statusEl = document.getElementById("cloudStatusText");
+      if (statusEl) statusEl.textContent = "Protegido (Requiere Login)";
+      openTotpModal();
+      return;
+    }
+
+    await bootAuthenticatedSession(session);
+  }
+
+  async function lockSanctuary() {
+    if (sbClient) {
+      await sbClient.auth.signOut();
+      sbClient.removeAllChannels();
+    }
+    isAuthenticated = false;
+    isEditMode = false;
+    isCloudLoaded = false;
+    currentUserRole = null;
+    currentUsername = "";
     editingCellKey = editingDirCellKey = editingCmdCellKey = editingSancCellKey = null;
+
+    trackersList = [];
+    commandsList = [];
+    directoryList = [];
+    sanctuaryList = [];
+    FIXED_78_POINTS = [];
+    savedGeofences = [];
     revealedIds.clear();
+
     document.getElementById("internalQrDrawer").classList.remove("open");
     switchTab("trackers");
     updateSecurityUI();
-    renderTrackersTable(); renderDirectoryTable(); renderCommandsTable();
+    updateCounters();
+    renderTrackersTable();
     document.body.classList.add("locked-screen");
     openTotpModal();
-    showToast("🔒 Sesión cerrada.");
+    showToast("🔒 Sesión cerrada y memoria limpiada.");
+  }
+
+  // =========================================================================
+  // PANEL INTERNO PARA VINCULAR / GESTIONAR 2FA NATIVO DE SUPABASE
+  // =========================================================================
+  async function toggleInternalQrPanel() {
+    if (!isAuthenticated || currentUserRole !== "dev" || !sbClient) return;
+    const drawer = document.getElementById("internalQrDrawer");
+    const willOpen = !drawer.classList.contains("open");
+    drawer.classList.toggle("open", willOpen);
+    if (willOpen) await refreshMfaPanel();
+  }
+
+  async function refreshMfaPanel() {
+    const statusLbl = document.getElementById("mfaStatusLabel");
+    const area = document.getElementById("mfaEnrollmentArea");
+    if (!sbClient || !statusLbl || !area) return;
+
+    const { data: factors, error } = await sbClient.auth.mfa.listFactors();
+    if (error) { statusLbl.textContent = "Error consultando MFA"; return; }
+
+    const verified = factors?.totp?.find(f => f.status === "verified");
+    if (verified) {
+      statusLbl.textContent = "✅ 2FA Activo en Servidor";
+      area.innerHTML = `
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
+          Tu cuenta ya está protegida con 2FA nativo de Supabase (la clave secreta nunca sale del servidor).
+        </p>
+        <button type="button" class="btn-danger" onclick="unenrollNativeMfa('${escapeAttr(verified.id)}')">🗑️ Desvincular 2FA Actual</button>
+      `;
+    } else {
+      statusLbl.textContent = "⚠️ 2FA No Vinculado";
+      area.innerHTML = `
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">
+          Activa el 2FA nativo de Supabase para exigir código de 6 dígitos en el servidor al iniciar sesión.
+        </p>
+        <button type="button" class="btn-primary btn-sm" onclick="startNativeMfaEnrollment()">🔐 Generar QR 2FA de Supabase</button>
+      `;
+    }
+  }
+
+  async function startNativeMfaEnrollment() {
+    const area = document.getElementById("mfaEnrollmentArea");
+    const { data, error } = await sbClient.auth.mfa.enroll({ factorType: "totp", friendlyName: "MDZ Authenticator" });
+    if (error) { showToast(`⛔ Error: ${error.message}`); return; }
+
+    pendingMfaFactorId = data.id;
+    area.innerHTML = `
+      <div class="qr-flex">
+        <div class="qr-box"><img src="${data.totp.qr_code}" alt="QR 2FA Supabase" /></div>
+        <div style="flex:1; min-width:220px;">
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">
+            1. Escanea este QR en Google Authenticator o Authy (o copia la clave):
+          </p>
+          <div class="secret-code-pill" style="margin-bottom:10px;">${escapeHtml(data.totp.secret)}</div>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">
+            2. Ingresa el código de 6 dígitos generado para confirmar:
+          </p>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="text" id="mfaConfirmCodeInput" maxlength="6" placeholder="000000" style="width:130px; text-align:center; font-family:var(--font-mono);" />
+            <button type="button" class="btn-primary btn-sm" onclick="confirmNativeMfaEnrollment()">✅ Activar 2FA</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  async function confirmNativeMfaEnrollment() {
+    const code = (document.getElementById("mfaConfirmCodeInput")?.value || "").replace(/\s+/g, "");
+    if (!/^\d{6}$/.test(code) || !pendingMfaFactorId) { showToast("⛔ Ingresa un código válido de 6 dígitos."); return; }
+
+    const { error } = await sbClient.auth.mfa.challengeAndVerify({ factorId: pendingMfaFactorId, code });
+    if (error) { showToast("⛔ Código incorrecto. Intenta de nuevo."); return; }
+
+    pendingMfaFactorId = null;
+    showToast("🔐 ¡2FA Nativo activado en Supabase!");
+    await refreshMfaPanel();
+  }
+
+  async function unenrollNativeMfa(factorId) {
+    const { error } = await sbClient.auth.mfa.unenroll({ factorId });
+    if (error) { showToast(`⛔ Error: ${error.message}`); return; }
+    showToast("🗑️ 2FA desvinculado.");
+    await refreshMfaPanel();
   }
 
   function switchTab(tabName) {
@@ -1737,7 +1700,7 @@
       btnEdit.className = "btn-lock-icon btn-edit-active"; btnEdit.innerHTML = "🔓"; btnEdit.title = `${currentUsername} (Desarrollador - Edición activa)`;
       btnSanc.className = "btn-danger"; sancText.textContent = "🔒 Cerrar Sesión";
       subtitle.textContent = `Modo desarrollador (${currentUsername}): edición total habilitada.`;
-      if (roleBadge) roleBadge.textContent = `${currentUsername} · Desarrollador 2FA`;
+      if (roleBadge) roleBadge.textContent = `${currentUsername} · Desarrollador RLS`;
     } else {
       btnEdit.className = "btn-lock-icon btn-edit-paused"; btnEdit.innerHTML = "🔓"; btnEdit.title = `${currentUsername} (Edición pausada)`;
       btnSanc.className = "btn-danger"; sancText.textContent = "🔒 Cerrar Sesión";
@@ -2076,23 +2039,6 @@
     setter(getter().filter(c => c.key !== colKey));
     showToast(`🗑️ Columna "${col.label}" eliminada.`);
   }
-  function toggleInternalQrPanel() {
-    if (!isAuthenticated || currentUserRole !== "dev") return;
-    const drawer = document.getElementById("internalQrDrawer"), willOpen = !drawer.classList.contains("open");
-    drawer.classList.toggle("open", willOpen);
-    if (willOpen) { document.getElementById("internalSecretDisplay").textContent = getTotpSecret(); renderSimpleMatrixQR(document.getElementById("internalQrBox"), buildOtpAuthUri()); }
-  }
-  function copyTotpSecret() { navigator.clipboard.writeText(getTotpSecret()); showToast("📋 Clave Base32 copiada."); }
-  function rotateTotpSecret() {
-    if (!isAuthenticated || currentUserRole !== "dev") return;
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", rand = new Uint8Array(24);
-    crypto.getRandomValues(rand);
-    totpSecret = Array.from(rand, b => alphabet[b % 32]).join("");
-    saveToCloud(STORAGE_TOTP_SECRET, totpSecret);
-    document.getElementById("internalSecretDisplay").textContent = totpSecret;
-    renderSimpleMatrixQR(document.getElementById("internalQrBox"), buildOtpAuthUri());
-    showToast("🔄 Nueva llave 2FA sincronizada en Supabase.");
-  }
 
   function renderTrackersForm() {
     document.getElementById("formTrackers").innerHTML = trackerColumns.map(col => `<div class="field"><label>${escapeHtml(col.label)}${col.required ? " *" : ""}</label><input type="text" id="tField_${escapeAttr(col.key)}" placeholder="Ingresar ${escapeAttr(col.label)}" ${col.required ? "required" : ""} /></div>`).join("") + `<div class="field" style="justify-content: flex-end;"><button type="submit" class="btn-primary">+ Agregar</button></div>`;
@@ -2128,7 +2074,7 @@
     const thead = document.getElementById("trackersTableHead"), tbody = document.getElementById("trackersTableBody");
     const q = normalizeText(document.getElementById("trackersSearch").value), editable = canModify();
     thead.innerHTML = `<tr>${editable ? `<th style="width:76px;">ORDEN</th>` : ""}${trackerColumns.map(col => `<th>${escapeHtml(col.label)}${(editable && col.custom) ? `<button type="button" class="col-del-btn" onclick="removeCustomColumn('${escapeAttr(col.key)}')">✕</button>` : ""}</th>`).join("")}<th>ACCIONES</th></tr>`;
-    if (!isCloudLoaded) { tbody.innerHTML = `<tr><td colspan="${Math.max(trackerColumns.length + 1, 2)}" style="text-align:center; color:var(--text-muted); padding:22px;">⏳ Cargando datos desde Supabase...</td></tr>`; return; }
+    if (!isCloudLoaded) { tbody.innerHTML = `<tr><td colspan="${Math.max(trackerColumns.length + 1, 2)}" style="text-align:center; color:var(--text-muted); padding:22px;">🔒 Inicia sesión para cargar los datos protegidos.</td></tr>`; return; }
     const filtered = trackersList.filter(item => normalizeText(trackerColumns.map(c => item[c.key] || "").join(" ")).includes(q));
     if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="${trackerColumns.length + (editable ? 2 : 1)}" style="text-align:center; color:var(--text-muted); padding:22px;">No se encontraron registros en Trackers.</td></tr>`; return; }
 
@@ -2297,14 +2243,11 @@
   function downloadJson(data, filename) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })); a.download = filename; a.click(); showToast(`💾 Respaldo guardado: ${filename}`); }
   function importTrackersBackupJSON(event) { if (!canModify()) { showToast("🔒 Solo lectura."); event.target.value = ""; return; } const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = e => { try { const imp = JSON.parse(e.target.result); if (!Array.isArray(imp)) throw new Error(); trackersList = imp; persistTrackers(); renderTrackersTable(); showToast("✅ Trackers restaurados en Supabase."); } catch { showToast("⛔ JSON inválido."); } }; reader.readAsText(file); event.target.value = ""; }
 
-  setInterval(async () => {
+  setInterval(() => {
     const secLeft = 30 - (Math.floor(Date.now() / 1000) % 30);
     const cEl = document.getElementById("modalCountdown"), fEl = document.getElementById("modalTimerFill");
     if (cEl) cEl.textContent = `${secLeft}s`;
     if (fEl) fEl.style.width = `${(secLeft / 30) * 100}%`;
-    if (isAuthenticated && currentUserRole === "dev" && getTotpSecret() && document.getElementById("internalQrDrawer").classList.contains("open")) {
-      document.getElementById("internalTotpLive").textContent = `Código actual: ${await computeTotpAtOffset(getTotpSecret(), 0)} (${secLeft}s)`;
-    }
   }, 500);
 
   document.addEventListener("keydown", e => {
@@ -2325,7 +2268,7 @@
   function escapeAttr(str) { return String(str || "").replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
 
   // =========================================================================
-  // MEJORAS UX DEL LOGIN (OJO DE CONTRASEÑA, CAPS LOCK, TOTP Y ESTADO NUBE)
+  // MEJORAS UX DEL LOGIN (OJO DE CONTRASEÑA, CAPS LOCK Y TOTP)
   // =========================================================================
   function toggleLoginPasswordVisibility() {
     const inp = document.getElementById("authPassInput");
@@ -2355,27 +2298,6 @@
         totpInput.classList.toggle("ready", totpInput.value.length === 6);
       });
     }
-
-    const cloudSource = document.getElementById("cloudStatusText");
-    const badge = document.getElementById("loginCloudBadge");
-    const badgeText = document.getElementById("loginCloudText");
-    if (cloudSource && badge && badgeText) {
-      const syncBadge = () => {
-        const txt = cloudSource.textContent || "";
-        badge.classList.remove("is-loading", "is-error");
-        if (txt.includes("Sincronizado")) {
-          badgeText.textContent = "Orbitado";
-        } else if (txt.includes("Error")) {
-          badge.classList.add("is-error");
-          badgeText.textContent = "Error de conexión";
-        } else {
-          badge.classList.add("is-loading");
-          badgeText.textContent = "Conectando nube...";
-        }
-      };
-      new MutationObserver(syncBadge).observe(cloudSource, { childList: true, characterData: true, subtree: true });
-      syncBadge();
-    }
   })();
 
   // =========================================================================
@@ -2388,14 +2310,14 @@
       mounted = true;
       const orb = new HoloOrb({
         container: "#loginOrbBg",
-        preset: "minimal",        // 'jarvis' | 'kamai' | 'minimal'
+        preset: "minimal",
         density: 1.15,
         glow: 1.5,
         speed: 1,
         seed: 7,
-        color: "#10b981",         // Verde esmeralda principal
-        hot: "#a7f3d0",           // Destellos verde menta
-        coreColor: "#059669",     // Núcleo verde profundo
+        color: "#10b981",
+        hot: "#a7f3d0",
+        coreColor: "#059669",
         brightness: 1.15,
         interactive: true,
         autoRotate: true,
@@ -2410,9 +2332,6 @@
   })();
 
   // =========================================================================
-  // BYTES ORBITALES Y FLUJO DE DATOS EN EL AURA LATERAL DEL ORBE GRANDE
-  // =========================================================================
-// =========================================================================
   // BYTES ORBITALES + ESPACIO PROFUNDO + METEORITOS COCODRILO
   // =========================================================================
   (function initLoginSanctuaryScene() {
@@ -2466,51 +2385,30 @@
 
     function spawnFirefly() {
       return {
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: 1.5 + Math.random() * 2.2,
-        angle: Math.random() * Math.PI * 2,
-        speed: 0.2 + Math.random() * 0.4,
-        pulse: Math.random() * Math.PI * 2
+        x: Math.random() * W, y: Math.random() * H,
+        r: 1.5 + Math.random() * 2.2, angle: Math.random() * Math.PI * 2,
+        speed: 0.2 + Math.random() * 0.4, pulse: Math.random() * Math.PI * 2
       };
     }
 
     function spawnStar() {
       return {
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: 0.6 + Math.random() * 1.4,
-        pulse: Math.random() * Math.PI * 2,
+        x: Math.random() * W, y: Math.random() * H,
+        r: 0.6 + Math.random() * 1.4, pulse: Math.random() * Math.PI * 2,
         speed: 0.01 + Math.random() * 0.03
       };
     }
 
-    // Meteorito en forma de cocodrilo cruzando las zonas oscuras
     function spawnCrocMeteor(randomStart = false) {
       const fromLeft = Math.random() > 0.5;
       const speed = 2.6 + Math.random() * 2.8;
-      // Ángulo diagonal suave (cayendo de arriba hacia abajo)
-      const angle = fromLeft
-        ? (0.28 + Math.random() * 0.35)          // Izquierda -> Derecha abajo
-        : (Math.PI - 0.28 - Math.random() * 0.35); // Derecha -> Izquierda abajo
-
-      const startX = randomStart
-        ? Math.random() * W
-        : (fromLeft ? -80 - Math.random() * 220 : W + 80 + Math.random() * 220);
-      const startY = randomStart
-        ? Math.random() * H * 0.8
-        : (-60 + Math.random() * (H * 0.55));
-
+      const angle = fromLeft ? (0.28 + Math.random() * 0.35) : (Math.PI - 0.28 - Math.random() * 0.35);
+      const startX = randomStart ? Math.random() * W : (fromLeft ? -80 - Math.random() * 220 : W + 80 + Math.random() * 220);
+      const startY = randomStart ? Math.random() * H * 0.8 : (-60 + Math.random() * (H * 0.55));
       return {
-        x: startX,
-        y: startY,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        angle,
-        scale: 0.65 + Math.random() * 0.55,
-        tailLen: 95 + Math.random() * 85,
-        jawPhase: Math.random() * Math.PI * 2,
-        alpha: 0.55 + Math.random() * 0.35
+        x: startX, y: startY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+        angle, scale: 0.65 + Math.random() * 0.55, tailLen: 95 + Math.random() * 85,
+        jawPhase: Math.random() * Math.PI * 2, alpha: 0.55 + Math.random() * 0.35
       };
     }
 
@@ -2520,7 +2418,6 @@
       ctx.rotate(m.angle);
       ctx.globalAlpha = m.alpha;
 
-      // 1. Estela de fuego meteórico (hacia atrás, eje -X)
       const tailGrad = ctx.createLinearGradient(0, 0, -m.tailLen, 0);
       tailGrad.addColorStop(0, "rgba(167, 243, 208, 0.85)");
       tailGrad.addColorStop(0.25, "rgba(16, 185, 129, 0.55)");
@@ -2535,57 +2432,38 @@
       ctx.closePath();
       ctx.fill();
 
-      // 2. Cabeza de cocodrilo meteórico (apuntando hacia +X)
       ctx.scale(m.scale, m.scale);
       const jaw = 0.12 + Math.abs(Math.sin(m.jawPhase)) * 0.22;
-
       ctx.shadowColor = "#10b981";
       ctx.shadowBlur = 14;
 
-      // Mandíbula superior
       ctx.save();
       ctx.rotate(-jaw);
       ctx.fillStyle = "#10b981";
       ctx.strokeStyle = "#a7f3d0";
       ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.moveTo(-10, -2);
-      ctx.lineTo(-6, -8);
-      ctx.lineTo(14, -6);
-      ctx.lineTo(18, -1);
-      ctx.lineTo(-10, -1);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+      ctx.moveTo(-10, -2); ctx.lineTo(-6, -8); ctx.lineTo(14, -6); ctx.lineTo(18, -1); ctx.lineTo(-10, -1);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
 
-      // Dientes superiores
       ctx.fillStyle = "#ecfdf5";
       ctx.beginPath();
       ctx.moveTo(2, -1); ctx.lineTo(4, 3); ctx.lineTo(6, -1);
       ctx.moveTo(8, -1); ctx.lineTo(10, 3); ctx.lineTo(12, -1);
       ctx.fill();
 
-      // Ojo brillante
       ctx.fillStyle = "#ecfdf5";
-      ctx.beginPath();
-      ctx.arc(-1, -4.5, 1.8, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(-1, -4.5, 1.8, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
 
-      // Mandíbula inferior
       ctx.save();
       ctx.rotate(jaw * 0.85);
       ctx.fillStyle = "#047857";
       ctx.strokeStyle = "#6ee7b7";
       ctx.lineWidth = 1.1;
       ctx.beginPath();
-      ctx.moveTo(-9, 1);
-      ctx.lineTo(16, 1);
-      ctx.lineTo(13, 6);
-      ctx.lineTo(-6, 6);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+      ctx.moveTo(-9, 1); ctx.lineTo(16, 1); ctx.lineTo(13, 6); ctx.lineTo(-6, 6);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
       ctx.restore();
 
       ctx.restore();
@@ -2602,116 +2480,78 @@
       if (!document.body.classList.contains("locked-screen")) return;
 
       ctx.clearRect(0, 0, W, H);
-      const cx = W / 2;
-      const cy = H / 2;
+      const cx = W / 2, cy = H / 2;
 
-      // 1. Estrellas de fondo para rellenar el negro
       for (const s of stars) {
         s.pulse += s.speed;
         ctx.save();
         ctx.globalAlpha = 0.12 + (Math.sin(s.pulse) * 0.5 + 0.5) * 0.42;
         ctx.fillStyle = "#a7f3d0";
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
 
-      // 2. Meteoritos cocodrilo + chispas
       for (let i = 0; i < crocMeteors.length; i++) {
         const m = crocMeteors[i];
-        m.x += m.vx;
-        m.y += m.vy;
-        m.jawPhase += 0.14;
-
-        // Suelta chispas verdes en la estela
+        m.x += m.vx; m.y += m.vy; m.jawPhase += 0.14;
         if (Math.random() < 0.45) {
           meteorSparks.push({
-            x: m.x - Math.cos(m.angle) * 12,
-            y: m.y - Math.sin(m.angle) * 12,
-            vx: -m.vx * 0.15 + (Math.random() - 0.5) * 0.8,
-            vy: -m.vy * 0.15 + (Math.random() - 0.5) * 0.8,
-            life: 1,
-            r: 1 + Math.random() * 1.8
+            x: m.x - Math.cos(m.angle) * 12, y: m.y - Math.sin(m.angle) * 12,
+            vx: -m.vx * 0.15 + (Math.random() - 0.5) * 0.8, vy: -m.vy * 0.15 + (Math.random() - 0.5) * 0.8,
+            life: 1, r: 1 + Math.random() * 1.8
           });
         }
-
         drawCrocMeteor(m);
-
-        // Si sale de pantalla, reaparece desde un borde
-        if (m.x < -260 || m.x > W + 260 || m.y > H + 200) {
-          crocMeteors[i] = spawnCrocMeteor(false);
-        }
+        if (m.x < -260 || m.x > W + 260 || m.y > H + 200) crocMeteors[i] = spawnCrocMeteor(false);
       }
 
       for (let i = meteorSparks.length - 1; i >= 0; i--) {
         const sp = meteorSparks[i];
-        sp.x += sp.vx;
-        sp.y += sp.vy;
-        sp.life -= 0.03;
+        sp.x += sp.vx; sp.y += sp.vy; sp.life -= 0.03;
         if (sp.life <= 0) { meteorSparks.splice(i, 1); continue; }
         ctx.save();
         ctx.globalAlpha = sp.life * 0.75;
         ctx.fillStyle = "#6ee7b7";
-        ctx.beginPath();
-        ctx.arc(sp.x, sp.y, sp.r * sp.life, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(sp.x, sp.y, sp.r * sp.life, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
 
-      // 3. Luciérnagas sutiles
       for (const f of fireflies) {
-        f.angle += (Math.random() - 0.5) * 0.06;
-        f.pulse += 0.03;
-        f.x += Math.cos(f.angle) * f.speed;
-        f.y += Math.sin(f.angle) * f.speed;
+        f.angle += (Math.random() - 0.5) * 0.06; f.pulse += 0.03;
+        f.x += Math.cos(f.angle) * f.speed; f.y += Math.sin(f.angle) * f.speed;
         if (f.x < 0) f.x = W; if (f.x > W) f.x = 0;
         if (f.y < 0) f.y = H; if (f.y > H) f.y = 0;
-
         ctx.save();
         ctx.globalAlpha = 0.2 + (Math.sin(f.pulse) * 0.5 + 0.5) * 0.45;
-        ctx.fillStyle = "#6ee7b7";
-        ctx.shadowColor = "#10b981";
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = "#6ee7b7"; ctx.shadowColor = "#10b981"; ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
 
-      // 4. Bytes orbitales y flujo lateral
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
       for (const b of auraBytes) {
         b.phase += 0.025;
         let x, y, alpha;
-
         if (b.mode === "orbit") {
           b.angle += b.speed;
-          x = cx + Math.cos(b.angle) * b.rx;
-          y = cy + Math.sin(b.angle) * b.ry;
+          x = cx + Math.cos(b.angle) * b.rx; y = cy + Math.sin(b.angle) * b.ry;
           const lateralBoost = Math.abs(Math.cos(b.angle));
           alpha = (0.18 + lateralBoost * 0.55) * (0.65 + Math.sin(b.phase) * 0.35);
         } else {
           b.offsetX += b.vx;
           if (Math.abs(b.offsetX) > 620) {
-            b.offsetX = b.side * 325;
-            b.offsetY = (Math.random() - 0.5) * 90;
+            b.offsetX = b.side * 325; b.offsetY = (Math.random() - 0.5) * 90;
             b.text = BYTE_TOKENS[Math.floor(Math.random() * BYTE_TOKENS.length)];
           }
-          x = cx + b.offsetX;
-          y = cy + b.offsetY + Math.sin(b.phase) * 5;
+          x = cx + b.offsetX; y = cy + b.offsetY + Math.sin(b.phase) * 5;
           const distNorm = (Math.abs(b.offsetX) - 320) / 300;
           alpha = Math.sin(Math.min(1, Math.max(0, distNorm)) * Math.PI) * 0.85;
         }
-
         ctx.save();
         ctx.font = `600 ${b.size.toFixed(1)}px "JetBrains Mono", monospace`;
         ctx.globalAlpha = alpha;
         ctx.fillStyle = b.phase % 2 > 1 ? "#a7f3d0" : "#34d399";
-        ctx.shadowColor = "#10b981";
-        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#10b981"; ctx.shadowBlur = 10;
         ctx.fillText(b.text, x, y);
         ctx.restore();
       }
@@ -2719,7 +2559,7 @@
     loop();
   })();
 
-// =========================================================================
+  // =========================================================================
   // PARALLAX 3D ESFÉRICO (MOUSE + TÁCTIL + GIROSCOPIO EN CELULAR)
   // =========================================================================
   (function initLogin3DTilt() {
@@ -2733,7 +2573,6 @@
       card.style.setProperty("--tilt-y", `${yDeg.toFixed(2)}deg`);
     }
 
-    // 1. Escritorio (Mouse)
     window.addEventListener("mousemove", e => {
       const nx = (e.clientX / window.innerWidth - 0.5) * 2;
       const ny = (e.clientY / window.innerHeight - 0.5) * 2;
@@ -2742,7 +2581,6 @@
 
     window.addEventListener("mouseleave", () => setTilt(0, 0));
 
-    // 2. Celular: Arrastre táctil (funciona en todos los teléfonos sin permisos)
     window.addEventListener("touchmove", e => {
       if (!e.touches.length) return;
       const t = e.touches[0];
@@ -2753,24 +2591,18 @@
 
     window.addEventListener("touchend", () => setTilt(0, 0), { passive: true });
 
-    // 3. Celular: Giroscopio (inclinar el teléfono)
     function enableGyro() {
       window.addEventListener("deviceorientation", e => {
         if (e.beta === null || e.gamma === null) return;
-        // beta: inclinación adelante/atrás (45° suele ser la postura normal en mano)
-        // gamma: inclinación izquierda/derecha
         const tiltY = Math.max(-12, Math.min(12, e.gamma * 0.45));
         const tiltX = Math.max(-10, Math.min(10, (e.beta - 45) * -0.35));
         setTilt(tiltX, tiltY);
       }, { passive: true });
     }
 
-    // En iOS 13+ Safari exige un toque previo para autorizar el giroscopio
     if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
       const askOnce = () => {
-        DeviceOrientationEvent.requestPermission()
-          .then(state => { if (state === "granted") enableGyro(); })
-          .catch(() => {});
+        DeviceOrientationEvent.requestPermission().then(state => { if (state === "granted") enableGyro(); }).catch(() => {});
         window.removeEventListener("touchstart", askOnce);
       };
       window.addEventListener("touchstart", askOnce, { once: true, passive: true });
@@ -2779,11 +2611,10 @@
     }
   })();
 
-  // Inicialización
+  // Inicialización segura: valida sesión antes de descargar cualquier dato
   updateCounters();
   updateSecurityUI();
-  renderTrackersTable();
-  initSupabaseSync();
+  checkSessionAndBoot();
   setTimeout(() => document.getElementById("authUserInput").focus(), 100);
 </script>
 </body>
