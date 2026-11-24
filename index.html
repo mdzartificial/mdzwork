@@ -1164,7 +1164,7 @@
         <p>Premium</p>
       </div>
     </div>
-
+    <div id="forcedMfaBox" style="display:none; margin-top:12px; text-align:center;"></div>
     <form onsubmit="verifyTotpSubmission(event)">
       <div class="login-cred-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div class="field">
@@ -1447,7 +1447,7 @@
 
   function closeTotpModal() { if (!isAuthenticated) return; document.getElementById("totpModal").classList.remove("open"); }
 
-  async function verifyTotpSubmission(e) {
+async function verifyTotpSubmission(e) {
     e.preventDefault();
     if (!sbClient) return;
 
@@ -1470,37 +1470,41 @@
       return;
     }
 
-    // Verificar si el usuario tiene 2FA (TOTP) activo en Supabase
     const { data: factors } = await sbClient.auth.mfa.listFactors();
     const totpFactor = factors?.totp?.find(f => f.status === "verified");
 
-    if (totpFactor) {
-      if (!/^\d{6}$/.test(code)) {
-        errEl.textContent = "⛔ Ingresa tu código 2FA de 6 dígitos.";
-        triggerAngryCroc();
-        await sbClient.auth.signOut();
-        return;
-      }
+    // SI NO TIENE 2FA VINCULADO: OBLIGARLO A CONFIGURARLO AHORA MISMO
+    if (!totpFactor) {
+      errEl.textContent = "";
+      await startForcedLoginMfaSetup(factors?.totp || []);
+      return;
+    }
 
-      const { error: mfaErr } = await sbClient.auth.mfa.challengeAndVerify({
-        factorId: totpFactor.id,
-        code: code
-      });
+    // SI YA TIENE 2FA: VALIDAR CÓDIGO DE 6 DÍGITOS
+    if (!/^\d{6}$/.test(code)) {
+      errEl.textContent = "⛔ Ingresa tu código 2FA de 6 dígitos.";
+      triggerAngryCroc();
+      await sbClient.auth.signOut();
+      return;
+    }
 
-      if (mfaErr) {
-        errEl.textContent = "⛔ Código TOTP incorrecto o expirado.";
-        triggerAngryCroc();
-        await sbClient.auth.signOut();
-        document.getElementById("totpCodeInput").value = "";
-        document.getElementById("totpCodeInput").focus();
-        return;
-      }
+    const { error: mfaErr } = await sbClient.auth.mfa.challengeAndVerify({
+      factorId: totpFactor.id,
+      code: code
+    });
+
+    if (mfaErr) {
+      errEl.textContent = "⛔ Código TOTP incorrecto o expirado.";
+      triggerAngryCroc();
+      await sbClient.auth.signOut();
+      document.getElementById("totpCodeInput").value = "";
+      document.getElementById("totpCodeInput").focus();
+      return;
     }
 
     const { data: { session: finalSession } } = await sbClient.auth.getSession();
     const activeSession = finalSession || authData.session;
 
-    // Registrar acceso permanente en mdz_accesos (solo al iniciar sesión, no al recargar F5)
     await sbClient.from("mdz_accesos").insert({
       usuario: activeSession.user.email,
       rol: activeSession.user.app_metadata?.role || "viewer",
@@ -1508,6 +1512,70 @@
     });
 
     await bootAuthenticatedSession(activeSession);
+  }
+
+  async function startForcedLoginMfaSetup(existingFactors) {
+    // Limpiar intentos previos sin verificar para evitar conflictos
+    for (const f of existingFactors) {
+      if (f.status !== "verified") await sbClient.auth.mfa.unenroll({ factorId: f.id });
+    }
+
+    const { data, error } = await sbClient.auth.mfa.enroll({ factorType: "totp" });
+    if (error) {
+      document.getElementById("totpErrorMsg").textContent = "⛔ Error generando QR 2FA.";
+      await sbClient.auth.signOut();
+      return;
+    }
+
+    pendingMfaFactorId = data.id;
+    document.querySelector("#loginModalCard form").style.display = "none";
+    const box = document.getElementById("forcedMfaBox");
+    box.style.display = "block";
+    box.innerHTML = `
+      <p style="font-size:0.82rem; color:#6ee7b7; font-weight:700; margin-bottom:8px;">
+        🔐 Configuración 2FA Obligatoria (Primer Ingreso)
+      </p>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
+        Escanea este QR con Google Authenticator o Authy e ingresa el código de 6 dígitos para continuar:
+      </p>
+      <div class="qr-box" style="margin-bottom:10px;"><img src="${data.totp.qr_code}" alt="QR 2FA" /></div>
+      <div class="secret-code-pill" style="font-size:0.74rem; margin-bottom:10px;">${escapeHtml(data.totp.secret)}</div>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <input type="text" id="forcedMfaCodeInput" maxlength="6" inputmode="numeric" placeholder="000000"
+          style="width:140px; text-align:center; font-family:var(--font-mono); font-size:1.1rem; letter-spacing:0.2em;" />
+        <button type="button" class="btn-primary btn-sm" onclick="verifyForcedLoginMfa()">✅ Activar y Entrar</button>
+      </div>
+      <div id="forcedMfaErr" class="error-msg"></div>
+    `;
+  }
+
+  async function verifyForcedLoginMfa() {
+    const code = (document.getElementById("forcedMfaCodeInput")?.value || "").replace(/\s+/g, "");
+    const errBox = document.getElementById("forcedMfaErr");
+    if (!/^\d{6}$/.test(code) || !pendingMfaFactorId) {
+      errBox.textContent = "Ingresa los 6 dígitos de tu app.";
+      return;
+    }
+
+    const { error } = await sbClient.auth.mfa.challengeAndVerify({ factorId: pendingMfaFactorId, code });
+    if (error) {
+      errBox.textContent = "⛔ Código incorrecto. Intenta de nuevo.";
+      triggerAngryCroc();
+      return;
+    }
+
+    pendingMfaFactorId = null;
+    document.getElementById("forcedMfaBox").style.display = "none";
+    document.querySelector("#loginModalCard form").style.display = "block";
+
+    const { data: { session } } = await sbClient.auth.getSession();
+    await sbClient.from("mdz_accesos").insert({
+      usuario: session.user.email,
+      rol: session.user.app_metadata?.role || "viewer",
+      dispositivo: navigator.userAgent.slice(0, 150)
+    });
+
+    await bootAuthenticatedSession(session);
   }
 
   async function bootAuthenticatedSession(session) {
