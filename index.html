@@ -416,21 +416,24 @@
       );
       pointer-events: none;
     }
-
     /* Contenedor 3D sin caja rectangular */
-    #loginModalCard > :not(.hud-curved-text) { position: relative; z-index: 2; }
-
-    /* Arco SVG curvo alrededor del núcleo (siempre absoluto para no empujar el login) */
-    #loginModalCard .hud-curved-text {
-      position: absolute !important;
-      top: 50%;
-      left: 50%;
-      width: 600px;
-      height: 600px;
-      transform: translate(-50%, -50%) translateZ(14px);
-      pointer-events: none;
-      z-index: 1 !important;
-      overflow: visible;
+    #loginModalCard {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      max-width: 420px;
+      padding: 24px 20px;
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      overflow: visible !important;
+      transform-style: preserve-3d;
+      transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+      transition: transform 0.14s ease-out;
+      will-change: transform;
     }
 
     /* Anillo HUD exterior giratorio (620px) */
@@ -479,11 +482,11 @@
       to   { transform: translate(-50%, -50%) rotate(0deg); }
     }
 
-    #loginModalCard > * { position: relative; z-index: 2; }
+    #loginModalCard > :not(.hud-curved-text) { position: relative; z-index: 2; }
 
-    /* Arco SVG curvo alrededor del núcleo */
-    .hud-curved-text {
-      position: absolute;
+    /* Arco SVG curvo alrededor del núcleo (siempre absoluto para no empujar el login) */
+    #loginModalCard .hud-curved-text {
+      position: absolute !important;
       top: 50%;
       left: 50%;
       width: 600px;
@@ -493,6 +496,7 @@
       z-index: 1 !important;
       overflow: visible;
     }
+
     .hud-arc-label {
       fill: rgba(167, 243, 208, 0.80);
       font-family: var(--font-mono);
