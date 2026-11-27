@@ -2,16 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#020a07" />
   <title>MDZ™ Sanctuary | KROKY</title>
   <link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=2" />
   <link rel="apple-touch-icon" href="favicon.png?v=2" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://kam.software/plugins/holo-orb.cdn.js" defer></script>
   <style>
     :root {
@@ -834,6 +836,405 @@
       .hud-curved-text { width: 92vw; height: 92vw; }
       #loginCoreGlow { width: 96vw; height: 96vw; }
     }
+
+    /* =========================================================================
+       MDZ™ FUTURISTA · CAPA VISUAL 2.0
+       Layout: login dividido (guardián 3D a la izquierda, acceso a la derecha);
+       panel interno tipo HUD con cristal, esquinas de mira y neón esmeralda.
+       ========================================================================= */
+    :root {
+      --neon: #00ffa3;
+      --jade: #1de9b6;
+      --lime: #c6ff3d;
+      --cyan: #22d3ee;
+      --abyss: #020a07;
+      --glass-hi: rgba(18, 44, 34, 0.72);
+      --glass-lo: rgba(4, 13, 10, 0.86);
+      --hairline: rgba(0, 255, 163, 0.16);
+      --font-display: 'Chakra Petch', 'JetBrains Mono', 'Segoe UI', sans-serif;
+      color-scheme: dark;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--abyss); padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: max(14px, env(safe-area-inset-right, 0px)); }
+
+    /* Atmósfera viva detrás del panel */
+    body:not(.locked-screen)::before {
+      content: ""; position: fixed; inset: -20%; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(38% 30% at 18% 12%, rgba(0, 255, 163, 0.13), transparent 70%),
+        radial-gradient(34% 28% at 86% 22%, rgba(34, 211, 238, 0.10), transparent 70%),
+        radial-gradient(40% 34% at 60% 92%, rgba(198, 255, 61, 0.07), transparent 70%),
+        var(--abyss);
+      animation: auroraDrift 26s ease-in-out infinite alternate;
+    }
+    body:not(.locked-screen)::after {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        repeating-linear-gradient(0deg, rgba(0, 255, 163, 0.035) 0 1px, transparent 1px 44px),
+        repeating-linear-gradient(90deg, rgba(0, 255, 163, 0.035) 0 1px, transparent 1px 44px);
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 85%);
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 85%);
+    }
+    @keyframes auroraDrift {
+      0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+      100% { transform: translate3d(3%, -2%, 0) rotate(4deg); }
+    }
+
+    ::selection { background: rgba(0, 255, 163, 0.35); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: rgba(2, 10, 7, 0.6); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #0f5c43, #0a3d2d); border-radius: 99px; border: 2px solid rgba(2, 10, 7, 0.9); }
+    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #14a374, #0f5c43); }
+    * { scrollbar-color: #0f5c43 rgba(2, 10, 7, 0.6); }
+
+    :focus-visible { outline: 2px solid var(--neon); outline-offset: 2px; }
+
+    /* Cristal con esquinas de mira */
+    .container .glass-panel {
+      --c: rgba(0, 255, 163, 0.75);
+      background:
+        linear-gradient(var(--c), var(--c)) top left / 16px 1.5px no-repeat,
+        linear-gradient(var(--c), var(--c)) top left / 1.5px 16px no-repeat,
+        linear-gradient(var(--c), var(--c)) top right / 16px 1.5px no-repeat,
+        linear-gradient(var(--c), var(--c)) top right / 1.5px 16px no-repeat,
+        linear-gradient(var(--c), var(--c)) bottom left / 16px 1.5px no-repeat,
+        linear-gradient(var(--c), var(--c)) bottom left / 1.5px 16px no-repeat,
+        linear-gradient(var(--c), var(--c)) bottom right / 16px 1.5px no-repeat,
+        linear-gradient(var(--c), var(--c)) bottom right / 1.5px 16px no-repeat,
+        linear-gradient(160deg, var(--glass-hi), var(--glass-lo));
+      border: 1px solid var(--hairline);
+      border-radius: 18px;
+      backdrop-filter: blur(18px) saturate(1.25);
+      -webkit-backdrop-filter: blur(18px) saturate(1.25);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(167, 243, 208, 0.08), inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+    }
+    .container .glass-panel::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+      background: radial-gradient(520px circle at var(--mx, -999px) var(--my, -999px), rgba(0, 255, 163, 0.075), transparent 42%);
+      transition: opacity 0.3s;
+    }
+
+    /* Cabecera fija */
+    .container > header {
+      position: sticky; top: max(8px, env(safe-area-inset-top, 0px)); z-index: 40;
+      padding: 12px 20px;
+    }
+    .brand h1 {
+      font-family: var(--font-display); font-weight: 700; font-size: 1.55rem; letter-spacing: 0.06em; text-transform: uppercase;
+      background: linear-gradient(90deg, #ecfdf5 0%, #a7f3d0 45%, var(--neon) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .brand h1 span { -webkit-text-fill-color: var(--neon); color: var(--neon); text-shadow: 0 0 18px rgba(0, 255, 163, 0.55); font-family: var(--font-display); }
+    .brand p { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(167, 243, 208, 0.62); }
+    .brand-icon { border-radius: 18px; position: relative; }
+    .brand-icon::before {
+      content: ""; position: absolute; inset: -40%; background: conic-gradient(from 0deg, transparent 0 70%, rgba(0, 255, 163, 0.55) 85%, transparent 100%);
+      animation: radarSpin 4.5s linear infinite; opacity: 0.55;
+    }
+    .brand-icon > svg { position: relative; z-index: 1; }
+    @keyframes radarSpin { to { transform: rotate(360deg); } }
+
+    /* Botones */
+    button { letter-spacing: 0.01em; }
+    .btn-primary {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--neon), var(--jade) 55%, #10b981);
+      color: #01170f; font-weight: 700;
+      box-shadow: 0 0 0 1px rgba(167, 243, 208, 0.35) inset, 0 8px 24px rgba(0, 255, 163, 0.28);
+    }
+    .btn-primary::after {
+      content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+      transform: skewX(-20deg); transition: left 0.55s ease;
+    }
+    .btn-primary:hover::after { left: 130%; }
+    .btn-primary:hover { background: linear-gradient(135deg, #5fffc6, var(--neon)); transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4) inset, 0 12px 30px rgba(0, 255, 163, 0.4); }
+    .btn-glass {
+      background: linear-gradient(180deg, rgba(0, 255, 163, 0.09), rgba(0, 255, 163, 0.03));
+      border: 1px solid rgba(0, 255, 163, 0.22); color: #d1fae5;
+    }
+    .btn-glass:hover { border-color: var(--neon); background: rgba(0, 255, 163, 0.14); box-shadow: 0 0 18px rgba(0, 255, 163, 0.22); transform: translateY(-1px); }
+    .btn-glass:active, .btn-primary:active { transform: translateY(0) scale(0.98); }
+    .btn-danger:hover { box-shadow: 0 0 16px rgba(239, 68, 68, 0.35); }
+
+    /* HUD de métricas */
+    .hud-strip {
+      display: grid; gap: 10px;
+      grid-template-columns: repeat(6, minmax(0, 1fr)) minmax(0, 1.3fr) minmax(0, 1.1fr);
+    }
+    .hud-cell {
+      position: relative; overflow: hidden; min-width: 0;
+      padding: 12px 14px 14px; border-radius: 14px;
+      background: linear-gradient(160deg, rgba(14, 36, 28, 0.66), rgba(3, 12, 9, 0.84));
+      border: 1px solid var(--hairline);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      display: flex; flex-direction: column; gap: 2px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .hud-cell:hover { border-color: rgba(0, 255, 163, 0.5); transform: translateY(-2px); }
+    .hud-label { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(167, 243, 208, 0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hud-num { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; line-height: 1.1; color: #ecfdf5; font-variant-numeric: tabular-nums; text-shadow: 0 0 16px rgba(0, 255, 163, 0.35); }
+    .hud-bar { position: absolute; left: 0; bottom: 0; height: 2px; width: var(--fill, 0%); background: linear-gradient(90deg, var(--neon), var(--cyan)); box-shadow: 0 0 10px var(--neon); transition: width 0.9s cubic-bezier(.2, .8, .2, 1); }
+    .hud-cell-session b, .hud-cell-clock b { font-family: var(--font-display); font-size: 1.15rem; color: #ecfdf5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+    .hud-role, #hudDate { font-family: var(--font-mono); font-size: 0.68rem; color: var(--neon); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hud-role.is-viewer { color: #7dd3fc; }
+    .hud-role.is-paused { color: #fcd34d; }
+    body.locked-screen .hud-strip { display: none; }
+
+    /* Pestañas */
+    .tabs-wrapper {
+      background: rgba(3, 12, 9, 0.7); border: 1px solid var(--hairline); border-radius: 16px; padding: 6px; gap: 6px;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    .tab-btn { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.82rem; border-radius: 11px; position: relative; }
+    .tab-btn.active {
+      background: linear-gradient(180deg, rgba(0, 255, 163, 0.2), rgba(0, 255, 163, 0.06));
+      border-color: rgba(0, 255, 163, 0.6); color: #fff;
+      box-shadow: 0 0 22px rgba(0, 255, 163, 0.22), inset 0 -2px 0 var(--neon);
+    }
+    .count-pill { background: rgba(0, 255, 163, 0.16); color: var(--neon); border: 1px solid rgba(0, 255, 163, 0.3); font-variant-numeric: tabular-nums; }
+
+    /* Secciones */
+    .workspace { padding: 24px; }
+    .workspace.active { animation: panelIn 0.45s cubic-bezier(.2, .8, .2, 1); }
+    @keyframes panelIn { from { opacity: 0; transform: translateY(10px) scale(0.995); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+    .section-header { border-bottom-color: var(--hairline); }
+    .section-title h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 1.1rem; color: #ecfdf5; text-wrap: balance; }
+    .autosave-pill { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; background: rgba(0, 255, 163, 0.08); border-color: rgba(0, 255, 163, 0.26); }
+    .dot-pulse { background: var(--neon); box-shadow: 0 0 10px var(--neon); animation: dotPulse 1.8s ease-in-out infinite; }
+    @keyframes dotPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.45; } }
+
+    /* Formularios */
+    input, select { background: rgba(2, 10, 7, 0.82); border-color: rgba(0, 255, 163, 0.16); }
+    input:hover, select:hover { border-color: rgba(0, 255, 163, 0.32); }
+    input:focus, select:focus { border-color: var(--neon); box-shadow: 0 0 0 3px rgba(0, 255, 163, 0.14), 0 0 18px rgba(0, 255, 163, 0.18); }
+    .form-grid { background: linear-gradient(160deg, rgba(0, 255, 163, 0.05), rgba(2, 10, 7, 0.7)); border: 1px dashed rgba(0, 255, 163, 0.28); border-radius: 14px; }
+    .field label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.12em; }
+    .smart-search-box { background: linear-gradient(135deg, rgba(0, 255, 163, 0.09), rgba(2, 10, 7, 0.9)); border-color: rgba(0, 255, 163, 0.45); box-shadow: 0 0 30px rgba(0, 255, 163, 0.08); }
+    .search-input-wrap input { border-color: rgba(0, 255, 163, 0.26); border-radius: 12px; min-width: 0; }
+    .search-clear:hover { color: #fff; background: rgba(0, 255, 163, 0.16); }
+
+    /* Chips con cortes angulares */
+    .chip {
+      border-radius: 0; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      background: rgba(0, 255, 163, 0.05); border-color: rgba(0, 255, 163, 0.18);
+      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.03em; padding: 6px 13px;
+    }
+    .chip:hover, .chip.active { background: rgba(0, 255, 163, 0.18); border-color: var(--neon); color: #fff; }
+    .chip.active { box-shadow: inset 0 0 0 1px rgba(0, 255, 163, 0.5); }
+
+    /* Tablas */
+    .table-wrap { border: 1px solid var(--hairline); border-radius: 14px; background: rgba(2, 9, 6, 0.55); max-height: 68vh; overflow: auto; }
+    th {
+      position: sticky; top: 0; z-index: 2;
+      background: linear-gradient(180deg, rgba(6, 22, 16, 0.98), rgba(4, 14, 10, 0.98));
+      font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.14em; color: var(--neon);
+      border-bottom: 1px solid rgba(0, 255, 163, 0.35);
+    }
+    tbody tr { transition: background 0.15s, box-shadow 0.15s; }
+    tbody tr:nth-child(even) td { background: rgba(0, 255, 163, 0.018); }
+    tbody tr:hover td { background: rgba(0, 255, 163, 0.07); }
+    tbody tr:hover td:first-child { box-shadow: inset 3px 0 0 var(--neon); }
+    td { border-bottom-color: rgba(0, 255, 163, 0.06); font-variant-numeric: tabular-nums; }
+    .badge-cat { font-family: var(--font-mono); font-size: 0.68rem; }
+
+    /* Mapa */
+    .map-toolbar, .map-sidebar { background: linear-gradient(160deg, rgba(10, 30, 23, 0.66), rgba(2, 10, 7, 0.85)) !important; border-color: var(--hairline) !important; }
+    #coverageMapContainer { border-color: rgba(0, 255, 163, 0.4); box-shadow: 0 0 40px rgba(0, 255, 163, 0.1), inset 0 0 60px rgba(0, 0, 0, 0.6); }
+    .nearest-card { border-radius: 12px; }
+    .nearest-card:hover { box-shadow: 0 0 18px rgba(0, 255, 163, 0.2); }
+
+    /* Modales y toast */
+    .modal-backdrop { background: rgba(1, 6, 4, 0.78); backdrop-filter: blur(10px) saturate(1.2); }
+    #addColumnModal .modal-card { background: linear-gradient(160deg, var(--glass-hi), var(--glass-lo)); border-color: rgba(0, 255, 163, 0.45); border-radius: 18px; }
+    #addColumnModal.open .modal-card { animation: panelIn 0.35s cubic-bezier(.2, .8, .2, 1); }
+    .toast {
+      bottom: max(20px, env(safe-area-inset-bottom, 0px)); right: max(20px, env(safe-area-inset-right, 0px));
+      background: linear-gradient(160deg, rgba(8, 34, 25, 0.94), rgba(3, 14, 10, 0.96));
+      border: 1px solid rgba(0, 255, 163, 0.45); border-left: 3px solid var(--neon);
+      border-radius: 12px; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.02em;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(0, 255, 163, 0.18);
+      max-width: calc(100vw - 40px);
+    }
+
+    /* Entrada tras el login */
+    body.just-entered .container > * { animation: enterRise 0.8s cubic-bezier(.2, .8, .2, 1) both; }
+    body.just-entered .container > *:nth-child(2) { animation-delay: 0.08s; }
+    body.just-entered .container > *:nth-child(3) { animation-delay: 0.16s; }
+    body.just-entered .container > *:nth-child(4) { animation-delay: 0.24s; }
+    @keyframes enterRise { from { opacity: 0; transform: translateY(26px) scale(0.98); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+
+    /* =========================================================================
+       LOGIN · GUARDIÁN COCODRILO 3D
+       ========================================================================= */
+    body.locked-screen #totpModal {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+      align-items: center;
+      gap: 24px;
+      padding: max(24px, env(safe-area-inset-top, 0px)) max(5vw, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+      background:
+        radial-gradient(60% 70% at 32% 55%, rgba(0, 255, 163, 0.10), transparent 70%),
+        radial-gradient(40% 50% at 85% 20%, rgba(34, 211, 238, 0.06), transparent 70%),
+        linear-gradient(180deg, #010705 0%, #03130d 55%, #010604 100%);
+      perspective: 1200px;
+      overflow-y: auto;
+    }
+    body.locked-screen.auth-alert-red #totpModal {
+      background:
+        radial-gradient(60% 70% at 32% 55%, rgba(239, 68, 68, 0.16), transparent 70%),
+        linear-gradient(180deg, #070101 0%, #1a0404 55%, #050101 100%) !important;
+    }
+
+    #crocStage { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 2; display: block; touch-action: pan-y; }
+    #loginOrbBg { left: 30%; width: 1100px; height: 900px; opacity: 0.32; }
+    #loginBgCanvas { opacity: 0.45; }
+    #loginCoreGlow { display: none; }
+    body:not(.locked-screen) #crocStage,
+    body:not(.locked-screen) #crocHud { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+
+    /* Telemetría del guardián */
+    .croc-hud {
+      position: fixed; z-index: 3; pointer-events: none;
+      left: max(28px, env(safe-area-inset-left, 0px)); top: max(26px, env(safe-area-inset-top, 0px));
+      display: flex; flex-direction: column; gap: 12px;
+      font-family: var(--font-mono); color: #a7f3d0;
+    }
+    .croc-hud-tl { display: flex; flex-direction: column; gap: 2px; padding-left: 12px; border-left: 2px solid var(--neon); }
+    .hud-eyebrow { font-size: 0.64rem; letter-spacing: 0.24em; color: rgba(167, 243, 208, 0.6); }
+    .croc-hud-tl strong { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.18em; color: #ecfdf5; text-shadow: 0 0 14px rgba(0, 255, 163, 0.5); }
+    .croc-hud-readouts { display: flex; gap: 8px; flex-wrap: wrap; }
+    .croc-hud-readouts div {
+      display: flex; flex-direction: column; min-width: 96px; padding: 7px 11px;
+      background: rgba(2, 14, 10, 0.55); border: 1px solid rgba(0, 255, 163, 0.22);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    }
+    .croc-hud-readouts span { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(167, 243, 208, 0.55); }
+    .croc-hud-readouts b { font-family: var(--font-display); font-size: 1rem; color: var(--neon); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .croc-hud-hint {
+      position: fixed; left: 0; right: calc(440px + 5vw + 24px); bottom: max(26px, env(safe-area-inset-bottom, 0px));
+      text-align: center; font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(167, 243, 208, 0.7);
+      text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+    }
+    body.auth-alert-red .croc-hud-tl { border-left-color: #ef4444; }
+    body.auth-alert-red .croc-hud-readouts div { border-color: rgba(239, 68, 68, 0.5); }
+    body.auth-alert-red .croc-hud-readouts b { color: #f87171; }
+    .croc-hud.is-granted .croc-hud-readouts b { color: var(--lime); }
+
+    /* Tarjeta de acceso como panel de cristal */
+    body.locked-screen #totpModal #loginModalCard {
+      grid-column: 2; justify-self: end;
+      max-width: 440px; padding: 26px 24px 24px;
+      background:
+        linear-gradient(var(--neon), var(--neon)) top left / 18px 1.5px no-repeat,
+        linear-gradient(var(--neon), var(--neon)) top left / 1.5px 18px no-repeat,
+        linear-gradient(var(--neon), var(--neon)) bottom right / 18px 1.5px no-repeat,
+        linear-gradient(var(--neon), var(--neon)) bottom right / 1.5px 18px no-repeat,
+        linear-gradient(160deg, rgba(10, 34, 26, 0.62), rgba(2, 10, 7, 0.82)) !important;
+      backdrop-filter: blur(20px) saturate(1.3) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(1.3) !important;
+      border: 1px solid rgba(0, 255, 163, 0.26) !important;
+      border-radius: 22px !important;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 50px rgba(0, 255, 163, 0.10), inset 0 1px 0 rgba(167, 243, 208, 0.12) !important;
+      overflow: hidden !important;
+    }
+    body.locked-screen #totpModal #loginModalCard.led-border::before {
+      width: 200%; height: 2px; top: 0; left: -50%; border: none; border-radius: 0; box-shadow: none;
+      background: linear-gradient(90deg, transparent, var(--neon), #a7f3d0, var(--neon), transparent) !important;
+      transform: none; animation: ledScan 3.2s linear infinite;
+    }
+    body.locked-screen #totpModal #loginModalCard::after { display: none; }
+    #loginModalCard .hud-curved-text { display: none; }
+    body.locked-screen.auth-alert-red #totpModal #loginModalCard { border-color: rgba(239, 68, 68, 0.6) !important; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(239, 68, 68, 0.28) !important; }
+    body.locked-screen.auth-alert-red #totpModal #loginModalCard.led-border::before { background: linear-gradient(90deg, transparent, #ef4444, #fecaca, #ef4444, transparent) !important; }
+
+    #loginModalCard .login-top-meta { justify-content: flex-start; transform: none; margin-bottom: 14px; }
+    #loginModalCard .login-hero { width: 100%; justify-content: flex-start; transform: none; margin-bottom: 18px; }
+    #loginModalCard .login-hero h3 { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    #loginModalCard .login-hero h3 span { font-family: var(--font-display); color: var(--neon); text-shadow: 0 0 18px rgba(0, 255, 163, 0.6); }
+    #loginModalCard .login-hero p { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(167, 243, 208, 0.7); }
+    #loginModalCard .login-cred-grid .field:first-child,
+    #loginModalCard .login-cred-grid .field:last-child,
+    #loginModalCard .totp-panel { transform: none; }
+    #loginModalCard .login-cred-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+    #loginModalCard .login-input-group input { padding: 12px 40px 12px 38px; font-size: 0.92rem; border-radius: 14px; }
+    #loginModalCard .totp-panel { border-radius: 16px; }
+    #loginModalCard .totp-panel .totp-input { border-radius: 12px; }
+    #loginModalCard .btn-login-submit {
+      width: 100%; transform: none; border-radius: 14px; padding: 14px 18px;
+      font-family: var(--font-display); letter-spacing: 0.16em; font-size: 0.9rem;
+      background: linear-gradient(135deg, var(--neon), var(--jade) 50%, #0e9f6e); color: #01170f;
+      position: relative; overflow: hidden;
+    }
+    #loginModalCard .btn-login-submit::after {
+      content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      transform: skewX(-20deg); animation: btnShine 3.4s ease-in-out infinite;
+    }
+    @keyframes btnShine { 0%, 60% { left: -60%; } 100% { left: 140%; } }
+    #loginModalCard .btn-login-submit:hover { transform: translateY(-1px); }
+    body.auth-alert-red #loginModalCard .btn-login-submit { color: #fff; }
+    #loginModalCard .login-croc-badge { border-radius: 16px; }
+    .login-secure-note { margin-top: 14px; display: flex; justify-content: space-between; gap: 8px; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(167, 243, 208, 0.5); }
+
+    /* Destello de entrada a la boca */
+    #crocFlash {
+      position: fixed; inset: 0; z-index: 2000; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(220, 255, 236, 0.95) 0%, rgba(0, 255, 163, 0.9) 30%, #01120b 80%);
+      transition: opacity 0.7s ease;
+    }
+    #crocFlash.on { opacity: 1; transition: opacity 0.35s ease; }
+
+    body.croc-diving #totpModal #loginModalCard { opacity: 0; transform: translateX(60px) scale(0.94) !important; transition: opacity 0.45s ease, transform 0.6s cubic-bezier(.2, .8, .2, 1) !important; pointer-events: none; }
+    body.croc-diving .croc-hud-hint, body.croc-diving #loginBgCanvas, body.croc-diving #loginOrbBg { opacity: 0; transition: opacity 0.4s ease; }
+
+    /* Sin WebGL: se queda el cocodrilo 2D */
+    body.no-croc3d #crocStage, body.no-croc3d .croc-hud-readouts { display: none; }
+
+    /* Responsive */
+    @media (max-width: 1180px) {
+      .hud-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .hud-cell-session, .hud-cell-clock { grid-column: span 2; }
+    }
+    @media (max-width: 900px) {
+      body.locked-screen #totpModal {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: end; align-content: end;
+        padding-top: 46vh;
+      }
+      body.locked-screen #totpModal #loginModalCard { grid-column: 1; justify-self: center; }
+      .croc-hud { left: 16px; right: 16px; top: max(16px, env(safe-area-inset-top, 0px)); }
+      .croc-hud-readouts div { min-width: 0; flex: 1; }
+      .croc-hud-hint { display: none; }
+    }
+    @media (max-width: 640px) {
+      body { padding-top: 10px; padding-bottom: 10px; }
+      .container > header { padding: 12px 14px; top: max(6px, env(safe-area-inset-top, 0px)); }
+      .brand h1 { font-size: 1.2rem; }
+      .brand-icon { width: 52px; height: 52px; min-width: 52px; }
+      .header-actions { width: 100%; }
+      .header-actions .btn-glass:first-child { flex: 1; justify-content: center; }
+      .hud-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hud-cell-session, .hud-cell-clock { grid-column: span 1; }
+      .hud-num { font-size: 1.4rem; }
+      .tabs-wrapper { width: 100%; overflow-x: auto; scrollbar-width: none; }
+      .tab-btn { white-space: nowrap; padding: 9px 12px; }
+      .workspace { padding: 16px 14px; }
+      .section-header > div:last-child { width: 100%; }
+      .search-input-wrap input { padding-right: 78px; font-size: 0.86rem; }
+      .croc-hud-tl strong { font-size: 0.9rem; }
+      .croc-hud-readouts b { font-size: 0.86rem; }
+      .croc-hud-readouts div { padding: 6px 8px; }
+      #loginModalCard .login-hero h3 { font-size: 1.25rem; }
+      .container > header { position: relative; top: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
   </style>
 </head>
 <body class="locked-screen">
@@ -885,6 +1286,17 @@
       </button>
     </div>
   </header>
+
+  <div class="hud-strip" id="hudStrip" aria-label="Resumen de datos">
+    <div class="hud-cell"><span class="hud-label">Trackers</span><b class="hud-num" id="hudTrk">0</b><i class="hud-bar"></i></div>
+    <div class="hud-cell"><span class="hud-label">Comandos AT</span><b class="hud-num" id="hudCmd">0</b><i class="hud-bar"></i></div>
+    <div class="hud-cell"><span class="hud-label">Directorio</span><b class="hud-num" id="hudDir">0</b><i class="hud-bar"></i></div>
+    <div class="hud-cell"><span class="hud-label">Credenciales</span><b class="hud-num" id="hudSnc">0</b><i class="hud-bar"></i></div>
+    <div class="hud-cell"><span class="hud-label">Puntos fijos</span><b class="hud-num" id="hudPts">0</b><i class="hud-bar"></i></div>
+    <div class="hud-cell"><span class="hud-label">Geocercas</span><b class="hud-num" id="hudGeo">0</b><i class="hud-bar"></i></div>
+    <div class="hud-cell hud-cell-session"><span class="hud-label">Sesión</span><b id="hudUser">—</b><span id="hudRole" class="hud-role">Sin sesión</span></div>
+    <div class="hud-cell hud-cell-clock"><span class="hud-label">Lima · PE</span><b id="hudClock">--:--:--</b><span id="hudDate"></span></div>
+  </div>
 
   <div id="tabsWrapper" class="tabs-wrapper">
     <button id="tabTrackers" class="tab-btn active" onclick="switchTab('trackers')">
@@ -1228,6 +1640,19 @@
   <div id="loginOrbBg" aria-hidden="true"></div>
   <canvas id="loginBgCanvas"></canvas>
   <div id="loginCoreGlow" aria-hidden="true"></div>
+  <canvas id="crocStage" aria-hidden="true"></canvas>
+  <div id="crocHud" class="croc-hud" aria-hidden="true">
+    <div class="croc-hud-tl">
+      <span class="hud-eyebrow">MDZ™ SANCTUARY · GUARDIÁN</span>
+      <strong>CROCODYLUS · MDZ-01</strong>
+    </div>
+    <div class="croc-hud-readouts">
+      <div><span>Mandíbula</span><b id="hudJaw">0°</b></div>
+      <div><span>Mordida</span><b id="hudPsi">0 PSI</b></div>
+      <div><span>Estado</span><b id="hudState">Patrullando</b></div>
+    </div>
+    <p class="croc-hud-hint" id="hudHint">Ingresa tus credenciales y el guardián abrirá la boca.</p>
+  </div>
 
   <div id="loginModalCard" class="modal-card glass-panel led-border">
     <svg class="hud-curved-text" viewBox="0 0 600 600" aria-hidden="true">
@@ -1270,7 +1695,7 @@
       </div>
       <div>
         <h3>MDZ™ <span>Sanctuary</span></h3>
-        <p>Premium</p>
+        <p>Acceso blindado · 2FA</p>
       </div>
     </div>
     <div id="forcedMfaBox" style="display:none; margin-top:12px; text-align:center;"></div>
@@ -1308,7 +1733,8 @@
 
       <div id="totpErrorMsg" class="error-msg" role="alert"></div>
 
-      <button type="submit" class="btn-login-submit">🔓 Validar e Ingresar</button>
+      <button type="submit" class="btn-login-submit">🐊 Abrir y entrar</button>
+      <div class="login-secure-note"><span>Supabase Auth + RLS</span><span>TOTP · 30 s</span></div>
     </form>
   </div>
 </div>
@@ -1333,6 +1759,7 @@
   </div>
 </div>
 
+<div id="crocFlash" aria-hidden="true"></div>
 <div id="toast" class="toast"></div>
 
 <script>
@@ -2877,6 +3304,564 @@
       enableGyro();
     }
   })();
+
+
+  // =========================================================================
+  // GUARDIÁN COCODRILO 3D (THREE.JS) · CAMINA, MUEVE LOS DIENTES Y ABRE LA BOCA
+  // =========================================================================
+  window.Croc3D = null;
+  (function initCroc3D() {
+    const canvas = document.getElementById("crocStage");
+    if (!canvas || typeof THREE === "undefined") { document.body.classList.add("no-croc3d"); return; }
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+    } catch (err) {
+      console.warn("WebGL no disponible para el guardián 3D:", err);
+      document.body.classList.add("no-croc3d");
+      return;
+    }
+    document.body.classList.add("has-croc3d");
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.92;
+
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x02110b, 0.07);
+    const camera = new THREE.PerspectiveCamera(34, 1, 0.03, 120);
+
+    // ---------- Luces ----------
+    scene.add(new THREE.HemisphereLight(0x7dffc8, 0x010f09, 0.38));
+    const key = new THREE.DirectionalLight(0xdfffee, 1.35); key.position.set(3, 6, 5); scene.add(key);
+    const rimCyan = new THREE.PointLight(0x00e5ff, 2.4, 14); rimCyan.position.set(-3.5, 2.2, -2.5); scene.add(rimCyan);
+    const rimLime = new THREE.PointLight(0xb6ff00, 1.8, 12); rimLime.position.set(3.5, 1.4, -2.2); scene.add(rimLime);
+    const underGlow = new THREE.PointLight(0x00ffa3, 1.4, 6); underGlow.position.set(0, 0.25, 1.4); scene.add(underGlow);
+
+    // ---------- Materiales (verdes exóticos) ----------
+    const M = {
+      skin: new THREE.MeshPhysicalMaterial({ color: 0x07804f, roughness: 0.32, metalness: 0.35, clearcoat: 1, clearcoatRoughness: 0.18, flatShading: true, emissive: 0x003b22, emissiveIntensity: 0.45 }),
+      back: new THREE.MeshPhysicalMaterial({ color: 0x033d2a, roughness: 0.38, metalness: 0.45, clearcoat: 0.9, flatShading: true, emissive: 0x00170e, emissiveIntensity: 0.5 }),
+      belly: new THREE.MeshPhysicalMaterial({ color: 0x8fdc4a, roughness: 0.45, metalness: 0.1, clearcoat: 0.6, flatShading: true, emissive: 0x1d3a06, emissiveIntensity: 0.3 }),
+      scute: new THREE.MeshStandardMaterial({ color: 0x0a3f2b, roughness: 0.3, metalness: 0.5, flatShading: true, emissive: 0x00ffa3, emissiveIntensity: 0.55 }),
+      tooth: new THREE.MeshStandardMaterial({ color: 0xf4fff8, roughness: 0.2, metalness: 0.1, emissive: 0xaaffdd, emissiveIntensity: 0.25 }),
+      eye: new THREE.MeshStandardMaterial({ color: 0xe1ff4a, emissive: 0xd4ff3a, emissiveIntensity: 1.8, roughness: 0.15 }),
+      pupil: new THREE.MeshBasicMaterial({ color: 0x010403 }),
+      mouth: new THREE.MeshStandardMaterial({ color: 0x0b3324, emissive: 0x00ff88, emissiveIntensity: 0.35, roughness: 0.6, side: THREE.DoubleSide }),
+      tongue: new THREE.MeshStandardMaterial({ color: 0x23b77a, emissive: 0x00ffa3, emissiveIntensity: 0.6, roughness: 0.45 }),
+      claw: new THREE.MeshStandardMaterial({ color: 0x0d1f18, roughness: 0.3, metalness: 0.6 }),
+      holo: new THREE.MeshBasicMaterial({ color: 0x6affd0, wireframe: true, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending, depthWrite: false })
+    };
+    const tintables = [M.skin, M.back, M.scute, M.eye, M.mouth, M.tongue];
+    const baseTint = tintables.map(m => ({ c: m.color.clone(), e: m.emissive.clone() }));
+    const RED = new THREE.Color(0xd0142c), RED_E = new THREE.Color(0xff1f3d);
+
+    const sphereGeo = new THREE.SphereGeometry(1, 16, 11);
+    const coneGeo = new THREE.ConeGeometry(1, 1, 5);
+    const toothGeo = new THREE.ConeGeometry(0.02, 0.075, 5);
+    const holoMeshes = [];
+    function blob(mat, sx, sy, sz, x = 0, y = 0, z = 0, holo = true) {
+      const m = new THREE.Mesh(sphereGeo, mat);
+      m.scale.set(sx, sy, sz); m.position.set(x, y, z);
+      if (holo) { const h = new THREE.Mesh(sphereGeo, M.holo); h.scale.setScalar(1.035); m.add(h); holoMeshes.push(h); }
+      return m;
+    }
+
+    // ---------- Esqueleto ----------
+    const croc = new THREE.Group(); croc.rotation.y = -0.62; croc.position.set(0.3, 0, -0.4); scene.add(croc);
+    const BODY_Y = 0.56;
+    const spineRoot = new THREE.Group(); spineRoot.position.set(0.95, BODY_Y, 0); croc.add(spineRoot);
+
+    const segSpec = [
+      { s: 0.55, r: [0.42, 0.31, 0.40], torso: true },
+      { s: 0.62, r: [0.46, 0.35, 0.48], torso: true },
+      { s: 0.62, r: [0.46, 0.34, 0.47], torso: true },
+      { s: 0.56, r: [0.42, 0.30, 0.41], torso: true }
+    ];
+    const TAIL = 11;
+    for (let i = 0; i < TAIL; i++) {
+      const k = i / (TAIL - 1);
+      const f = 1 - k * 0.86;
+      segSpec.push({ s: 0.34 - k * 0.1, r: [0.3 * f + 0.04, 0.25 * f + 0.03, 0.3 * f + 0.02], torso: false, k });
+    }
+
+    const joints = [];
+    let parent = spineRoot;
+    segSpec.forEach((sp, i) => {
+      const j = new THREE.Group();
+      if (i > 0) j.position.x = -segSpec[i - 1].s;
+      parent.add(j);
+      const body = blob(M.skin, sp.r[0] * 1.15, sp.r[1], sp.r[2], -sp.s / 2, 0, 0);
+      j.add(body);
+      // Lomo oscuro
+      j.add(blob(M.back, sp.r[0] * 1.05, sp.r[1] * 0.55, sp.r[2] * 0.82, -sp.s / 2, sp.r[1] * 0.5, 0, false));
+      if (sp.torso) j.add(blob(M.belly, sp.r[0] * 1.08, sp.r[1] * 0.45, sp.r[2] * 0.88, -sp.s / 2, -sp.r[1] * 0.55, 0, false));
+      else j.add(blob(M.belly, sp.r[0] * 1.0, sp.r[1] * 0.4, sp.r[2] * 0.7, -sp.s / 2, -sp.r[1] * 0.55, 0, false));
+      // Escamas dorsales luminosas (doble fila en el cuerpo, cresta doble alta en la cola)
+      const rows = sp.torso ? [-0.32, 0.32] : (sp.k < 0.6 ? [-0.22, 0.22] : [0]);
+      [0.25, 0.75].forEach(px => {
+        rows.forEach(rz => {
+          const h = sp.torso ? 0.1 : 0.12 + (1 - sp.k) * 0.06;
+          const sc = new THREE.Mesh(coneGeo, M.scute);
+          sc.scale.set(0.045, h, 0.03);
+          sc.position.set(-sp.s * px, sp.r[1] * 0.92 + h * 0.3, sp.r[2] * rz);
+          j.add(sc);
+        });
+      });
+      joints.push(j);
+      parent = j;
+    });
+    // Punta de la cola
+    const tailTip = new THREE.Mesh(coneGeo, M.skin); tailTip.scale.set(0.05, 0.28, 0.05); tailTip.rotation.z = Math.PI / 2; tailTip.position.x = -segSpec[segSpec.length - 1].s - 0.1; joints[joints.length - 1].add(tailTip);
+
+    // ---------- Patas ----------
+    const legs = [];
+    function makeLeg(hostJoint, x, side, phase, rear) {
+      const host = joints[hostJoint];
+      const hip = new THREE.Group();
+      const rz = segSpec[hostJoint].r[2];
+      hip.position.set(x, -0.06, side * rz * 0.78);
+      host.add(hip);
+      const upperLen = rear ? 0.34 : 0.28;
+      const upper = blob(M.skin, 0.1, 0.09, upperLen / 2, 0, -0.02, side * upperLen / 2, false);
+      hip.add(upper);
+      const knee = new THREE.Group(); knee.position.set(0, -0.02, side * upperLen); hip.add(knee);
+      const lowerLen = BODY_Y - 0.14;
+      knee.add(blob(M.skin, 0.075, lowerLen / 2, 0.075, 0, -lowerLen / 2, 0, false));
+      const foot = new THREE.Group(); foot.position.set(0, -lowerLen, 0); knee.add(foot);
+      foot.add(blob(M.belly, 0.13, 0.04, 0.1, 0.05, 0, 0, false));
+      for (let t = 0; t < 4; t++) {
+        const claw = new THREE.Mesh(coneGeo, M.claw);
+        claw.scale.set(0.022, 0.09, 0.022); claw.rotation.z = -Math.PI / 2;
+        claw.position.set(0.19, -0.01, (t - 1.5) * 0.05);
+        foot.add(claw);
+      }
+      legs.push({ hip, knee, side, phase });
+    }
+    makeLeg(0, -0.2, 1, 0, false);
+    makeLeg(0, -0.2, -1, Math.PI, false);
+    makeLeg(3, -0.3, 1, Math.PI, true);
+    makeLeg(3, -0.3, -1, 0, true);
+
+    // ---------- Cabeza y mandíbulas ----------
+    const neck = new THREE.Group(); neck.position.set(0.12, 0.02, 0); spineRoot.add(neck);
+    const head = new THREE.Group(); neck.add(head);
+    head.add(blob(M.skin, 0.3, 0.22, 0.3, 0.02, 0.0, 0));
+
+    function snoutGeo(rBack, rFront, len, flat) {
+      const g = new THREE.CylinderGeometry(rFront, rBack, len, 12, 1);
+      g.rotateZ(-Math.PI / 2); g.scale(1, flat, 1);
+      return g;
+    }
+    const upperJaw = new THREE.Group(); upperJaw.position.set(0.12, 0.02, 0); head.add(upperJaw);
+    const lowerJaw = new THREE.Group(); lowerJaw.position.set(0.12, -0.03, 0); head.add(lowerJaw);
+
+    const SN_LEN = 0.92, SN_X = 0.5, R_BACK = 0.24, R_FRONT = 0.12;
+    const upperSnout = new THREE.Mesh(snoutGeo(R_BACK, R_FRONT, SN_LEN, 0.42), M.skin); upperSnout.position.set(SN_X, 0.05, 0); upperJaw.add(upperSnout);
+    const uh = new THREE.Mesh(upperSnout.geometry, M.holo); uh.scale.setScalar(1.03); upperSnout.add(uh); holoMeshes.push(uh);
+    upperJaw.add(blob(M.skin, 0.14, 0.07, 0.15, SN_X + SN_LEN / 2, 0.06, 0, false));   // nariz
+    [-1, 1].forEach(s => upperJaw.add(blob(M.back, 0.025, 0.02, 0.02, SN_X + SN_LEN / 2 + 0.04, 0.12, s * 0.05, false)));
+    upperJaw.add(blob(M.mouth, 0.46, 0.012, 0.15, SN_X, -0.005, 0, false));               // paladar
+    // Arcos oculares y ojos
+    const eyes = [];
+    [-1, 1].forEach(s => {
+      upperJaw.add(blob(M.skin, 0.1, 0.08, 0.08, -0.02, 0.2, s * 0.13, false));
+      const eye = blob(M.eye, 0.062, 0.055, 0.062, 0.0, 0.235, s * 0.15, false);
+      const pupil = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.085, 0.03), M.pupil);
+      pupil.position.set(0.055, 0, 0); eye.add(pupil);
+      upperJaw.add(eye); eyes.push(eye);
+    });
+    // Dientes superiores (el 4.º diente inferior queda visible, rasgo típico)
+    function radiusAt(x) { const t = (x - (SN_X - SN_LEN / 2)) / SN_LEN; return R_BACK + (R_FRONT - R_BACK) * Math.min(1, Math.max(0, t)); }
+    for (let i = 0; i < 11; i++) {
+      const x = 0.14 + i * 0.078;
+      [-1, 1].forEach(s => {
+        const t = new THREE.Mesh(toothGeo, M.tooth);
+        const big = i === 8;
+        t.scale.setScalar(big ? 1.45 : 0.9 + Math.sin(i * 1.7) * 0.15);
+        t.rotation.x = Math.PI; t.position.set(x, 0.0, s * radiusAt(x) * 0.93);
+        upperJaw.add(t);
+      });
+    }
+    const lowerSnout = new THREE.Mesh(snoutGeo(R_BACK * 0.92, R_FRONT * 0.9, SN_LEN * 0.98, 0.34), M.skin); lowerSnout.position.set(SN_X - 0.01, -0.035, 0); lowerJaw.add(lowerSnout);
+    lowerJaw.add(blob(M.belly, 0.44, 0.03, 0.16, SN_X, -0.075, 0, false));
+    lowerJaw.add(blob(M.tongue, 0.36, 0.025, 0.12, SN_X - 0.06, 0.005, 0, false));
+    for (let i = 0; i < 10; i++) {
+      const x = 0.18 + i * 0.08;
+      [-1, 1].forEach(s => {
+        const t = new THREE.Mesh(toothGeo, M.tooth);
+        t.scale.setScalar(i === 2 ? 1.5 : 0.85 + Math.cos(i * 1.3) * 0.12);
+        t.position.set(x, 0.02, s * radiusAt(x) * 0.84);
+        lowerJaw.add(t);
+      });
+    }
+    const mouthLight = new THREE.PointLight(0x39ff9a, 0, 2.2); mouthLight.position.set(0.45, 0, 0); upperJaw.add(mouthLight);
+
+    // ---------- Suelo holográfico, sombra y esporas ----------
+    const grid = new THREE.GridHelper(60, 120, 0x00ffa3, 0x0d5c3f);
+    grid.material.transparent = true; grid.material.opacity = 0.32; grid.material.depthWrite = false;
+    scene.add(grid);
+    function radialTexture(stops) {
+      const c = document.createElement("canvas"); c.width = c.height = 128;
+      const g = c.getContext("2d"); const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      stops.forEach(([o, col]) => gr.addColorStop(o, col)); g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+      return new THREE.CanvasTexture(c);
+    }
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: radialTexture([[0, "rgba(0,0,0,0.75)"], [1, "rgba(0,0,0,0)"]]), transparent: true, depthWrite: false }));
+    shadow.rotation.x = -Math.PI / 2; shadow.scale.set(5.6, 1.6, 1); shadow.position.set(-0.9, 0.005, 0); croc.add(shadow);
+    const halo = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: radialTexture([[0, "rgba(0,255,163,0.55)"], [0.5, "rgba(0,255,163,0.12)"], [1, "rgba(0,255,163,0)"]]), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+    halo.rotation.x = -Math.PI / 2; halo.scale.set(7.5, 4, 1); halo.position.set(-0.6, 0.01, 0); croc.add(halo);
+
+    const SPORES = 420;
+    const sporeGeo = new THREE.BufferGeometry();
+    const sp = new Float32Array(SPORES * 3), spSpeed = new Float32Array(SPORES);
+    for (let i = 0; i < SPORES; i++) { sp[i * 3] = (Math.random() - 0.5) * 16; sp[i * 3 + 1] = Math.random() * 5; sp[i * 3 + 2] = (Math.random() - 0.5) * 10; spSpeed[i] = 0.002 + Math.random() * 0.006; }
+    sporeGeo.setAttribute("position", new THREE.BufferAttribute(sp, 3));
+    const spores = new THREE.Points(sporeGeo, new THREE.PointsMaterial({ color: 0x8dffc8, size: 0.035, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false }));
+    scene.add(spores);
+
+    // ---------- Encuadre responsive ----------
+    let W = 1, H = 1, offX = 0, offY = 0;
+    const camBase = new THREE.Vector3(), camLook = new THREE.Vector3();
+    function frame() {
+      W = window.innerWidth; H = window.innerHeight;
+      renderer.setSize(W, H, false);
+      camera.aspect = W / H;
+      const wide = W > 900;
+      if (wide) {
+        camBase.set(2.2, 2.1, 7.6); camLook.set(-0.2, 0.35, 0); camera.fov = 34;
+        offX = W * 0.2; offY = -H * 0.02;
+        camera.setViewOffset(W, H, offX, offY, W, H);
+      } else {
+        const portraitBoost = Math.min(1.6, Math.max(0.9, (H / W) * 0.75));
+        camBase.set(2.0 * portraitBoost, 2.3 * portraitBoost, 8.2 * portraitBoost); camLook.set(0.25, 0.3, 0); camera.fov = 36;
+        offX = 0; offY = H * 0.25;
+        camera.setViewOffset(W, H, offX, offY, W, H);
+      }
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener("resize", frame);
+    frame();
+    camera.position.copy(camBase); camera.lookAt(camLook);
+
+    // ---------- Estado ----------
+    let pointerX = 0, pointerY = 0;
+    window.addEventListener("pointermove", e => { pointerX = (e.clientX / W - 0.5) * 2; pointerY = (e.clientY / H - 0.5) * 2; }, { passive: true });
+
+    const S = {
+      jaw: 0, jawPrev: 0, base: 0, mode: "idle", angryUntil: 0, tint: 0,
+      walk: reduceMotion ? 0.45 : 1, walkTarget: 1, phase: 0, nextSnap: 2.5, snapT: -1, psi: 0,
+      dive: null, flashOn: false
+    };
+    const clock = new THREE.Clock();
+    const hudJaw = document.getElementById("hudJaw"), hudPsi = document.getElementById("hudPsi"), hudState = document.getElementById("hudState"), hudWrap = document.getElementById("crocHud");
+    const flash = document.getElementById("crocFlash");
+    const STATE_LABEL = { idle: "Patrullando", listening: "Escuchando", verifying: "Verificando", granted: "Acceso concedido", angry: "Acceso denegado", mfa: "Vinculando 2FA" };
+    let hudTick = 0;
+
+    const tmpA = new THREE.Vector3(), tmpB = new THREE.Vector3(), tmpC = new THREE.Vector3();
+    function ease(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+
+    function loop() {
+      requestAnimationFrame(loop);
+      const locked = document.body.classList.contains("locked-screen");
+      if (!locked && !S.dive) return;
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const t = clock.elapsedTime;
+      const now = performance.now();
+      const angry = now < S.angryUntil || document.body.classList.contains("auth-alert-red");
+
+      // Mandíbula objetivo
+      let target = S.base;
+      if (S.mode === "verifying") target = 0.32 + Math.sin(t * 26) * 0.08;
+      if (S.mode === "mfa") target = 0.35 + Math.sin(t * 2) * 0.05;
+      if (angry) target = (Math.sin(t * 34) * 0.5 + 0.5) * 0.75;
+      if (!angry && S.mode === "idle" && !reduceMotion) {
+        if (t > S.nextSnap && S.snapT < 0) { S.snapT = 0; }
+        if (S.snapT >= 0) {
+          S.snapT += dt;
+          // castañeteo de dientes: tres mordidas rápidas
+          const k = S.snapT / 0.9;
+          target = Math.max(target, k < 1 ? Math.abs(Math.sin(k * Math.PI * 3)) * (0.55 - k * 0.25) : 0);
+          if (k >= 1) { S.snapT = -1; S.nextSnap = t + 3.5 + Math.random() * 4; }
+        }
+      }
+      if (S.dive) target = 1;
+      const jawSpeed = angry ? 30 : (S.snapT >= 0 ? 22 : 7);
+      S.jawPrev = S.jaw;
+      S.jaw += (target - S.jaw) * Math.min(1, dt * jawSpeed);
+      upperJaw.rotation.z = S.jaw * 0.62;
+      lowerJaw.rotation.z = -S.jaw * 0.36;
+      head.rotation.z = S.jaw * 0.12;
+      const closing = (S.jawPrev - S.jaw) / Math.max(dt, 0.001);
+      if (closing > 0) S.psi = Math.max(S.psi, Math.min(3700, closing * 1600));
+      S.psi *= 0.95;
+      if (angry) S.psi = Math.max(S.psi, 3400 + Math.random() * 300);
+      mouthLight.intensity = 0.4 + S.jaw * 3.2 + (S.dive ? S.dive.k * 8 : 0);
+
+      // Color de alerta
+      S.tint += ((angry ? 1 : 0) - S.tint) * Math.min(1, dt * 6);
+      tintables.forEach((m, i) => {
+        m.color.copy(baseTint[i].c).lerp(RED, S.tint * (m === M.eye ? 0.4 : 0.85));
+        m.emissive.copy(baseTint[i].e).lerp(RED_E, S.tint * 0.7);
+      });
+      M.holo.color.setHex(S.tint > 0.5 ? 0xff6b7d : 0x6affd0);
+      grid.material.color && grid.material.color.setHex(S.tint > 0.5 ? 0xff2d4b : 0x00ffa3);
+
+      // Caminata (cinta holográfica)
+      S.walkTarget = S.dive ? 0 : (S.mode === "verifying" ? 0.4 : (S.mode === "listening" ? 0.6 : 1)) * (reduceMotion ? 0.45 : 1);
+      if (angry) S.walkTarget = 0.2;
+      S.walk += (S.walkTarget - S.walk) * Math.min(1, dt * 3);
+      S.phase += dt * 5.2 * S.walk;
+      const p = S.phase;
+      legs.forEach(L => {
+        const swing = Math.sin(p + L.phase) * 0.55 * S.walk;
+        const lift = Math.max(0, Math.cos(p + L.phase)) * 0.42 * S.walk;
+        L.hip.rotation.y = L.side * swing;
+        L.hip.rotation.x = -L.side * lift;
+        L.knee.rotation.x = L.side * lift * 0.7;
+      });
+      joints.forEach((j, i) => {
+        const amp = i < 4 ? 0.07 : 0.1 + (i - 4) * 0.014;
+        j.rotation.y = Math.sin(p * 0.5 - i * 0.55) * amp * (0.35 + S.walk * 0.65) + (i >= 4 ? Math.sin(t * 0.9 - i * 0.4) * 0.03 : 0);
+      });
+      spineRoot.position.y = BODY_Y + Math.abs(Math.sin(p)) * 0.025 * S.walk;
+      spineRoot.rotation.z = Math.sin(p * 2) * 0.012 * S.walk;
+      grid.position.x = -((S.phase * 0.19) % 0.5);
+      tmpA.set(0, 0, 0);
+
+      // Cabeza sigue al puntero (mira hacia la cámara al escuchar)
+      const lookY = (S.mode === "listening" || S.mode === "verifying" || S.dive ? -0.55 : -0.2) - pointerX * 0.35;
+      const lookX = -pointerY * 0.12;
+      neck.rotation.y += (lookY - neck.rotation.y) * Math.min(1, dt * 4);
+      neck.rotation.z += (lookX - neck.rotation.z) * Math.min(1, dt * 4);
+      // Parpadeo
+      const blink = (t % 4.3) < 0.12 ? 0.15 : 1;
+      eyes.forEach(e => { e.scale.y = 0.055 * blink; });
+
+      // Esporas
+      const arr = sporeGeo.attributes.position.array;
+      for (let i = 0; i < SPORES; i++) {
+        arr[i * 3 + 1] += spSpeed[i] * (S.dive ? 6 : 1);
+        arr[i * 3] -= 0.004 * S.walk;
+        if (arr[i * 3 + 1] > 5) arr[i * 3 + 1] = 0;
+        if (arr[i * 3] < -8) arr[i * 3] = 8;
+      }
+      sporeGeo.attributes.position.needsUpdate = true;
+      holoMeshes.forEach(h => { h.material.opacity = 0.035 + Math.sin(t * 2) * 0.015; });
+
+      // Cámara: respiración suave o zambullida en la boca
+      if (S.dive) {
+        const k = Math.min(1, (now - S.dive.t0) / S.dive.dur);
+        S.dive.k = k;
+        const eo = 1 - ease(Math.min(1, k / 0.72));
+        camera.setViewOffset(W, H, offX * eo, offY * eo, W, H); camera.updateProjectionMatrix();
+        head.updateMatrixWorld(true);
+        const front = head.localToWorld(tmpA.set(2.3, 0.18, 0));
+        const inside = head.localToWorld(tmpB.set(0.6, 0.04, 0));
+        const lookAt = head.localToWorld(tmpC.set(-0.5, 0.0, 0));
+        if (k < 0.3) {
+          camera.position.copy(S.dive.from); camera.lookAt(camLook);
+        } else if (k < 0.72) {
+          const e = ease((k - 0.3) / 0.42);
+          camera.position.copy(S.dive.from).lerp(front, e);
+          tmpC.copy(camLook).lerp(lookAt, e); camera.lookAt(tmpC);
+        } else {
+          const e = ease((k - 0.72) / 0.28);
+          camera.position.copy(front).lerp(inside, e); camera.lookAt(lookAt);
+        }
+        if (k > 0.64 && !S.flashOn) { S.flashOn = true; flash && flash.classList.add("on"); }
+        if (k >= 1 && S.dive.res) { const r = S.dive.res; S.dive.res = null; setTimeout(r, 120); }
+      } else {
+        const bx = camBase.x + Math.sin(t * 0.25) * 0.15 + pointerX * 0.25;
+        const by = camBase.y + Math.sin(t * 0.33) * 0.06 - pointerY * 0.12;
+        camera.position.x += (bx - camera.position.x) * Math.min(1, dt * 2);
+        camera.position.y += (by - camera.position.y) * Math.min(1, dt * 2);
+        camera.position.z += (camBase.z - camera.position.z) * Math.min(1, dt * 2);
+        camera.lookAt(camLook);
+      }
+
+      // Telemetría
+      hudTick += dt;
+      if (hudTick > 0.08 && hudJaw) {
+        hudTick = 0;
+        const deg = Math.round(S.jaw * (0.62 + 0.36) * 57.3);
+        hudJaw.textContent = `${deg}°`;
+        hudPsi.textContent = `${Math.round(S.psi).toLocaleString("es-PE")} PSI`;
+        hudState.textContent = angry ? STATE_LABEL.angry : (S.dive ? STATE_LABEL.granted : STATE_LABEL[S.mode] || STATE_LABEL.idle);
+        hudWrap && hudWrap.classList.toggle("is-granted", !!S.dive);
+      }
+
+      renderer.render(scene, camera);
+    }
+    loop();
+
+    window.Croc3D = {
+      setBase(v) { S.base = Math.max(0, Math.min(0.75, v)); },
+      setMode(m) { S.mode = m; if (m !== "idle") S.snapT = -1; },
+      angry() { S.angryUntil = performance.now() + 1500; S.mode = "idle"; },
+      openAndDive() {
+        if (S.dive) return Promise.resolve();
+        S.mode = "granted";
+        return new Promise(res => { S.dive = { t0: performance.now(), dur: reduceMotion ? 700 : 1900, from: camera.position.clone(), res, k: 0 }; });
+      },
+      finishDive() {
+        setTimeout(() => { flash && flash.classList.remove("on"); }, 120);
+        setTimeout(() => this.reset(), 900);
+      },
+      reset() {
+        S.dive = null; S.flashOn = false; S.mode = "idle"; S.base = 0; S.jaw = 0;
+        frame(); camera.position.copy(camBase); camera.lookAt(camLook);
+        flash && flash.classList.remove("on");
+      }
+    };
+  })();
+
+  // =========================================================================
+  // LA BOCA DEL COCODRILO REACCIONA AL FORMULARIO DE ACCESO
+  // =========================================================================
+  (function wireCrocToLogin() {
+    const u = document.getElementById("authUserInput");
+    const p = document.getElementById("authPassInput");
+    const c = document.getElementById("totpCodeInput");
+    const form = document.querySelector("#loginModalCard form");
+    const hint = document.getElementById("hudHint");
+    if (!u || !p || !c) return;
+
+    function update() {
+      if (!window.Croc3D) return;
+      const active = document.activeElement;
+      const focused = active === u || active === p || active === c;
+      const digits = c.value.replace(/\D/g, "").length;
+      let base = focused ? 0.08 : 0;
+      base += Math.min(0.2, (u.value.length + p.value.length) * 0.011);
+      if (digits) base = Math.max(base, 0.2 + digits * 0.065);
+      Croc3D.setBase(base);
+      Croc3D.setMode(focused || base > 0.05 ? "listening" : "idle");
+      if (hint) {
+        hint.textContent = digits === 6 ? "Código completo. Pulsa ingresar y el guardián abrirá la boca."
+          : (u.value && p.value ? "Ahora tu código 2FA de 6 dígitos." : "Ingresa tus credenciales y el guardián abrirá la boca.");
+      }
+    }
+    [u, p, c].forEach(el => { ["input", "focus", "blur"].forEach(ev => el.addEventListener(ev, () => setTimeout(update, 0))); });
+    if (form) form.addEventListener("submit", () => { window.Croc3D && Croc3D.setMode("verifying"); }, true);
+    window._crocLoginUpdate = update;
+  })();
+
+  // =========================================================================
+  // ENGANCHES: LOGIN → ZAMBULLIDA, ERROR → FURIA, CIERRE → RESET
+  // =========================================================================
+  (function wireFuturistHooks() {
+    const _boot = bootAuthenticatedSession;
+    bootAuthenticatedSession = async function (session) {
+      const wasLocked = document.body.classList.contains("locked-screen");
+      if (wasLocked && window.Croc3D) {
+        clearAuthAlertRed();
+        document.body.classList.add("croc-diving");
+        await Croc3D.openAndDive();
+      }
+      await _boot(session);
+      if (wasLocked) {
+        document.body.classList.add("just-entered");
+        setTimeout(() => document.body.classList.remove("just-entered"), 1400);
+      }
+      if (window.Croc3D) Croc3D.finishDive();
+      setTimeout(() => document.body.classList.remove("croc-diving"), 400);
+    };
+
+    const _angry = triggerAngryCroc;
+    triggerAngryCroc = function () {
+      _angry();
+      if (window.Croc3D) Croc3D.angry();
+      setTimeout(() => window._crocLoginUpdate && window._crocLoginUpdate(), 1600);
+    };
+
+    const _mfa = startForcedLoginMfaSetup;
+    startForcedLoginMfaSetup = async function (factors) {
+      if (window.Croc3D) Croc3D.setMode("mfa");
+      return _mfa(factors);
+    };
+
+    const _open = openTotpModal;
+    openTotpModal = function () {
+      _open();
+      if (window.Croc3D && !document.getElementById("crocFlash").classList.contains("on")) { Croc3D.setBase(0); Croc3D.setMode("idle"); }
+    };
+
+    const _lock = lockSanctuary;
+    lockSanctuary = async function () {
+      await _lock();
+      if (window.Croc3D) Croc3D.reset();
+      renderHudStrip();
+    };
+
+    const _counters = updateCounters;
+    updateCounters = function () { _counters(); renderHudStrip(); };
+
+    const _sec = updateSecurityUI;
+    updateSecurityUI = function () { _sec(); renderHudSession(); };
+  })();
+
+  // =========================================================================
+  // HUD DE MÉTRICAS DEL PANEL INTERNO
+  // =========================================================================
+  const _hudShown = {};
+  function animateNumber(el, to) {
+    if (!el) return;
+    const from = _hudShown[el.id] || 0;
+    _hudShown[el.id] = to;
+    if (from === to) { el.textContent = to.toLocaleString("es-PE"); return; }
+    const t0 = performance.now(), dur = 700;
+    (function step(now) {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(from + (to - from) * e).toLocaleString("es-PE");
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+  function renderHudStrip() {
+    const data = [
+      ["hudTrk", trackersList.length], ["hudCmd", commandsList.length], ["hudDir", directoryList.length],
+      ["hudSnc", sanctuaryList.length], ["hudPts", FIXED_78_POINTS.length], ["hudGeo", savedGeofences.length]
+    ];
+    const max = Math.max(1, ...data.map(d => d[1]));
+    data.forEach(([id, n]) => {
+      const el = document.getElementById(id);
+      animateNumber(el, n);
+      const bar = el && el.parentElement.querySelector(".hud-bar");
+      if (bar) bar.style.setProperty("--fill", `${Math.round((n / max) * 100)}%`);
+    });
+  }
+  function renderHudSession() {
+    const u = document.getElementById("hudUser"), r = document.getElementById("hudRole");
+    if (!u || !r) return;
+    r.classList.remove("is-viewer", "is-paused");
+    if (!isAuthenticated) { u.textContent = "—"; r.textContent = "Sin sesión"; return; }
+    u.textContent = currentUsername || "—";
+    if (currentUserRole === "dev") { r.textContent = isEditMode ? "DEV · Edición activa" : "DEV · Edición pausada"; if (!isEditMode) r.classList.add("is-paused"); }
+    else { r.textContent = "USER · Solo lectura"; r.classList.add("is-viewer"); }
+  }
+  (function startHudClock() {
+    const c = document.getElementById("hudClock"), d = document.getElementById("hudDate");
+    function tick() {
+      const now = new Date();
+      try {
+        if (c) c.textContent = now.toLocaleTimeString("es-PE", { timeZone: "America/Lima", hour12: false });
+        if (d) d.textContent = now.toLocaleDateString("es-PE", { timeZone: "America/Lima", weekday: "short", day: "2-digit", month: "short" });
+      } catch { if (c) c.textContent = now.toLocaleTimeString(); }
+    }
+    tick(); setInterval(tick, 1000);
+  })();
+
+  // Halo que sigue al cursor sobre los paneles
+  document.addEventListener("pointermove", e => {
+    const panel = e.target.closest && e.target.closest(".container .glass-panel");
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    panel.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    panel.style.setProperty("--my", `${e.clientY - r.top}px`);
+  }, { passive: true });
 
   // Inicialización segura: valida sesión antes de descargar cualquier dato
   updateCounters();
